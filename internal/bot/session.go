@@ -337,7 +337,7 @@ func (sm *SessionManager) consumeDroppedPrefixLocked(key, text string) string {
 	if len(dropped) > 0 {
 		b.WriteString(" Dropped summaries:")
 		limit := compat.Min(len(dropped), 3)
-		for i := range limit {
+		for i := 0; i < limit; i++ {
 			fmt.Fprintf(&b, "\n- %s", dropped[i])
 		}
 		if len(dropped) > limit {

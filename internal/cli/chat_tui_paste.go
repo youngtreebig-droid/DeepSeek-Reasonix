@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -669,7 +671,7 @@ func splitPastePathTokens(s string) []string {
 
 func nonEmptyPasteLines(text string) []string {
 	var out []string
-	for line := range strings.SplitSeq(strings.ReplaceAll(text, "\r\n", "\n"), "\n") {
+	for _, line := range strings.Split(strings.ReplaceAll(text, "\r\n", "\n"), "\n") {
 		line = strings.TrimSpace(line)
 		if line != "" {
 			out = append(out, line)
@@ -748,42 +750,11 @@ func pastedImagePathForOS(src, goos string) (string, bool) {
 	return candidates[0], true
 }
 
-func hasUnescapedPathWhitespace(s string) bool {
-	escaped := false
-	for i := range len(s) {
-		ch := s[i]
-		if escaped {
-			escaped = false
-			continue
-		}
-		if ch == '\\' {
-			escaped = true
-			continue
-		}
-		if ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' {
-			return true
-		}
-	}
-	return false
-}
-
 // unescapeShellPath applies POSIX backslash semantics to an unquoted pasted
 // path: a backslash makes the next byte literal, whatever it is — zsh and
 // bash escape any byte they consider special that way (space, parens, ^,
 // comma, $, ...), so a whitelist would always lag behind. A trailing
 // backslash stays literal. Quoted paths and Windows paths never reach here.
-func unescapeShellPath(s string) string {
-	var b strings.Builder
-	b.Grow(len(s))
-	for i := 0; i < len(s); i++ {
-		if s[i] == '\\' && i+1 < len(s) {
-			i++
-		}
-		b.WriteByte(s[i])
-	}
-	return b.String()
-}
-
 // pastedFileRef turns a dragged/pasted non-image file path into an @reference so
 // it attaches instead of landing as literal text (and, for a POSIX path, being
 // misread as a slash command). Images are handled earlier; only path-shaped

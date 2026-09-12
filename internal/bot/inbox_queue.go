@@ -230,7 +230,7 @@ func formatBotInboxList(api control.SessionAPI) string {
 	}
 	b.WriteByte('\n')
 	limit := compat.Min(len(snap.Items), 15)
-	for i := range limit {
+	for i := 0; i < limit; i++ {
 		it := snap.Items[i]
 		fmt.Fprintf(&b, "%d. [%s/%s] %s #%s\n", i+1, it.Intent, it.State, it.Preview, shortItemID(it.ID))
 	}

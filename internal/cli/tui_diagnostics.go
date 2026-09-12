@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -316,9 +318,12 @@ func (d *tuiDiagnostics) StartWatchdog(p *tea.Program) {
 			d.lastHeartbeatSource = "watchdog_armed"
 		}
 		d.mu.Unlock()
-		d.watchWG.Go(func() {
+		d.watchWG.Add(1)
+		go func() {
+			defer d.watchWG.Done()
+
 			d.watch()
-		})
+		}()
 	})
 }
 

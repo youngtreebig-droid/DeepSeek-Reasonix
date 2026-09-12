@@ -164,7 +164,7 @@ func (r *webInstanceRegistry) register(addr string, pid int) (*webInstanceRegist
 	}
 
 	now := r.now().UnixMilli()
-	for range 8 {
+	for __i := 0; __i < 8; __i++ {
 		serverID, err := randomWebInstanceID()
 		if err != nil {
 			return nil, fmt.Errorf("generate Web instance id: %w", err)

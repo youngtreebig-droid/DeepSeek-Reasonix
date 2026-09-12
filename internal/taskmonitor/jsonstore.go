@@ -231,7 +231,7 @@ func (s *FileStore) RenewRuntimeLease(ctx context.Context, projectDir, taskID, o
 		return false, nil
 	}
 	const maxAttempts = 4
-	for range maxAttempts {
+	for _i := 0; _i < maxAttempts; _i++ {
 		snap, err := s.getTaskRaw(ctx, projectDir, taskID)
 		if err != nil || snap == nil {
 			return false, err

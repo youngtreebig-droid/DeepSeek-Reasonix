@@ -622,7 +622,7 @@ func reapShellProcess(cmd *exec.Cmd, tracked *proc.TrackedCommand) {
 // PowerShell chaining guard.
 func hasUnquotedSeq(s, seq string) bool {
 	var quote byte
-	for i := range len(s) {
+	for i := 0; i < len(s); i++ {
 		c := s[i]
 		if quote != 0 {
 			if c == quote {

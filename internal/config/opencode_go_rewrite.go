@@ -142,7 +142,7 @@ func rawTOMLValue(v any) (string, error) {
 		return strconv.FormatFloat(rv.Float(), 'g', -1, 64), nil
 	case reflect.Slice, reflect.Array:
 		var parts []string
-		for i := range rv.Len() {
+		for i := 0; i < rv.Len(); i++ {
 			s, err := rawTOMLValue(rv.Index(i).Interface())
 			if err != nil {
 				return "", err
@@ -295,7 +295,7 @@ func expandOpenCodeGoInlineProviders(body string) (string, error) {
 		outside = outside[:a] + outside[z:]
 	}
 	var comments []string
-	for line := range strings.SplitSeq(outside, "\n") {
+	for _, line := range strings.Split(outside, "\n") {
 		if at := tomlInlineCommentIndex(line); at >= 0 {
 			comments = append(comments, line[at:])
 		}

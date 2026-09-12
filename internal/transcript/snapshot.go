@@ -189,7 +189,7 @@ func activeRecordIndexes(messages []*bufferedMessage, before int, runtime Runtim
 	}
 	if runtime.TurnID == "" {
 		indexes := make([]int, 0, before)
-		for i := range before {
+		for i := 0; i < before; i++ {
 			indexes = append(indexes, i)
 		}
 		return indexes

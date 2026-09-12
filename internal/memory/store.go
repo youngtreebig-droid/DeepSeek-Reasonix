@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat/rootfs"
 	"reasonix/internal/config"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"
@@ -261,7 +262,7 @@ func (s Store) Delete(name string) error {
 }
 
 func archiveInDir(dir, name string) (string, error) {
-	root, err := os.OpenRoot(dir)
+	root, err := rootfs.OpenRoot(dir)
 	if os.IsNotExist(err) {
 		return "", nil
 	}
@@ -294,7 +295,7 @@ func archiveInDir(dir, name string) (string, error) {
 	return out, nil
 }
 
-func archivePath(root *os.Root, name string, when time.Time) (string, error) {
+func archivePath(root *rootfs.Root, name string, when time.Time) (string, error) {
 	stem := when.Format("20060102-150405.000") + "-" + name
 	path := filepath.Join(".archive", stem+".md")
 	if _, err := root.Stat(path); os.IsNotExist(err) {
@@ -338,7 +339,7 @@ func safeJoin(base, name string) (string, error) {
 	return pathAbs, nil
 }
 
-func renameMemoryFile(root *os.Root, path, dest string) error {
+func renameMemoryFile(root *rootfs.Root, path, dest string) error {
 	err := root.Rename(path, dest)
 	if err == nil || os.IsNotExist(err) {
 		return nil
@@ -356,7 +357,7 @@ func renameMemoryFile(root *os.Root, path, dest string) error {
 	return err
 }
 
-func repairOwnerWrite(root *os.Root, path string, dir bool) {
+func repairOwnerWrite(root *rootfs.Root, path string, dir bool) {
 	info, err := root.Stat(path)
 	if err != nil {
 		return

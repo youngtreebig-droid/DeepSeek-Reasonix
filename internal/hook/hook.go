@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"reasonix/internal/compat"
 	"regexp"
 	"runtime"
 	"sort"
@@ -1135,7 +1136,7 @@ func Run(ctx context.Context, payload Payload, hooks []ResolvedHook, spawner Spa
 			Timeout: timeout,
 		}
 		if h.Async {
-			asyncCtx := context.WithoutCancel(ctx)
+			asyncCtx := compat.ContextWithoutCancel(ctx)
 			go runResolvedHook(asyncCtx, h, input, spawner)
 			report.Outcomes = append(report.Outcomes, Outcome{Hook: h, Decision: DecisionPass})
 			continue

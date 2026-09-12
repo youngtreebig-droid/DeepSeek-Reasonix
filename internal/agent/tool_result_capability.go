@@ -252,7 +252,7 @@ func toolResultRefFromMarker(content string) (string, bool) {
 	if end := strings.Index(marker, "]…"); end >= 0 {
 		marker = marker[:end]
 	}
-	for field := range strings.FieldsSeq(marker) {
+	for _, field := range strings.Fields(marker) {
 		ref, ok := strings.CutPrefix(field, "result_ref=")
 		if !ok || len(ref) != len("tr-")+24 || !strings.HasPrefix(ref, "tr-") {
 			continue

@@ -136,7 +136,7 @@ func completedPlanTodosJSON(args string) string {
 // todo_write calls as it executes.
 func parsePlanTodos(plan string) []seedTodo {
 	var todos []seedTodo
-	for raw := range strings.SplitSeq(plan, "\n") {
+	for _, raw := range strings.Split(plan, "\n") {
 		item, level, ok := listItem(raw)
 		if !ok {
 			continue

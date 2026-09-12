@@ -448,7 +448,7 @@ func firstNonEmptyLine(s string) string {
 
 func commonPrefixLen(a, b string) int {
 	n := compat.Min(len(b), len(a))
-	for i := range n {
+	for i := 0; i < n; i++ {
 		if a[i] != b[i] {
 			return i
 		}

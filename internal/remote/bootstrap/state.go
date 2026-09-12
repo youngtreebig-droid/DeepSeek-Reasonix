@@ -1,40 +1,24 @@
 package bootstrap
 
 import (
-	"encoding/json"
 	"path"
 	"time"
 
+	"reasonix/internal/remote/serveenv"
 	"reasonix/internal/store"
 )
 
 // ServeState is the JSON record a bootstrapped serve leaves on the remote host
-// so a later (re)connect can find and reuse it. Fields use omitempty so an
-// older record missing a field still decodes.
-type ServeState struct {
-	PID       int    `json:"pid"`
-	Addr      string `json:"addr"` // 127.0.0.1:<port> on the remote host
-	Workspace string `json:"workspace"`
-	Version   string `json:"version,omitempty"`
-	ServeCaps string `json:"serve_caps,omitempty"`
-	TokenFile string `json:"token_file"`
-	LogFile   string `json:"log_file,omitempty"`
-	StartedAt int64  `json:"started_at,omitempty"` // unix seconds
-}
+// so a later (re)connect can find and reuse it. It is defined in the ssh-free
+// serveenv leaf package so non-remote CLI paths can use it without pulling in
+// the ssh client stack; this alias preserves the bootstrap.ServeState name.
+type ServeState = serveenv.ServeState
 
 // MarshalState renders a ServeState as indented JSON.
-func MarshalState(s ServeState) ([]byte, error) {
-	return json.MarshalIndent(s, "", "  ")
-}
+func MarshalState(s ServeState) ([]byte, error) { return serveenv.MarshalState(s) }
 
 // UnmarshalState parses a ServeState record.
-func UnmarshalState(data []byte) (ServeState, error) {
-	var s ServeState
-	if err := json.Unmarshal(data, &s); err != nil {
-		return ServeState{}, err
-	}
-	return s, nil
-}
+func UnmarshalState(data []byte) (ServeState, error) { return serveenv.UnmarshalState(data) }
 
 // remoteDir is the ~/.reasonix/remote directory given the resolved remote home.
 func remoteDir(home string) string {

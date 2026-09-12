@@ -157,7 +157,7 @@ func isPOSIXShellScriptFile(path string) bool {
 
 func isSimpleWindowsBatchTail(tail string) bool {
 	quoted := false
-	for i := range len(tail) {
+	for i := 0; i < len(tail); i++ {
 		switch tail[i] {
 		case '\r', '\n':
 			return false

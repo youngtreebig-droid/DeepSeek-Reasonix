@@ -81,7 +81,7 @@ type ModelRuntimePreferences struct {
 func (c *Config) RuntimeModelPreferences() ModelRuntimePreferences {
 	var out ModelRuntimePreferences
 	src, dst := reflect.ValueOf(c.Agent), reflect.ValueOf(&out).Elem()
-	for i := range dst.NumField() {
+	for i := 0; i < dst.NumField(); i++ {
 		dst.Field(i).Set(src.FieldByName(dst.Type().Field(i).Name))
 	}
 	return out
@@ -163,7 +163,7 @@ func (settings *ModelRuntimeSettings) Apply(c *Config, root string) error {
 	}
 	declared, _ := project["agent"].(map[string]any)
 	src, dst := reflect.ValueOf(frozen.Preferences), reflect.ValueOf(&c.Agent).Elem()
-	for i := range src.NumField() {
+	for i := 0; i < src.NumField(); i++ {
 		field := src.Type().Field(i)
 		if _, explicit := declared[field.Tag.Get("toml")]; !explicit {
 			dst.FieldByName(field.Name).Set(src.Field(i))

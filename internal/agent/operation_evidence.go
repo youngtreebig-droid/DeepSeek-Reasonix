@@ -240,7 +240,7 @@ func (a *Agent) currentFileHashes(ctx context.Context, path string) ([]string, b
 	}
 	var hashes []string
 	offset := 0
-	for range maxEvidenceReadPages {
+	for __i := 0; __i < maxEvidenceReadPages; __i++ {
 		args, err := json.Marshal(map[string]any{"path": path, "offset": offset, "limit": readEvidencePageLines})
 		if err != nil {
 			return nil, false

@@ -333,7 +333,7 @@ func configuredWindowsBashPath(prefer, path string, exists func(string) bool) st
 func bashCandidatesFromGitBinary(bin string) []string {
 	var out []string
 	dir := pathDir(bin)
-	for range 3 {
+	for _i := 0; _i < 3; _i++ {
 		if dir == "" || dir == "." {
 			break
 		}

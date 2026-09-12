@@ -77,7 +77,7 @@ func replaceTOMLScalarAssignment(line, encoded string) string {
 
 func tomlInlineCommentIndex(value string) int {
 	inBasic, inLiteral, escaped := false, false, false
-	for i := range len(value) {
+	for i := 0; i < len(value); i++ {
 		ch := value[i]
 		if inBasic {
 			if escaped {

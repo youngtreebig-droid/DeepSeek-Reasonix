@@ -129,7 +129,7 @@ func startLoadedPackages(ctx context.Context, packages []pluginpkg.InstalledPack
 	workers := compat.Min(maxConcurrentPackageStarts, len(jobs))
 	var wg sync.WaitGroup
 	wg.Add(workers)
-	for range workers {
+	for w := 0; w < workers; w++ {
 		go func() {
 			defer wg.Done()
 			for i := range indices {

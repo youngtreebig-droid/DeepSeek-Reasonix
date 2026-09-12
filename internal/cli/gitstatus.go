@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -13,7 +15,6 @@ import (
 	"github.com/charmbracelet/x/ansi"
 
 	"reasonix/internal/compat"
-	"reasonix/internal/gitcmd"
 )
 
 const gitStatusTimeout = 700 * time.Millisecond
@@ -77,18 +78,6 @@ func loadGitStatusWithRunner(ctx context.Context, cwd string, run func(context.C
 		return gitStatus{}, err
 	}
 	return status, nil
-}
-
-func runGit(ctx context.Context, cwd string, args ...string) (string, error) {
-	// cwd goes through gitcmd's dir parameter, not cmd.Dir, so the gitcmd
-	// baseline can resolve the repository's own config relative to it (the
-	// filter-driver neutralization reads <cwd>/.git/config).
-	cmd := gitcmd.Command(ctx, cwd, args...)
-	out, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	return string(out), nil
 }
 
 func parseGitNumstat(out string) (added int, removed int) {

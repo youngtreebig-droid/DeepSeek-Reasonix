@@ -175,7 +175,7 @@ func resolvedReadOnlyFields(command string, nested bool) ([]string, bool, bool) 
 }
 
 func resolvedReadOnlyStmt(stmt *syntax.Stmt, nested bool) ([]string, bool, bool) {
-	if stmt == nil || stmt.Negated || stmt.Background || stmt.Coprocess || stmt.Disown || len(stmt.Redirs) > 0 {
+	if stmt == nil || stmt.Negated || stmt.Background || stmt.Coprocess || stmtDisownEffect(stmt) || len(stmt.Redirs) > 0 {
 		return nil, false, false
 	}
 	call, ok := stmt.Cmd.(*syntax.CallExpr)

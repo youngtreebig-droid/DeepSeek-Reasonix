@@ -63,7 +63,10 @@ func (c *Catalog) scheduleSessionRemovalRetry(path, reason string) {
 	if c == nil || c.workerCtx == nil {
 		return
 	}
-	c.workers.Go(func() {
+	c.workers.Add(1)
+	go func() {
+		defer c.workers.Done()
+
 		select {
 		case <-c.stop:
 			return
@@ -79,7 +82,7 @@ func (c *Catalog) scheduleSessionRemovalRetry(path, reason string) {
 		}
 		// Blocking apply is fine on the background worker.
 		_ = c.applySessionRemovalLocked(ctx, path, reason+"-retry", true)
-	})
+	}()
 }
 
 // tryApplySessionRemoval attempts a non-blocking durable delete. When directory

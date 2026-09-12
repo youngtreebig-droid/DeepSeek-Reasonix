@@ -33,7 +33,7 @@ func mapContentStrings(value reflect.Value, path []string, visit func(string, []
 	case reflect.Struct:
 		out := reflect.New(value.Type()).Elem()
 		out.Set(value)
-		for i := range value.NumField() {
+		for i := 0; i < value.NumField(); i++ {
 			field := value.Type().Field(i)
 			name := strings.Split(field.Tag.Get("json"), ",")[0]
 			if field.PkgPath != "" || name == "-" {
@@ -55,7 +55,7 @@ func mapContentStrings(value reflect.Value, path []string, visit func(string, []
 		} else {
 			out = reflect.New(value.Type()).Elem()
 		}
-		for i := range value.Len() {
+		for i := 0; i < value.Len(); i++ {
 			out.Index(i).Set(mapContentStrings(value.Index(i), appendPath(path, strconv.Itoa(i)), visit))
 		}
 		return out
@@ -92,7 +92,7 @@ func contentStringAt(message Message, path []string) (string, bool) {
 		switch value.Kind() {
 		case reflect.Struct:
 			var child reflect.Value
-			for i := range value.NumField() {
+			for i := 0; i < value.NumField(); i++ {
 				field := value.Type().Field(i)
 				name := strings.Split(field.Tag.Get("json"), ",")[0]
 				if name == "" {
@@ -140,11 +140,11 @@ func retainedBytes(value reflect.Value) int {
 			size += retainedBytes(value.Elem())
 		}
 	case reflect.Struct:
-		for i := range value.NumField() {
+		for i := 0; i < value.NumField(); i++ {
 			size += retainedBytes(value.Field(i))
 		}
 	case reflect.Slice, reflect.Array:
-		for i := range value.Len() {
+		for i := 0; i < value.Len(); i++ {
 			size += retainedBytes(value.Index(i))
 		}
 	case reflect.Map:

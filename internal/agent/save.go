@@ -715,7 +715,7 @@ func (s *Session) saveRecoveryBranch(opts RecoveryBranchOptions, shutdown bool) 
 
 	// One stable recovery file per (root branch, writer generation). Nested
 	// -recovery- names peel back to the root so conflicts update in place.
-	for range 8 {
+	for __i := 0; __i < 8; __i++ {
 		recoveryPath, lane := s.isolatedRecoverySessionPath(originalPath)
 		info, collision, err := s.writeRecoveryBranchAtPath(recoveryPath, opts, msgs, digest,
 			version, rewriteVersion, preview, turns, digestText, 1, shutdown)

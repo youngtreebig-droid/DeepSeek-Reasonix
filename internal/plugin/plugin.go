@@ -377,7 +377,9 @@ func Start(ctx context.Context, specs []Spec, p StartPolicy) (*Host, []tool.Tool
 				phaseADur := recordedPhaseADur()
 				cancelStartup()
 				if !p.SkipPersistence {
-					h.bgWrites.Go(func() { ; _ = RecordStartup(spec.Name, phaseADur) })
+					h.bgWrites.Add(1)
+
+					go func() { defer h.bgWrites.Done(); _ = RecordStartup(spec.Name, phaseADur) }()
 				}
 				ch <- result{idx: idx, spec: spec, err: fmt.Errorf("start plugin %q: %w", spec.Name, err)}
 				return
@@ -388,7 +390,9 @@ func Start(ctx context.Context, specs []Spec, p StartPolicy) (*Host, []tool.Tool
 				phaseADur := recordedPhaseADur()
 				cancelStartup()
 				if !p.SkipPersistence {
-					h.bgWrites.Go(func() { ; _ = RecordStartup(spec.Name, phaseADur) })
+					h.bgWrites.Add(1)
+
+					go func() { defer h.bgWrites.Done(); _ = RecordStartup(spec.Name, phaseADur) }()
 				}
 				c.close()
 				err = newStartupFailure("tools/list", phaseAStart, c.startupStderr(), err)
@@ -401,7 +405,10 @@ func Start(ctx context.Context, specs []Spec, p StartPolicy) (*Host, []tool.Tool
 			phaseADur := recordedPhaseADur()
 			cancelStartup()
 			if !p.SkipPersistence {
-				h.bgWrites.Go(func() {
+				h.bgWrites.Add(1)
+				go func() {
+					defer h.bgWrites.Done()
+
 					_ = RecordStartup(spec.Name, phaseADur)
 					_ = SaveCachedSchemaForProfile(h.profile, spec.Name, CachedSchema{
 						CacheKey: SchemaCacheKey(spec),
@@ -412,7 +419,7 @@ func Start(ctx context.Context, specs []Spec, p StartPolicy) (*Host, []tool.Tool
 						},
 						Tools: cacheableToolsOf(ts),
 					})
-				})
+				}()
 			}
 
 			// Prompts and resources are deferred to StartPhaseB so the boot path
@@ -502,9 +509,12 @@ func (h *Host) Close() {
 // Callers must enqueue before their Close-drained startup owner completes, so
 // Close cannot begin waiting before the WaitGroup increment is visible.
 func (h *Host) queueBackgroundWrite(write func()) {
-	h.bgWrites.Go(func() {
+	h.bgWrites.Add(1)
+	go func() {
+		defer h.bgWrites.Done()
+
 		write()
-	})
+	}()
 }
 
 func (h *Host) goSurface(work func()) bool {

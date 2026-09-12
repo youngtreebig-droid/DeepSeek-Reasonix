@@ -104,7 +104,7 @@ func planOpenCodeGoUpgradeFiltered(c *Config, eligible func(ProviderEntry) bool)
 			}
 		}
 	}
-	for i := range count {
+	for i := 0; i < count; i++ {
 		original := cloneProviderEntry(c.Providers[i])
 		if eligible != nil && !eligible(original) {
 			continue
@@ -197,7 +197,7 @@ func placeOpenCodeGoSiblings(c *Config, count int, additions []openCodeGoGroup) 
 		return
 	}
 	ordered := make([]ProviderEntry, 0, len(c.Providers))
-	for i := range count {
+	for i := 0; i < count; i++ {
 		ordered = append(ordered, c.Providers[i])
 		for k, add := range additions {
 			if add.source == i {

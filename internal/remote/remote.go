@@ -188,7 +188,7 @@ func (p BackoffPolicy) max() time.Duration {
 func (p BackoffPolicy) delay(attempt int) time.Duration {
 	d := float64(p.initial())
 	f := p.factor()
-	for range attempt {
+	for i := 0; i < attempt; i++ {
 		d *= f
 		if d >= float64(p.max()) {
 			return p.max()

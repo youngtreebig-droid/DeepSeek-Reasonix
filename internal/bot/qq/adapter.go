@@ -64,9 +64,12 @@ func (a *adapter) Start(ctx context.Context) error {
 	}
 	ctx, a.cancel = context.WithCancel(ctx)
 
-	a.loopWG.Go(func() {
+	a.loopWG.Add(1)
+	go func() {
+		defer a.loopWG.Done()
+
 		a.gatewayLoop(ctx)
-	})
+	}()
 	return nil
 }
 

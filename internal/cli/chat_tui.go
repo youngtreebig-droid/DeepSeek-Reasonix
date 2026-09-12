@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -38,7 +40,6 @@ import (
 	"reasonix/internal/outputstyle"
 	"reasonix/internal/plugin"
 	"reasonix/internal/provider"
-	"reasonix/internal/recovery"
 	"reasonix/internal/sandbox"
 	"reasonix/internal/sessioninbox"
 	"reasonix/internal/skill"
@@ -3121,12 +3122,6 @@ func flushableMarkdownPrefix(buf string) string {
 	return strings.Join(lines[:boundary], "\n")
 }
 
-// planApprovalTool is the Tool name the controller puts on the ApprovalRequest it
-// emits to gate a plan (mirrors control's constant). The banner, status line, and
-// approval handler key on it to render the plan-specific prompt and to keep the
-// [plan] tag in sync when the user starts execution or exits without executing.
-const planApprovalTool = "exit_plan_mode"
-
 // handleApprovalKey resolves a pending approval from a keystroke and re-arms the
 // listener. 1/y/Enter allows once, 2/a allows for the rest of the session,
 // 3/p writes an "always allow" rule to the config file for ordinary tool
@@ -3219,26 +3214,6 @@ func (m chatTUI) handleApprovalKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 		return answer(approvalChoice{})
 	}
 	return m, nil
-}
-
-func isRecoveryApprovalEvent(a *event.Approval) bool {
-	return a != nil && (a.Kind == recovery.ApprovalKindRecovery || a.Recovery != nil)
-}
-
-func isRecoveryPlanChangeApproval(a *event.Approval) bool {
-	if !isRecoveryApprovalEvent(a) || a.Recovery == nil {
-		return false
-	}
-	switch strings.ToLower(strings.TrimSpace(a.Recovery.ChangeKind)) {
-	case string(recovery.ChangeStrategy), string(recovery.ChangeScope):
-		return true
-	default:
-		return false
-	}
-}
-
-func freshApprovalAllowsSession(toolName string) bool {
-	return toolName == control.SandboxEscapeApprovalTool || toolName == control.ManagedConfigWriteApprovalTool
 }
 
 var (

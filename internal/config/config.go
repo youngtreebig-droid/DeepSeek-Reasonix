@@ -17,6 +17,7 @@ import (
 	"runtime"
 	"strings"
 
+	"reasonix/internal/compat/rootfs"
 	slices "reasonix/internal/compat/xslices"
 	fileencoding "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/netclient"
@@ -2252,7 +2253,7 @@ func readProjectSystemPromptFile(root, path string) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("resolve workspace root: %w", err)
 	}
-	rootHandle, err := os.OpenRoot(workspace)
+	rootHandle, err := rootfs.OpenRoot(workspace)
 	if err != nil {
 		return nil, fmt.Errorf("open workspace root %q: %w", workspace, err)
 	}

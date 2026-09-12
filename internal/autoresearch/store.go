@@ -17,6 +17,7 @@ import (
 	"unicode"
 
 	"reasonix/internal/compat"
+	"reasonix/internal/compat/rootfs"
 	fileencoding "reasonix/internal/fileutil/encoding"
 )
 
@@ -233,7 +234,7 @@ func (s *Store) ValidateTask(taskID string) (*ValidationReport, error) {
 
 // validateTaskRoot reads and validates a task through one already-open root.
 // The task directory cannot be swapped between validation and goal extraction.
-func validateTaskRoot(storeRoot *os.Root, taskRel, taskID string) (TaskSpec, *ValidationReport) {
+func validateTaskRoot(storeRoot *rootfs.Root, taskRel, taskID string) (TaskSpec, *ValidationReport) {
 	report := &ValidationReport{Valid: true}
 	info, err := storeRoot.Lstat(taskRel)
 	if err != nil {
@@ -338,7 +339,7 @@ func (s *Store) taskRel(taskID string, parts ...string) (string, error) {
 	return rel, nil
 }
 
-func (s *Store) openTaskRoot(taskID string) (*os.Root, string, error) {
+func (s *Store) openTaskRoot(taskID string) (*rootfs.Root, string, error) {
 	taskRel, err := s.taskRel(taskID)
 	if err != nil {
 		return nil, "", err
@@ -399,8 +400,8 @@ func (s *Store) openTaskRoot(taskID string) (*os.Root, string, error) {
 // openArchiveRoot anchors every archive read to the resolved workspace root.
 // os.Root prevents a concurrent symlink swap from escaping the workspace; the
 // explicit Lstat/SameFile checks additionally reject symlinked archive roots.
-func (s *Store) openArchiveRoot() (*os.Root, error) {
-	workspace, err := os.OpenRoot(s.workspaceRoot)
+func (s *Store) openArchiveRoot() (*rootfs.Root, error) {
+	workspace, err := rootfs.OpenRoot(s.workspaceRoot)
 	if err != nil {
 		return nil, fmt.Errorf("autoresearch: open workspace root: %w", err)
 	}
@@ -476,7 +477,7 @@ func validateFinding(f Finding) error {
 	return nil
 }
 
-func readJSONFile(root *os.Root, path string, out any) error {
+func readJSONFile(root *rootfs.Root, path string, out any) error {
 	data, err := readArchiveFile(root, path)
 	if err != nil {
 		return err
@@ -488,7 +489,7 @@ func readJSONFile(root *os.Root, path string, out any) error {
 	return nil
 }
 
-func readJSONL(root *os.Root, path string, each func([]byte) error) error {
+func readJSONL(root *rootfs.Root, path string, each func([]byte) error) error {
 	f, err := openArchiveFile(root, path)
 	if err != nil {
 		return fmt.Errorf("autoresearch: open %s: %w", path, err)
@@ -516,7 +517,7 @@ func readJSONL(root *os.Root, path string, each func([]byte) error) error {
 // file order, reading backward in fixed-size chunks so per-turn readers do not
 // rescan an append-only log that grows for the life of a task. limit <= 0
 // reads the whole file (legacy unbounded behavior).
-func tailJSONLLines(root *os.Root, path string, limit int) ([][]byte, error) {
+func tailJSONLLines(root *rootfs.Root, path string, limit int) ([][]byte, error) {
 	if limit <= 0 {
 		var lines [][]byte
 		if err := readJSONL(root, path, func(data []byte) error {
@@ -573,7 +574,7 @@ func tailJSONLLines(root *os.Root, path string, limit int) ([][]byte, error) {
 	return lines, nil
 }
 
-func readArchiveFile(root *os.Root, path string) ([]byte, error) {
+func readArchiveFile(root *rootfs.Root, path string) ([]byte, error) {
 	f, err := openArchiveFile(root, path)
 	if err != nil {
 		return nil, err
@@ -590,7 +591,7 @@ func readArchiveFile(root *os.Root, path string) ([]byte, error) {
 // component, then binds parsing to the verified file descriptor. The second
 // identity check closes the Lstat/open replacement window without holding a
 // process-global directory or changing the archive.
-func openArchiveFile(root *os.Root, path string) (*os.File, error) {
+func openArchiveFile(root *rootfs.Root, path string) (*os.File, error) {
 	path = filepath.Clean(path)
 	if !filepath.IsLocal(path) || path == "." {
 		return nil, fmt.Errorf("autoresearch: unsafe archive file path %q", path)

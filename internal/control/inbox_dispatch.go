@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"reasonix/internal/compat"
 	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/sessioninbox"
 )
@@ -63,7 +64,7 @@ func (c *Controller) maybeDispatchInbox() {
 	if hostAdmission {
 		// Enqueue/resume can be called with the host's publication lock held.
 		// Never synchronously reenter that lock through its admission callback.
-		c.autosaveWG.Go(c.drainInboxDispatch)
+		compat.WaitGroupGo(&c.autosaveWG, c.drainInboxDispatch)
 		return
 	}
 	c.drainInboxDispatch()

@@ -28,7 +28,7 @@ import (
 	"reasonix/internal/control"
 	"reasonix/internal/event"
 	"reasonix/internal/eventwire"
-	"reasonix/internal/remote/bootstrap"
+	"reasonix/internal/remote/serveenv"
 	"reasonix/internal/store"
 )
 
@@ -81,7 +81,7 @@ func discoverCLIServes() []cliServeRecord {
 		if err != nil {
 			continue
 		}
-		state, err := bootstrap.UnmarshalState(data)
+		state, err := serveenv.UnmarshalState(data)
 		if err != nil || state.PID <= 0 {
 			continue
 		}

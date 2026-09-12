@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"strings"
 
+	"reasonix/internal/compat/httpmux"
 	"reasonix/internal/control"
 	"reasonix/internal/sessioninbox"
 )
 
-func (s *Server) registerInboxRoutes(mux *http.ServeMux) {
+func (s *Server) registerInboxRoutes(mux *httpmux.Mux) {
 	mux.HandleFunc("GET /inbox", s.inboxList)
 	mux.HandleFunc("GET /inbox/receipt", s.inboxReceipt)
 	mux.HandleFunc("POST /inbox/items", s.foregroundMutation(s.inboxEnqueue))
@@ -142,7 +143,7 @@ func (s *Server) inboxReceipt(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) inboxGet(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
+	id := httpmux.PathValue(r, "id")
 	meta, env, err := s.inboxAPI().ReadInboxItem(id)
 	if err != nil {
 		writeInboxError(w, err)
@@ -153,7 +154,7 @@ func (s *Server) inboxGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) inboxUpdate(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
+	id := httpmux.PathValue(r, "id")
 	var body struct {
 		Input string `json:"input"`
 	}
@@ -171,7 +172,7 @@ func (s *Server) inboxUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) inboxDelete(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
+	id := httpmux.PathValue(r, "id")
 	if err := s.inboxAPI().DeleteInboxItem(id); err != nil {
 		writeInboxError(w, err)
 		return
@@ -214,7 +215,7 @@ func (s *Server) inboxResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) inboxRetry(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
+	id := httpmux.PathValue(r, "id")
 	if err := s.inboxAPI().RetryInboxItem(id); err != nil {
 		writeInboxError(w, err)
 		return
@@ -223,7 +224,7 @@ func (s *Server) inboxRetry(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) inboxRefresh(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("id")
+	id := httpmux.PathValue(r, "id")
 	if err := s.inboxAPI().RefreshInboxReferences(id); err != nil {
 		writeInboxError(w, err)
 		return

@@ -433,9 +433,12 @@ func (t *sdkSessionTransport) generationActive(generation uint64) bool {
 }
 
 func (t *sdkSessionTransport) watch(managed *managedMCPSession) {
-	t.wg.Go(func() {
+	t.wg.Add(1)
+	go func() {
+		defer t.wg.Done()
+
 		t.handleSessionEnd(managed, managed.session.Wait())
-	})
+	}()
 }
 
 func (t *sdkSessionTransport) handleSessionEnd(managed *managedMCPSession, err error) {

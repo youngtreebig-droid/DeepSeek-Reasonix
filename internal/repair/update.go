@@ -1509,7 +1509,7 @@ func quarantineExistingAppBundleUpdateBackup(tx *UpdateTransaction) (string, str
 	if err != nil {
 		return "", "", fmt.Errorf("read existing handoff backup digest: %w", err)
 	}
-	for attempt := range 16 {
+	for attempt := 0; attempt < 16; attempt++ {
 		quarantine := fmt.Sprintf(
 			"%s.reasonix-orphaned-%d-%d",
 			tx.BackupPath,
@@ -3006,7 +3006,7 @@ func rollbackPendingUpdateMatchingLocked(
 }
 
 func retainUpdateRollbackNode(path, suffix string) (string, error) {
-	for attempt := range 16 {
+	for attempt := 0; attempt < 16; attempt++ {
 		retained := fmt.Sprintf(
 			"%s.%s-%d-%d",
 			path,
@@ -3360,7 +3360,7 @@ func stageUpdateRollbackBackup(
 	file UpdateTransactionFile,
 	mode os.FileMode,
 ) (string, string, error) {
-	for attempt := range 16 {
+	for attempt := 0; attempt < 16; attempt++ {
 		stage := fmt.Sprintf(
 			"%s.reasonix-rollback-stage-%d-%d",
 			file.TargetPath,

@@ -498,7 +498,7 @@ func formatBotProjects(projects []botProjectEntry, query string, limit int) stri
 	}
 	var b strings.Builder
 	fmt.Fprintf(&b, "项目索引（%d/%d）：", limit, len(matches))
-	for i := range limit {
+	for i := 0; i < limit; i++ {
 		project := matches[i]
 		fmt.Fprintf(&b, "\n%s %s — %s", project.ID, project.Name, displayBotPath(project.Root))
 		if len(project.Sources) > 0 {
@@ -524,7 +524,7 @@ func formatBotSessions(sessions []botSessionEntry, query string, limit int) stri
 	}
 	var b strings.Builder
 	fmt.Fprintf(&b, "会话索引（%d/%d）：", limit, len(matches))
-	for i := range limit {
+	for i := 0; i < limit; i++ {
 		session := matches[i]
 		project := firstNonEmptyString(session.ProjectName, "global")
 		fmt.Fprintf(&b, "\n%s %s", session.ID, project)
@@ -558,7 +558,7 @@ func formatBotProjectSearchResults(results []botProjectSearchResult, limit int) 
 	}
 	var b strings.Builder
 	fmt.Fprintf(&b, "跨项目检索结果（%d/%d）：", limit, len(results))
-	for i := range limit {
+	for i := 0; i < limit; i++ {
 		result := results[i]
 		project := firstNonEmptyString(result.ProjectName, result.ProjectID)
 		fmt.Fprintf(&b, "\n- %s %s:%d: %s", project, displayBotPath(result.Path), result.Line, singleLineBotText(result.Text, 120))

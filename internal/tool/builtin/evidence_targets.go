@@ -12,7 +12,6 @@ import (
 	"reasonix/internal/readcoord"
 	"reasonix/internal/tool"
 
-	udiff "github.com/aymanbagabas/go-udiff"
 )
 
 // Evidence is resolved by the same preview implementation that validates the
@@ -35,7 +34,7 @@ func previewEvidence(change diff.Change, err error) (tool.EvidenceTargetInfo, er
 		return info, nil
 	}
 	var ranges []tool.ReadRange
-	for _, edit := range udiff.Lines(change.OldText, change.NewText) {
+	for _, edit := range builtinDiffLineEdits(change.OldText, change.NewText) {
 		start := strings.Count(change.OldText[:edit.Start], "\n")
 		end := strings.Count(change.OldText[:edit.End], "\n")
 		if edit.End > edit.Start && change.OldText[edit.End-1] != '\n' {

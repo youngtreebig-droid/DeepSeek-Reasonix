@@ -1,3 +1,5 @@
+//go:build !win7
+
 // Renders a unified diff as line-numbered, syntax-highlighted rows on
 // green/red background bars with a +/- gutter.
 package cli

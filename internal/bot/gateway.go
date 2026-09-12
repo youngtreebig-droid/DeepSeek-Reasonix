@@ -451,9 +451,12 @@ func (gw *BotGateway) Start(ctx context.Context) (err error) {
 
 	// 合并所有适配器的消息通道
 	for _, binding := range gw.adapters {
-		gw.gatewayWG.Go(func() {
+		gw.gatewayWG.Add(1)
+		go func() {
+			defer gw.gatewayWG.Done()
+
 			gw.dispatchLoop(runCtx, binding)
-		})
+		}()
 	}
 
 	return nil
@@ -1715,9 +1718,12 @@ func (gw *BotGateway) kickInbox(ctx context.Context, adapter Adapter, key string
 	if !gw.sessions.TryAcquireIdle(key) {
 		return
 	}
-	gw.turnWG.Go(func() {
+	gw.turnWG.Add(1)
+	go func() {
+		defer gw.turnWG.Done()
+
 		gw.runTurnItem(ctx, adapter, key, next.msg, next.itemID, nil)
-	})
+	}()
 }
 
 func slashCommandVerb(text string) string {

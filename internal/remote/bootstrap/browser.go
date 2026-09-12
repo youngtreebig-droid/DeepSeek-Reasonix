@@ -4,20 +4,23 @@ import (
 	"context"
 	"fmt"
 	"strings"
+
+	"reasonix/internal/remote/serveenv"
 )
 
 // Environment the launched serve reads to reach the desktop browser broker.
 // Both travel in the process environment only: the token rotates with every
-// SSH connection generation, so nothing on disk may outlive it.
+// SSH connection generation, so nothing on disk may outlive it. Defined in the
+// ssh-free serveenv leaf package; these aliases preserve the bootstrap names.
 const (
-	BrowserBrokerEnv = "REASONIX_BROWSER_BROKER"
-	BrowserTokenEnv  = "REASONIX_BROWSER_TOKEN"
+	BrowserBrokerEnv = serveenv.BrowserBrokerEnv
+	BrowserTokenEnv  = serveenv.BrowserTokenEnv
 )
 
 // ServeBrowserBrokerMarker is the `serve --help` flag name that advertises a
 // binary able to use a desktop browser broker. Unlike the required capability
 // markers it is optional: a serve without it launches untouched.
-const ServeBrowserBrokerMarker = "browser-broker"
+const ServeBrowserBrokerMarker = serveenv.ServeBrowserBrokerMarker
 
 // BrowserBrokerOptions hands a launching serve the desktop browser broker:
 // the reverse-forwarded loopback endpoint on the REMOTE host and the bearer

@@ -51,7 +51,7 @@ func byteOffsetAfterRunes(content string, count int) int {
 
 func byteOffsetBeforeLastRunes(content string, count int) int {
 	offset := len(content)
-	for range count {
+	for __i := 0; __i < count; __i++ {
 		if offset == 0 {
 			return 0
 		}

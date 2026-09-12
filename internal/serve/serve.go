@@ -22,6 +22,7 @@ import (
 
 	"reasonix/internal/agent"
 	"reasonix/internal/boot"
+	"reasonix/internal/compat/httpmux"
 	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
@@ -558,7 +559,7 @@ func (s *Server) HandlerWithCORS(origin string) http.Handler {
 	return corsMiddleware(s.handler(), origin)
 }
 func (s *Server) handler() http.Handler {
-	mux := http.NewServeMux()
+	mux := httpmux.New()
 	mux.HandleFunc("GET /", s.index)
 	mux.HandleFunc("GET /sessions/{id}", s.index)
 	mux.HandleFunc("GET /assets/logo-wordmark.svg", s.logoWordmark)

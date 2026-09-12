@@ -95,7 +95,7 @@ func RunForeground(ctx context.Context, req Request) Result {
 	runCtx := ctx
 	var cancel context.CancelFunc
 	if req.Timeout > 0 {
-		runCtx, cancel = context.WithTimeoutCause(ctx, req.Timeout, errForegroundTimeout)
+		runCtx, cancel = compat.ContextWithTimeoutCause(ctx, req.Timeout, errForegroundTimeout)
 		defer cancel()
 	}
 

@@ -1046,9 +1046,12 @@ func (c *Controller) spawnGuardedTurn(ctx context.Context, cancel context.Cancel
 	body = c.prepareTurnAdmission(body)
 	ctx, completion := withGuardedTurnCompletion(ctx)
 	c.liveness.reset(time.Now())
-	c.autosaveWG.Go(func() {
+	c.autosaveWG.Add(1)
+	go func() {
+		defer c.autosaveWG.Done()
+
 		c.autosaveWhileRunning(ctx)
-	})
+	}()
 	go func() {
 		defer cancel()
 		defer func() {
@@ -4198,7 +4201,7 @@ func interruptedToolSummary(call provider.ToolCall) provider.InterruptedToolSumm
 			}
 		}
 	}
-	for line := range strings.SplitSeq(call.Diff, "\n") {
+	for _, line := range strings.Split(call.Diff, "\n") {
 		line = strings.TrimSpace(line)
 		switch {
 		case strings.HasPrefix(line, "+++ b/"):

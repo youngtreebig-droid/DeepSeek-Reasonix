@@ -119,7 +119,7 @@ func isSafeFDDupWord(source string, word *syntax.Word) bool {
 	if value == "" {
 		return false
 	}
-	for i := range len(value) {
+	for i := 0; i < len(value); i++ {
 		if value[i] < '0' || value[i] > '9' {
 			return false
 		}

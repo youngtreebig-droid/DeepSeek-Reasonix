@@ -379,7 +379,7 @@ func (m *subagentProgressMerger) stepLocked() bool {
 		return false
 	}
 	now := m.clock.Now()
-	for i := range n {
+	for i := 0; i < n; i++ {
 		idx := (m.rr + i) % n
 		childID := m.order[idx]
 		if m.tokens < 1 {

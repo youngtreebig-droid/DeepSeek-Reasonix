@@ -318,7 +318,7 @@ func executableNames(command, pathext string) []string {
 	}
 	names := []string{command}
 	seen := map[string]bool{strings.ToLower(command): true}
-	for ext := range strings.SplitSeq(pathext, ";") {
+	for _, ext := range strings.Split(pathext, ";") {
 		ext = strings.TrimSpace(ext)
 		if ext == "" {
 			continue

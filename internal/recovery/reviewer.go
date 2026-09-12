@@ -240,7 +240,7 @@ func buildReviewEvidence(failure *FailureEvent, diagnosis []string, proposal Pro
 // Drop order prefers keeping failure identity and proposal identity over large
 // excerpts (task summary → diagnosis notes → output → preview → args).
 func marshalEvidenceWithinBudget(ev reviewEvidence) ([]byte, error) {
-	for range 12 {
+	for __i := 0; __i < 12; __i++ {
 		raw, err := json.Marshal(ev)
 		if err != nil {
 			return nil, fmt.Errorf("marshal recovery evidence: %w", err)

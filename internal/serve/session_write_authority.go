@@ -122,7 +122,7 @@ func (s *Server) handleControllerSessionRecovered(ctrl *control.Controller, fall
 	if owner == nil {
 		owner = fallback
 	}
-	for range 3 {
+	for __i := 0; __i < 3; __i++ {
 		if owner == nil {
 			return nil
 		}

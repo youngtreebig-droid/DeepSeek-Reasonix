@@ -103,7 +103,7 @@ func removeRepairNodeIfMatching(path, identityPath, expectedStateID string) erro
 }
 
 func moveRepairNodeToUniqueCleanup(path string) (string, error) {
-	for attempt := range 16 {
+	for attempt := 0; attempt < 16; attempt++ {
 		cleanup := fmt.Sprintf("%s.reasonix-cleanup-%d-%d", path, time.Now().UTC().UnixNano(), attempt)
 		err := renameRepairNodeNoReplace(path, cleanup)
 		if err == nil {

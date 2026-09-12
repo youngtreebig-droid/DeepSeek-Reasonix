@@ -2633,14 +2633,10 @@ func bashRedirectWritesFile(source string, redir *syntax.Redirect) bool {
 	if redir == nil {
 		return false
 	}
-	switch redir.Op {
-	case syntax.RdrOut, syntax.AppOut, syntax.RdrClob, syntax.AppClob,
-		syntax.RdrAll, syntax.RdrAllClob, syntax.AppAll, syntax.AppAllClob,
-		syntax.RdrInOut:
-		return !redirectWordIsNullSink(source, redir.Word)
-	default:
+	if !bashRedirectOpWritesFile(redir.Op) {
 		return false
 	}
+	return !redirectWordIsNullSink(source, redir.Word)
 }
 
 func redirectWordIsNullSink(source string, word *syntax.Word) bool {
@@ -2784,7 +2780,7 @@ func truncateToolOutputFor(s, toolName, toolCallID string) (string, string) {
 	tail := snapToRuneBoundary(s, len(s)-tailKeep, len(s))
 	resultRef := toolResultRef(toolCallID, s)
 	marker := toolOutputRecoveryMarker(toolName, toolCallID, resultRef, len(s), len(head)+len(tail))
-	for range 3 {
+	for __i := 0; __i < 3; __i++ {
 		bodyLen := len(head) + len(marker) + len(tail)
 		if bodyLen <= maxToolOutputBytes {
 			break

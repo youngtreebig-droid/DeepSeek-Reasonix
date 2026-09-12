@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 // mcp_manager_view.go renders the /mcp manager overlay and its display strings.

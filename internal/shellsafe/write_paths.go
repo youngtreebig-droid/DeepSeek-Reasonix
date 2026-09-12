@@ -16,7 +16,7 @@ func StaticWritePaths(command string) ([]string, bool) {
 		return nil, false
 	}
 	s := f.Stmts[0]
-	if s.Background || s.Coprocess || s.Disown || s.Negated {
+	if s.Background || s.Coprocess || stmtDisownEffect(s) || s.Negated {
 		return nil, false
 	}
 	c, ok := s.Cmd.(*syntax.CallExpr)

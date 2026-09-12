@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"reasonix/internal/remote/bootstrap"
+	"reasonix/internal/remote/serveenv"
 	"reasonix/internal/serve"
 )
 
@@ -16,13 +16,13 @@ func serveBrowserBrokerFromEnv(getenv func(string) string) (*serve.BrowserBroker
 	if getenv == nil {
 		return nil, nil
 	}
-	endpoint := strings.TrimSpace(getenv(bootstrap.BrowserBrokerEnv))
-	token := strings.TrimSpace(getenv(bootstrap.BrowserTokenEnv))
+	endpoint := strings.TrimSpace(getenv(serveenv.BrowserBrokerEnv))
+	token := strings.TrimSpace(getenv(serveenv.BrowserTokenEnv))
 	if endpoint == "" && token == "" {
 		return nil, nil
 	}
 	if endpoint == "" || token == "" {
-		return nil, fmt.Errorf("%s and %s must be set together", bootstrap.BrowserBrokerEnv, bootstrap.BrowserTokenEnv)
+		return nil, fmt.Errorf("%s and %s must be set together", serveenv.BrowserBrokerEnv, serveenv.BrowserTokenEnv)
 	}
 	return serve.NewBrowserBroker(endpoint, token)
 }

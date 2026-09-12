@@ -30,6 +30,26 @@ func OnceValue[T any](f func() T) func() T {
 	}
 }
 
+// ClearSyncMap removes every entry from m. It mirrors (*sync.Map).Clear
+// (added in Go 1.23) using Range+Delete so it compiles on go1.20.14. Deleting
+// during Range is explicitly permitted by sync.Map.
+func ClearSyncMap(m *sync.Map) {
+	m.Range(func(key, _ any) bool {
+		m.Delete(key)
+		return true
+	})
+}
+
+// WaitGroupGo runs f in a new goroutine tracked by wg, mirroring
+// (*sync.WaitGroup).Go (added in Go 1.25). It compiles on go1.20.14.
+func WaitGroupGo(wg *sync.WaitGroup, f func()) {
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		f()
+	}()
+}
+
 // randTextChars is the base32 alphabet crypto/rand.Text uses (RFC 4648,
 // lowercase, no padding).
 const randTextChars = "abcdefghijklmnopqrstuvwxyz234567"

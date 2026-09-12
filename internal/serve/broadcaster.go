@@ -261,7 +261,7 @@ func evictRecoverableSubscriberFrame(ch chan []byte) bool {
 	}
 	frames := make([][]byte, 0, queued)
 drain:
-	for range queued {
+	for __i := 0; __i < queued; __i++ {
 		select {
 		case frame := <-ch:
 			frames = append(frames, frame)

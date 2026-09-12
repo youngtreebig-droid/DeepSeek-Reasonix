@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"unicode"
 
-	"github.com/charmbracelet/x/ansi"
 
 	"reasonix/internal/compat"
 	"reasonix/internal/plugin"
@@ -235,31 +233,6 @@ func writeMCPItem(b *strings.Builder, width int, indent, ref, desc string) {
 // labels, failure messages) before it is rendered into the TUI. TrimSpace and
 // Fields alone leave CSI sequences intact and would let a malicious MCP rewrite
 // the terminal, spoof chrome, or poke the clipboard.
-func sanitizeExternalDisplayText(s string) string {
-	s = ansi.Strip(s)
-	var b strings.Builder
-	b.Grow(len(s))
-	for _, r := range s {
-		switch {
-		case r == '\t' || r == '\n' || r == '\r':
-			b.WriteByte(' ')
-		case r < 0x20 || r == 0x7f:
-			// Drop remaining C0 controls and DEL.
-		case r >= 0x80 && r <= 0x9f:
-			// Drop C1 controls (including after partial decode).
-		case unicode.Is(unicode.Cc, r):
-			// Other control categories.
-		default:
-			b.WriteRune(r)
-		}
-	}
-	return strings.Join(strings.Fields(b.String()), " ")
-}
-
-func oneLineText(s string) string {
-	return sanitizeExternalDisplayText(s)
-}
-
 func countText(n int, noun string) string {
 	if n == 1 {
 		return "1 " + noun

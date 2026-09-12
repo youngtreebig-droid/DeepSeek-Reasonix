@@ -1,3 +1,5 @@
+//go:build !win7
+
 // chat_tui_shutdown.go — the one exit every quit gesture and signal funnels into.
 package cli
 
