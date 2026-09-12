@@ -9,7 +9,12 @@ GOEXE := $(shell go env GOEXE)
 # One pin for the Makefile and the CI lint job; see .github/workflows/ci.yml.
 GOLANGCI_VERSION := $(shell cat .golangci-version)
 
-.PHONY: build vet fmt lint lint-go lint-install lint-cross lint-update test desktop-test desktop-test-short desktop-test-times sdk-test sdk-test-race hooks cross clean
+# Windows 7 build knobs. go1.20.14 is the last Go whose binaries RUN on
+# Windows 7 (golang/go#64622); override WIN7_GOROOT to point at your copy.
+WIN7_GOROOT ?= /projects/sandbox/toolchains/go1.20.14
+WIN7_GO := $(WIN7_GOROOT)/bin/go
+
+.PHONY: build vet fmt lint lint-go lint-install lint-cross lint-update test desktop-test desktop-test-short desktop-test-times sdk-test sdk-test-race hooks cross clean win7
 
 build:
 	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/reasonix$(GOEXE) ./cmd/reasonix
@@ -78,6 +83,17 @@ cross:
 		echo "build $$os/$$arch"; \
 		CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -ldflags "$(LDFLAGS)" -o dist/reasonix-$$os-$$arch$$ext ./cmd/reasonix; \
 	done
+
+# Reproducible Windows 7 build + packaging. Must run under the go1.20.14
+# toolchain (WIN7_GOROOT), NOT the default toolchain: Go 1.21.5+ binaries crash
+# on launch on Win7. The reduced win7 build (-tags win7 -modfile=go.win7.mod)
+# excludes the interactive TUI, MCP, and the pi model catalog; see
+# dist/README-WIN7.txt. Delegates to scripts/build-win7.sh for the exe + zip
+# (and a lean NSIS installer when makensis is available).
+win7:
+	@test -x "$(WIN7_GO)" || { echo "win7: no Go toolchain at WIN7_GOROOT=$(WIN7_GOROOT); set WIN7_GOROOT to a go1.20.x install (last Win7-capable Go, golang/go#64622)"; exit 1; }
+	@ver="$$($(WIN7_GO) env GOVERSION)"; case "$$ver" in go1.20.*) : ;; *) echo "win7: WIN7_GOROOT is $$ver, need go1.20.x (Go 1.21.5+ binaries crash on Windows 7, golang/go#64622)"; exit 1 ;; esac
+	WIN7_GOROOT="$(WIN7_GOROOT)" VERSION="$(VERSION)" GIT_COMMIT="$(GIT_COMMIT)" BUILD_TIME_UTC="$(BUILD_TIME_UTC)" ./scripts/build-win7.sh
 
 clean:
 	rm -rf bin dist
