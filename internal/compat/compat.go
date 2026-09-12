@@ -9,18 +9,32 @@
 // Go 1.21 language feature, so they compile identically on both toolchains.
 package compat
 
-// Min returns the smaller of a and b. It mirrors the Go 1.21 builtin min for
-// two ordered operands.
+// Min returns the smaller of a and b. It mirrors the Go 1.21 builtin min,
+// including its float NaN behavior: if either operand is NaN the result is NaN,
+// matching the language spec (min propagates NaN).
 func Min[T Ordered](a, b T) T {
+	if isNaN(a) || isNaN(b) {
+		if isNaN(a) {
+			return a
+		}
+		return b
+	}
 	if a < b {
 		return a
 	}
 	return b
 }
 
-// Max returns the larger of a and b. It mirrors the Go 1.21 builtin max for
-// two ordered operands.
+// Max returns the larger of a and b. It mirrors the Go 1.21 builtin max,
+// including its float NaN behavior: if either operand is NaN the result is NaN,
+// matching the language spec (max propagates NaN).
 func Max[T Ordered](a, b T) T {
+	if isNaN(a) || isNaN(b) {
+		if isNaN(a) {
+			return a
+		}
+		return b
+	}
 	if a > b {
 		return a
 	}

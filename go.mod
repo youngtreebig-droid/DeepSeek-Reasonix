@@ -38,7 +38,7 @@ require (
 	github.com/zalando/go-keyring v0.2.8
 	go.uber.org/goleak v1.3.0
 	golang.org/x/crypto v0.56.0
-	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba
+	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba // win7-only: imported solely by //go:build !go1.21 compat shims (xslog/xslices/xmaps/ordered); the default Go 1.25/1.26 build never links it, but `go mod tidy` scans all build tags so it stays a direct require here
 	golang.org/x/image v0.45.0
 	golang.org/x/mod v0.41.0
 	golang.org/x/net v0.58.0

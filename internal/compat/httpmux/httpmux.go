@@ -6,6 +6,24 @@
 // this in net/http, so serve.go uses this router on every build to keep one
 // code path. Behavior matches the standard mux closely enough for the fixed,
 // known route table in internal/serve; it is not a general drop-in.
+//
+// Intentional divergence from net/http.ServeMux (Go 1.22): this router does NOT
+// perform request-path cleaning or the sanitizing 301 redirects the standard
+// mux issues. The standard mux, on a request to an unclean path, responds with
+// a 301 to the cleaned path (collapsing "//", resolving "." and ".."). Here,
+// splitPath only trims the leading/trailing "/" and splits on "/"; it does not
+// resolve "." / ".." and it does not collapse repeated slashes. An empty
+// segment produced by a doubled slash is therefore kept as a distinct (empty)
+// segment, so an unclean path like "/inbox//items" does NOT match the route
+// registered for "/inbox/items" (it splits to ["inbox","","items"], three
+// segments) and, absent a matching subtree, yields 404 rather than the
+// standard mux's 301 redirect to the cleaned path. This is safe and intended
+// for internal/serve: every route is a fixed, first-party API or UI path
+// invoked by Reasonix's own clients (CLI, desktop shell, the bundled web UI),
+// none of which construct unclean paths or depend on the redirect. If this
+// router is ever reused for a surface where the redirect matters (e.g.
+// canonical-URL SEO, or clients that special-case 301), path cleaning must be
+// added.
 package httpmux
 
 import (

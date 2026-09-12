@@ -18,6 +18,38 @@ func TestMinMax(t *testing.T) {
 	if got := Max(2.5, 2.5); got != 2.5 {
 		t.Errorf("Max(2.5,2.5) = %v, want 2.5", got)
 	}
+
+	// NaN must propagate, mirroring the Go builtin min/max. Every ordered
+	// comparison with NaN is false, so a naive `if a < b` implementation would
+	// silently return the non-NaN operand; these cases guard against that
+	// regression.
+	nan := math.NaN()
+	if got := Min(nan, 1.0); !math.IsNaN(got) {
+		t.Errorf("Min(NaN,1) = %v, want NaN", got)
+	}
+	if got := Min(1.0, nan); !math.IsNaN(got) {
+		t.Errorf("Min(1,NaN) = %v, want NaN", got)
+	}
+	if got := Max(nan, 1.0); !math.IsNaN(got) {
+		t.Errorf("Max(NaN,1) = %v, want NaN", got)
+	}
+	if got := Max(1.0, nan); !math.IsNaN(got) {
+		t.Errorf("Max(1,NaN) = %v, want NaN", got)
+	}
+	if got := Min(nan, nan); !math.IsNaN(got) {
+		t.Errorf("Min(NaN,NaN) = %v, want NaN", got)
+	}
+	if got := Max(nan, nan); !math.IsNaN(got) {
+		t.Errorf("Max(NaN,NaN) = %v, want NaN", got)
+	}
+
+	// Non-NaN floats still behave normally.
+	if got := Min(2.5, 3.5); got != 2.5 {
+		t.Errorf("Min(2.5,3.5) = %v, want 2.5", got)
+	}
+	if got := Max(2.5, 3.5); got != 3.5 {
+		t.Errorf("Max(2.5,3.5) = %v, want 3.5", got)
+	}
 }
 
 func TestClear(t *testing.T) {
