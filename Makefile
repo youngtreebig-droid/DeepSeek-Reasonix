@@ -14,7 +14,7 @@ GOLANGCI_VERSION := $(shell cat .golangci-version)
 WIN7_GOROOT ?= /projects/sandbox/toolchains/go1.20.14
 WIN7_GO := $(WIN7_GOROOT)/bin/go
 
-.PHONY: build vet fmt lint lint-go lint-install lint-cross lint-update test desktop-test desktop-test-short desktop-test-times sdk-test sdk-test-race hooks cross clean win7
+.PHONY: build vet fmt lint lint-go lint-install lint-cross lint-update test desktop-test desktop-test-short desktop-test-times sdk-test sdk-test-race hooks cross clean win7 win7-bundle
 
 build:
 	CGO_ENABLED=0 go build -ldflags "$(LDFLAGS)" -o bin/reasonix$(GOEXE) ./cmd/reasonix
@@ -94,6 +94,16 @@ win7:
 	@test -x "$(WIN7_GO)" || { echo "win7: no Go toolchain at WIN7_GOROOT=$(WIN7_GOROOT); set WIN7_GOROOT to a go1.20.x install (last Win7-capable Go, golang/go#64622)"; exit 1; }
 	@ver="$$($(WIN7_GO) env GOVERSION)"; case "$$ver" in go1.20.*) : ;; *) echo "win7: WIN7_GOROOT is $$ver, need go1.20.x (Go 1.21.5+ binaries crash on Windows 7, golang/go#64622)"; exit 1 ;; esac
 	WIN7_GOROOT="$(WIN7_GOROOT)" VERSION="$(VERSION)" GIT_COMMIT="$(GIT_COMMIT)" BUILD_TIME_UTC="$(BUILD_TIME_UTC)" ./scripts/build-win7.sh
+
+# Self-contained Win7 bundle: the reduced Win7 exe + an embedded CPython 3.8.10
+# x64 (last Win7-capable Python) pre-loaded with office/PDF/OCR/SQL/data
+# packages + a launcher that puts the bundled Python first on PATH. Requires
+# dist/reasonix-win7-amd64.exe first (run `make win7`); the bundling itself
+# needs no Go toolchain, just python3/pip + zip. Produces
+# dist/reasonix-win7-python-amd64.zip. See scripts/bundle-win7-python.sh.
+win7-bundle:
+	@test -f dist/reasonix-win7-amd64.exe || { echo "win7-bundle: dist/reasonix-win7-amd64.exe missing; run 'make win7' first"; exit 1; }
+	./scripts/bundle-win7-python.sh
 
 clean:
 	rm -rf bin dist
