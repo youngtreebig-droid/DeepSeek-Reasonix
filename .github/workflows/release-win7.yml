@@ -1,0 +1,156 @@
+# Build and publish the self-contained Windows 7 Reasonix bundle.
+#
+# WHY THIS EXISTS: the Win7 artifacts (a ~194MB self-contained zip with an
+# embedded CPython 3.8.10 + offline OCR, plus the bare CLI zip and exe) are too
+# large / awkward to upload from a local sandbox whose gateway does not forward
+# asset uploads to uploads.github.com. Pushing a `win7-*` tag hands the whole
+# build to GitHub's own runners, where the release upload works normally, so
+# every tag yields a stable, repeatable download link.
+#
+# The entire Win7 build is a Linux cross-build, so this runs on ubuntu-latest:
+#   * Go cross-compiles GOOS=windows GOARCH=amd64 with the go1.20.14 toolchain
+#     (WIN7_GOROOT) -- the last Go whose binaries run on Windows 7
+#     (golang/go#64622). We download go1.20.14 explicitly because no GitHub
+#     runner ships it.
+#   * The Python bundle cross-DOWNLOADS cp38 win_amd64 wheels and the
+#     embeddable CPython 3.8.10 with the host python3/pip -- nothing Windows is
+#     executed here.
+name: release-win7
+
+on:
+  # Push a tag like `win7-v1` to build + publish that release.
+  push:
+    tags:
+      - "win7-*"
+  # Or run it by hand (no tag push required) and name the release yourself.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to create/publish (e.g. win7-v1)"
+        required: true
+        type: string
+
+# The job creates a GitHub Release, which needs write access to repo contents.
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    # Only build in the maintainer's own repo (skip on forks). Tag pushes and a
+    # manual dispatch in this repo both satisfy this.
+    if: github.repository == 'youngtreebig-droid/DeepSeek-Reasonix'
+    runs-on: ubuntu-latest
+    env:
+      # go1.20.14 (linux/amd64) is the last Win7-capable Go toolchain; the
+      # Makefile's `win7` target enforces `go env GOVERSION` is go1.20.*.
+      WIN7_GO_VERSION: "1.20.14"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so `git describe --tags` (VERSION in the Makefile)
+          # resolves the pushed tag instead of a bare commit.
+          fetch-depth: 0
+
+      # Resolve the release tag: the pushed tag ref on `push`, or the
+      # workflow_dispatch input on a manual run.
+      - name: Resolve release tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            tag="${{ github.event.inputs.tag }}"
+          else
+            tag="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          case "$tag" in
+            *-rc*|*-preview*) echo "prerelease=true" >> "$GITHUB_OUTPUT" ;;
+            *) echo "prerelease=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      # Modern Go for any default-toolchain `go` invocations (go.mod pins
+      # `toolchain go1.26.6`; GOTOOLCHAIN=auto lets the toolchain fetch it).
+      - name: Set up modern Go toolchain
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+
+      # python3 + pip3 host interpreter used to cross-download the cp38
+      # win_amd64 wheels for the bundle (a 3.11/3.12 host is fine).
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # unzip + zip are preinstalled on ubuntu-latest; make sure they are there.
+      - name: Verify archive tools
+        run: |
+          command -v unzip >/dev/null || { echo "unzip missing"; exit 1; }
+          command -v zip >/dev/null || { echo "zip missing"; exit 1; }
+
+      # Download + extract go1.20.14 for WIN7_GOROOT. `make win7` refuses any
+      # toolchain that is not genuinely go1.20.x, so this must be the real
+      # 1.20.14 release.
+      - name: Provision go1.20.14 for WIN7_GOROOT
+        id: win7go
+        run: |
+          set -euo pipefail
+          dest="$RUNNER_TEMP/go1.20.14"
+          url="https://go.dev/dl/go${WIN7_GO_VERSION}.linux-amd64.tar.gz"
+          echo "== downloading $url =="
+          curl -fSL -o "$RUNNER_TEMP/go-win7.tar.gz" "$url"
+          mkdir -p "$dest"
+          # The tarball unpacks to a top-level `go/` dir; land it at $dest/go.
+          tar -C "$dest" -xzf "$RUNNER_TEMP/go-win7.tar.gz"
+          goroot="$dest/go"
+          ver="$("$goroot/bin/go" env GOVERSION)"
+          echo "WIN7_GOROOT=$goroot ($ver)"
+          case "$ver" in
+            go1.20.*) : ;;
+            *) echo "provisioned Go is $ver, expected go1.20.x"; exit 1 ;;
+          esac
+          echo "goroot=$goroot" >> "$GITHUB_OUTPUT"
+
+      # Build the reduced Win7 exe + bare zip (make win7), then assemble the
+      # self-contained Python bundle (make win7-bundle). win7-bundle only checks
+      # for the exe; it does not build it, so both targets are run explicitly.
+      - name: Build Win7 bundle
+        run: |
+          set -euo pipefail
+          make win7 WIN7_GOROOT="${{ steps.win7go.outputs.goroot }}"
+          make win7-bundle
+          echo "== dist/ contents =="
+          ls -la dist/
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: "Reasonix Windows 7 build ${{ steps.tag.outputs.tag }}"
+          prerelease: ${{ steps.tag.outputs.prerelease }}
+          body: |
+            Self-contained Windows 7 build of the reduced Reasonix CLI.
+
+            Artifacts:
+            - `reasonix-win7-python-amd64.zip` - self-contained bundle: the Win7
+              CLI + an embedded CPython 3.8.10 with offline OCR/office/PDF/data
+              packages and a `reasonix.cmd` launcher. Recommended download.
+            - `reasonix-win7-amd64.zip` - bare CLI (exe + README-WIN7.txt), no
+              bundled Python.
+            - `reasonix-win7-amd64.exe` - the raw reduced Win7 executable.
+
+            Launch via `reasonix.cmd` from the bundle, NOT the bare exe:
+            only the launcher prepends the bundled Python to PATH so an
+            agent-issued `python` resolves to the embedded interpreter.
+
+            Caveats: this is the REDUCED Win7 build (no interactive TUI / MCP /
+            pi catalog). Built with the go1.20.14 toolchain (last Win7-capable
+            Go) and CPython 3.8.10 (last Win7-capable Python). The bundled OCR
+            (onnxruntime) needs the VC++ 2015-2019 x64 runtime on the target.
+            See README-WIN7.txt inside the bundle for full details.
+          files: |
+            dist/reasonix-win7-python-amd64.zip
+            dist/reasonix-win7-amd64.zip
+            dist/reasonix-win7-amd64.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
