@@ -18,7 +18,10 @@
 # with the host pip and installed into the embeddable tree with `pip install
 # --target`; the result is verified structurally, not by running python.exe.
 #
-# Idempotent: downloads are cached under dist/.cache/ and re-used. Re-running
+# Idempotent: downloads are cached under dist/.cache/ and re-used. The
+# wheelhouse is keyed on a hash of the exact package pins, so a pin change
+# lands in a fresh directory and can never resolve against a stale wheel from a
+# previous pin set; mismatched wheelhouse dirs are purged. Re-running
 # regenerates the staged tree and the zip from scratch.
 #
 # Invoke via `make win7-bundle` (which first builds the exe via `make win7`) or
@@ -30,7 +33,12 @@ cd "$repo_root"
 
 dist="$repo_root/dist"
 cache="$dist/.cache"
-wheelhouse="$cache/wheelhouse"
+# $wheelhouse is set below, AFTER the pin set (PKGS) is known, to a directory
+# keyed on a hash of the exact pins + cross-download flags. That way a pin
+# change lands in a fresh, empty wheelhouse and can never resolve against a
+# stale wheel from an earlier pin set (see the "Wheelhouse cache never purged"
+# review issue).
+wheelhouse=""
 bundle="$dist/win7-bundle"
 pydir="$bundle/python"
 site="$pydir/Lib/site-packages"
@@ -58,8 +66,15 @@ PLATFORM_FLAGS=(--only-binary=:all: --platform win_amd64 --python-version 38 --i
 # pinned to 3.3.2 so its wheel is a clean cp38-cp38-win_amd64 build (newer
 # releases only ship cp37-abi3). Pillow is pulled transitively by
 # matplotlib/pdfplumber; pinned to its last cp38 release (10.4.0).
+# pip is pinned to the LAST 3.8-capable release: pip 25.x has
+# `Requires-Python >=3.9` and cannot run on the bundled CPython 3.8. Because
+# pip/setuptools/wheel are pure-python (py3-none-any) wheels, pip's
+# `--python-version 38` cross-download does NOT filter them by Requires-Python
+# the way it filters platform wheels, so an unpinned `pip` silently pulled
+# pip-25 here. `pip<25` (i.e. 24.3.1) keeps it 3.8-runnable. The
+# Requires-Python guard in step 4b independently enforces this for every wheel.
 PKGS=(
-  pip
+  "pip<25"
   "setuptools<69"
   wheel
   numpy==1.24.4
@@ -97,7 +112,30 @@ command -v "$PIP" >/dev/null 2>&1 || { echo "bundle-win7-python: '$PIP' not foun
 command -v unzip >/dev/null 2>&1 || { echo "bundle-win7-python: 'unzip' not found" >&2; exit 1; }
 command -v zip >/dev/null 2>&1 || { echo "bundle-win7-python: 'zip' not found" >&2; exit 1; }
 
-mkdir -p "$cache" "$wheelhouse"
+# ---------------------------------------------------------------------------
+# 0b. Key the wheelhouse on the exact pin set + cross-download flags.
+# The wheelhouse is cached across runs for speed, but caching it under a fixed
+# path let stale wheels from a previous pin set survive and be selected by the
+# offline --find-links install. Deriving the directory name from a hash of the
+# pins (and the platform flags) means any pin change gets a fresh, empty
+# wheelhouse; the old one is left behind harmlessly and never consulted. We
+# also purge sibling wheelhouse-* directories so the cache does not grow
+# unbounded across pin changes.
+# ---------------------------------------------------------------------------
+pin_fingerprint="$(printf '%s\n' "${PLATFORM_FLAGS[@]}" "${PKGS[@]}" | sha256sum | awk '{print $1}')"
+wheelhouse="$cache/wheelhouse-${pin_fingerprint:0:16}"
+mkdir -p "$cache"
+# Drop any wheelhouse directories that do not match the current pin set,
+# including the legacy unkeyed "wheelhouse" dir, so no stale wheel can be
+# resolved offline.
+for d in "$cache"/wheelhouse "$cache"/wheelhouse-*; do
+  [ -e "$d" ] || continue
+  if [ "$d" != "$wheelhouse" ]; then
+    echo "== purging stale wheelhouse $d (pin set changed) =="
+    rm -rf "$d"
+  fi
+done
+mkdir -p "$wheelhouse"
 
 # Fresh staging tree each run so the zip is reproducible.
 rm -rf "$bundle"
@@ -172,6 +210,112 @@ wrong="$(ls "$wheelhouse" | grep -iE 'win32|-386-|_i386|cp39|cp310|cp311|cp312|c
 if [ -n "$wrong" ]; then
   echo "bundle-win7-python: forbidden (win32/386 or cp39+) wheels present:" >&2
   echo "$wrong" >&2
+  exit 1
+fi
+
+# Requires-Python guard: the platform greps above only look at the wheel TAG,
+# so a pure-python (py3-none-any) wheel whose METADATA declares
+# `Requires-Python >=3.9` (e.g. pip 25.x) passes them yet cannot run on the
+# bundled CPython 3.8. `pip download --python-version 38` does NOT filter these
+# meta-package wheels by Requires-Python, so enforce it here: crack open every
+# wheel, read its Requires-Python, and fail if the target 3.8.10 is excluded.
+echo "== verifying every wheel's Requires-Python admits ${PY_VERSION} =="
+badpy="$(
+  PY_VERSION="$PY_VERSION" python3 - "$wheelhouse" <<'PYEOF'
+import os, re, sys, zipfile
+
+target = tuple(int(p) for p in os.environ["PY_VERSION"].split("."))
+wheelhouse = sys.argv[1]
+
+
+def parse_ver(s):
+    m = re.match(r"\s*(\d+)(?:\.(\d+))?(?:\.(\d+))?", s)
+    if not m:
+        return None
+    return tuple(int(g) if g else 0 for g in m.groups())
+
+
+def cmp_ver(a, b):
+    a = a + (0,) * (3 - len(a))
+    b = b + (0,) * (3 - len(b))
+    return (a > b) - (a < b)
+
+
+def admits(requires_python, ver):
+    # Empty / missing Requires-Python admits everything.
+    if not requires_python:
+        return True
+    for spec in requires_python.split(","):
+        spec = spec.strip()
+        if not spec:
+            continue
+        m = re.match(r"(>=|<=|==|!=|~=|>|<|===)\s*([0-9][0-9.*]*)", spec)
+        if not m:
+            # Unrecognized specifier -> be conservative and reject.
+            return False
+        op, raw = m.group(1), m.group(2)
+        if op == "===":
+            # Arbitrary-equality string match; skip (rare for Requires-Python).
+            continue
+        bound = parse_ver(raw)
+        if bound is None:
+            continue
+        c = cmp_ver(ver, bound)
+        if op == ">=" and not (c >= 0):
+            return False
+        if op == ">" and not (c > 0):
+            return False
+        if op == "<=" and not (c <= 0):
+            return False
+        if op == "<" and not (c < 0):
+            return False
+        if op == "==":
+            # e.g. ==3.8.* -> compare on the number of components given.
+            if raw.rstrip(".*").count(".") + 1 == 2:
+                if ver[:2] != bound[:2]:
+                    return False
+            elif ver != bound:
+                return False
+        if op == "!=":
+            if ver == bound:
+                return False
+        if op == "~=":
+            # Compatible release: >= bound and same major (approx).
+            if not (cmp_ver(ver, bound) >= 0 and ver[0] == bound[0]):
+                return False
+    return True
+
+
+bad = []
+for name in sorted(os.listdir(wheelhouse)):
+    if not name.endswith(".whl"):
+        continue
+    path = os.path.join(wheelhouse, name)
+    rp = ""
+    try:
+        with zipfile.ZipFile(path) as zf:
+            meta = next(
+                (n for n in zf.namelist()
+                 if n.endswith(".dist-info/METADATA")), None)
+            if meta:
+                for line in zf.read(meta).decode("utf-8", "replace").splitlines():
+                    if line.startswith("Requires-Python:"):
+                        rp = line.split(":", 1)[1].strip()
+                        break
+    except Exception as exc:  # noqa: BLE001
+        bad.append(f"{name} (could not read METADATA: {exc})")
+        continue
+    if not admits(rp, target):
+        bad.append(f"{name} (Requires-Python: {rp})")
+
+if bad:
+    print("\n".join(bad))
+PYEOF
+)"
+if [ -n "$badpy" ]; then
+  echo "bundle-win7-python: wheels whose Requires-Python excludes ${PY_VERSION}:" >&2
+  echo "$badpy" >&2
+  echo "  pin these to a ${PY_VERSION}-compatible release (e.g. pip<25)." >&2
   exit 1
 fi
 

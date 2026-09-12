@@ -120,7 +120,10 @@ python\Lib\site-packages.
     Pillow          10.4.0    (import name: PIL)
 
 Supporting packages (pip build tools and a resolved dependency pin):
-    pip             25.0.1
+    pip             24.3.1    (pinned via pip<25 to stay comfortably on a
+                               3.8-capable pip; pip 25.1+ requires Python
+                               >=3.9 and would not run on the bundled 3.8
+                               interpreter)
     setuptools      68.2.2    (setuptools<69)
     wheel           0.45.1
     charset-normalizer  3.3.2 (pinned so its cp38 win_amd64 wheel is used;
