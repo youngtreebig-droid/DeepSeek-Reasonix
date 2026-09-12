@@ -20,7 +20,6 @@ import (
 	"unicode"
 
 	"reasonix/internal/compat"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/nilutil"
 )
 
@@ -503,7 +502,7 @@ func repairToolCallArgs(m Message) Message {
 func closeTruncatedJSON(s string) string {
 	var stack []byte
 	inStr, esc := false, false
-	for i := range len(s) {
+	for i := 0; i < len(s); i++ {
 		c := s[i]
 		if inStr {
 			switch {
@@ -543,7 +542,9 @@ func closeTruncatedJSON(s string) string {
 	case strings.HasSuffix(trimmed, ":"):
 		out = trimmed + "null"
 	}
-	for _, v := range slices.Backward(stack) {
+	_rev1 := stack
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		out += string(v)
 	}
 	if !json.Valid([]byte(out)) {

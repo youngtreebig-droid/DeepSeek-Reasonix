@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"reasonix/internal/compat"
-	slices "reasonix/internal/compat/xslices"
 	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/control"
 	"reasonix/internal/sessioninbox"
@@ -118,7 +117,9 @@ func collectAppend(ctrl control.SessionAPI, msg InboundMessage, debounce time.Du
 	snap := ctrl.InboxSnapshot()
 	// Find last queued follow-up.
 	var last *sessioninbox.InboxItemMeta
-	for i, it := range slices.Backward(snap.Items) {
+	_rev1 := snap.Items
+	for i := len(_rev1) - 1; i >= 0; i-- {
+		it := _rev1[i]
 		if it.State == sessioninbox.StateQueued && it.Intent == sessioninbox.IntentFollowup {
 			last = &snap.Items[i]
 			break

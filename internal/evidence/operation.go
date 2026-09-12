@@ -273,7 +273,9 @@ func (l *OperationLedger) AttachLatestVerification(ref ReceiptRef) (Operation, b
 	defer l.mu.Unlock()
 	paths := normalizePaths(ref.Paths)
 	var fallback *Operation
-	for _, id := range slices.Backward(l.order) {
+	_rev1 := l.order
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		id := _rev1[_ri1]
 		op, ok := l.ops[id]
 		if !ok || op.Terminal() || op.Mutation == nil {
 			continue

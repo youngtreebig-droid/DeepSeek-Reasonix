@@ -146,9 +146,11 @@ func (s *Server) serve() {
 		s.mu.Lock()
 		s.conns = append(s.conns, nConn)
 		s.mu.Unlock()
-		s.wg.Go(func() {
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
 			s.handleConn(nConn)
-		})
+		}()
 	}
 }
 

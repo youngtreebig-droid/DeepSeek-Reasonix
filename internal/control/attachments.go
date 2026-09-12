@@ -388,7 +388,7 @@ func saveLinuxClipboardImage() (string, error) {
 }
 
 func clipboardTypeListed(raw []byte, want string) bool {
-	for field := range strings.FieldsSeq(string(raw)) {
+	for _, field := range strings.Fields(string(raw)) {
 		if strings.EqualFold(field, want) {
 			return true
 		}
@@ -401,7 +401,7 @@ func clipboardTypeListed(raw []byte, want string) bool {
 // contain their terminal control sequences verbatim.
 func offeredImageTypes(raw []byte) []string {
 	var offered []string
-	for field := range strings.FieldsSeq(string(raw)) {
+	for _, field := range strings.Fields(string(raw)) {
 		lower := strings.ToLower(field)
 		if strings.HasPrefix(lower, "image/") && !slices.Contains(clipboardImageTypes, lower) {
 			offered = append(offered, strconv.QuoteToASCII(field))
@@ -516,7 +516,7 @@ func rejectSymlinkComponents(path, root string) error {
 		return fmt.Errorf("attachment path is outside .reasonix/attachments")
 	}
 	cur := root
-	for part := range strings.SplitSeq(rel, string(filepath.Separator)) {
+	for _, part := range strings.Split(rel, string(filepath.Separator)) {
 		if part == "" || part == "." {
 			continue
 		}

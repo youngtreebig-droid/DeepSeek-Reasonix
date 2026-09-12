@@ -107,7 +107,7 @@ func semanticPool(text string, entries []Entry) []Entry {
 		// bounded built-in/high-policy Skill set so English metadata does not make
 		// the semantic router blind to Chinese requests.
 		matched := false
-		for tok := range strings.FieldsSeq(text) {
+		for _, tok := range strings.Fields(text) {
 			if len(tok) < 3 {
 				continue
 			}

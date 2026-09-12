@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"reasonix/internal/compat"
 	"sort"
 	"strings"
 	"sync"
@@ -184,7 +185,7 @@ func (h *Host) subscribeToolListChanges(ctx context.Context, callback func(Spec,
 			h.mu.Unlock()
 		})
 	}
-	stop := context.AfterFunc(ctx, unsubscribe)
+	stop := compat.ContextAfterFunc(ctx, unsubscribe)
 	return func() {
 		stop()
 		unsubscribe()

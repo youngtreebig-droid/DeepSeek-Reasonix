@@ -17,7 +17,7 @@ import (
 // identity.
 func NormalizeSubjectKey(s string) string {
 	var segments []string
-	for seg := range strings.SplitSeq(strings.ToLower(strings.TrimSpace(s)), ".") {
+	for _, seg := range strings.Split(strings.ToLower(strings.TrimSpace(s)), ".") {
 		var b strings.Builder
 		for _, r := range seg {
 			switch {

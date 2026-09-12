@@ -9,7 +9,6 @@ import (
 	"unicode/utf8"
 
 	"reasonix/internal/compat"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )
@@ -158,7 +157,9 @@ func (s *SubagentStore) ReadFinalAnswer(ref, parentSession, workspaceRoot string
 		return "", meta.Status, fmt.Errorf("load subagent transcript %q: %w", ref, err)
 	}
 	msgs := sess.Snapshot()
-	for _, v := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		if v.Role == provider.RoleAssistant && strings.TrimSpace(v.Content) != "" {
 			status := meta.Status
 			if meta.Outcome != "" {

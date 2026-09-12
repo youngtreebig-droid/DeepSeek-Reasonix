@@ -2692,12 +2692,12 @@ func subagentPreviewBlock(glyph, raw string, width, maxLines int) string {
 	w := compat.Max(width-len([]rune(connector)), 8)
 	var lines []string
 	first := true
-	for ln := range strings.SplitSeq(strings.TrimRight(raw, "\n"), "\n") {
+	for _, ln := range strings.Split(strings.TrimRight(raw, "\n"), "\n") {
 		if first {
 			ln = glyph + " " + ln
 			first = false
 		}
-		for wl := range strings.SplitSeq(ansi.Wrap(expandTabs(ln), w, ""), "\n") {
+		for _, wl := range strings.Split(ansi.Wrap(expandTabs(ln), w, ""), "\n") {
 			lines = append(lines, dim(wl))
 		}
 	}
@@ -3510,7 +3510,7 @@ func compactionCardLines(c event.Compaction) []string {
 	}
 	header := fmt.Sprintf("%s · %d %s · %s", i18n.M.CompactionTitle, c.Messages, i18n.M.CompactionUnit, trigger)
 	lines := []string{accent("◆ " + header)}
-	for ln := range strings.SplitSeq(strings.TrimRight(c.Summary, "\n"), "\n") {
+	for _, ln := range strings.Split(strings.TrimRight(c.Summary, "\n"), "\n") {
 		lines = append(lines, dim("  │ "+ln))
 	}
 	if c.Archive != "" {
@@ -4659,7 +4659,7 @@ func (m *chatTUI) runCopyCommand(input string) tea.Cmd {
 
 // firstLine returns the first non-empty line of s, truncated to 80 runes.
 func firstLine(s string) string {
-	for line := range strings.SplitSeq(s, "\n") {
+	for _, line := range strings.Split(s, "\n") {
 		if t := strings.TrimSpace(line); t != "" {
 			runes := []rune(t)
 			if len(runes) > 80 {

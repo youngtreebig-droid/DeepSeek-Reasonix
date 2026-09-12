@@ -175,7 +175,7 @@ func Search(root, query string, limit int) []SearchResult {
 // directories above the file (e.g. "src/planind/index.tsx" with query
 // "planind" matches the "planind" segment).
 func pathSegmentContains(relSlash, queryLower string) bool {
-	for seg := range strings.SplitSeq(relSlash, "/") {
+	for _, seg := range strings.Split(relSlash, "/") {
 		if strings.Contains(strings.ToLower(seg), queryLower) {
 			return true
 		}

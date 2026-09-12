@@ -229,7 +229,9 @@ func detectRequiredCycle(g *DependencyGraph) []ComponentID {
 			switch color[m] {
 			case gray:
 				// Extract cycle from stack.
-				for _, id := range slices.Backward(stack) {
+				_rev1 := stack
+				for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+					id := _rev1[_ri1]
 					cycle = append([]ComponentID{id}, cycle...)
 					if id == m {
 						break

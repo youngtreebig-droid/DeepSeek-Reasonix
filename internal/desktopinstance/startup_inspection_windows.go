@@ -5,6 +5,8 @@ package desktopinstance
 import (
 	"errors"
 	"time"
+
+	"reasonix/internal/compat"
 )
 
 // Startup may race Chromium child teardown. Wait within the existing startup
@@ -21,6 +23,6 @@ func waitForInspectable(inspect func() ([]*process, error), remaining func() tim
 		if left <= 0 {
 			return nil, err
 		}
-		wait(min(left, 200*time.Millisecond))
+		wait(compat.Min(left, 200*time.Millisecond))
 	}
 }

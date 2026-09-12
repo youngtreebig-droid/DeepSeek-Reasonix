@@ -1790,7 +1790,7 @@ func mergeTOMLDelta(body, delta string) string {
 }
 
 func mergeTOMLTopLevelFields(body, fields string) string {
-	for line := range strings.SplitSeq(fields, "\n") {
+	for _, line := range strings.Split(fields, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue

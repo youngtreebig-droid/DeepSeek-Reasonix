@@ -11,7 +11,6 @@ import (
 	"sort"
 	"strings"
 
-	slices "reasonix/internal/compat/xslices"
 	fileencoding "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/frontmatter"
 )
@@ -67,12 +66,16 @@ func Dirs() []string {
 	var dirs []string
 	if os.Getenv("REASONIX_HOME") == "" {
 		if home, err := os.UserHomeDir(); err == nil {
-			for _, v := range slices.Backward(conventionDirs) {
+			_rev1 := conventionDirs
+			for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+				v := _rev1[_ri1]
 				dirs = append(dirs, filepath.Join(home, v, "output-styles"))
 			}
 		}
 	}
-	for _, v := range slices.Backward(conventionDirs) {
+	_rev2 := conventionDirs
+	for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+		v := _rev2[_ri2]
 		dirs = append(dirs, filepath.Join(".", v, "output-styles"))
 	}
 	return dirs

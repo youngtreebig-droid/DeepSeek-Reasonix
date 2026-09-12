@@ -23,7 +23,7 @@ func StreamAuxiliary(ctx context.Context, p Provider, req Request) (<-chan Chunk
 				return false
 			}
 		}
-		for attempt := range 4 {
+		for attempt := 0; attempt < 4; attempt++ {
 			attemptCtx, cancel := context.WithCancel(ctx)
 			ch, err := p.Stream(attemptCtx, req)
 			var latest *Usage

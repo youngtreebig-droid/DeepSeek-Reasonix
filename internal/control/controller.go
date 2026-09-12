@@ -1293,7 +1293,9 @@ func (c *Controller) stopGoal(status string) {
 // lastAssistantText returns the content of the most recent assistant message with
 // non-empty text — the model's final answer for the turn (its plan, in plan mode).
 func lastAssistantText(msgs []provider.Message) string {
-	for _, msg := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		msg := _rev1[_ri1]
 		if msg.Role == provider.RoleAssistant && strings.TrimSpace(msg.Content) != "" {
 			return msg.Content
 		}
@@ -4116,7 +4118,9 @@ func resolveInterruptedTurnStart(msgs []provider.Message, idx int, preserveUser 
 	// graceful fallback still distinguishes the current visible turn; search
 	// backward so a repeated prompt selects the newest occurrence.
 	if fallbackContent != "" {
-		for i, msg := range slices.Backward(msgs) {
+		_rev2 := msgs
+		for i := len(_rev2) - 1; i >= 0; i-- {
+			msg := _rev2[i]
 			if matchesKind(msg) {
 				return i, true
 			}

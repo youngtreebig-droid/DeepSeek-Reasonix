@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 
@@ -111,7 +110,9 @@ func (s *Session) IndexOfID(id string) int {
 	}
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	for i, m := range slices.Backward(s.Messages) {
+	_rev1 := s.Messages
+	for i := len(_rev1) - 1; i >= 0; i-- {
+		m := _rev1[i]
 		if m.ID == id {
 			return i
 		}

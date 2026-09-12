@@ -1,7 +1,6 @@
 package control
 
 import (
-	"crypto/rand"
 	"errors"
 	"path/filepath"
 
@@ -13,7 +12,7 @@ import (
 )
 
 func (c *Controller) restoreTranscriptProjection(sessionPath string, ledger *turnevent.Ledger) (*transcript.Projection, error) {
-	identity := transcript.Identity{SessionID: agent.BranchID(sessionPath), RuntimeEpoch: rand.Text()}
+	identity := transcript.Identity{SessionID: agent.BranchID(sessionPath), RuntimeEpoch: compat.RandText()}
 	ledger.SetRuntimeEpoch(identity.RuntimeEpoch)
 	var messages []provider.Message
 	if c.executor != nil && c.executor.Session() != nil {

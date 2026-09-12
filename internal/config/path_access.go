@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 
@@ -66,7 +65,9 @@ func evalSymlinksAllowMissing(path string) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			for _, v := range slices.Backward(suffix) {
+			_rev1 := suffix
+			for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+				v := _rev1[_ri1]
 				resolved = filepath.Join(resolved, v)
 			}
 			return filepath.Clean(resolved), nil

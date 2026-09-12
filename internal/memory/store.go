@@ -378,7 +378,7 @@ var indexLineRe = regexp.MustCompile(`(?m)^\s*-\s\[.+?\]\(([^)]+)\.md\)\s*—\s.
 func indexLinesExceptIn(dir, name string) map[string]string {
 	existing, _ := fileencoding.ReadFileUTF8(filepath.Join(dir, indexFile))
 	keep := map[string]string{}
-	for line := range strings.SplitSeq(string(existing), "\n") {
+	for _, line := range strings.Split(string(existing), "\n") {
 		if mt := indexLineRe.FindStringSubmatch(line); mt != nil && mt[1] != name {
 			keep[mt[1]] = strings.TrimRight(line, "\r")
 		}
@@ -391,7 +391,7 @@ func indexContainsIn(dir, name string) bool {
 	if err != nil {
 		return false
 	}
-	for line := range strings.SplitSeq(string(existing), "\n") {
+	for _, line := range strings.Split(string(existing), "\n") {
 		if mt := indexLineRe.FindStringSubmatch(line); mt != nil && mt[1] == name {
 			return true
 		}
@@ -408,7 +408,7 @@ func flushIndexIn(dir string, lines map[string]string) error {
 	processed := map[string]bool{}
 	var preserved strings.Builder
 	preservedEmpty := true
-	for line := range strings.SplitSeq(string(existing), "\n") {
+	for _, line := range strings.Split(string(existing), "\n") {
 		trimmed := strings.TrimRight(line, "\r")
 		if mt := indexLineRe.FindStringSubmatch(trimmed); mt != nil {
 			name := mt[1]

@@ -7,11 +7,10 @@ import (
 	"fmt"
 	"reasonix/internal/compat"
 	"strings"
-	"sync"
 	"unicode/utf8"
 )
 
-var processRunID = sync.OnceValue(func() string {
+var processRunID = compat.OnceValue(func() string {
 	return newRandomID()
 })
 

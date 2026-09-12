@@ -99,7 +99,7 @@ func BuildWithOptions(path, oldText, newText string, kind Kind, opts BuildOption
 		return c
 	}
 
-	edits := udiff.Lines(oldText, newText)
+	edits := diffLineEdits(oldText, newText)
 	c.Added, c.Removed = tallyEdits(oldText, edits)
 	diff, err := udiff.ToUnified(opts.OldLabel, opts.NewLabel, oldText, edits, opts.ContextLines)
 	if err != nil {

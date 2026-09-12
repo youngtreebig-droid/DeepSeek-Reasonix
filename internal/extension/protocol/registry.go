@@ -3,6 +3,7 @@ package protocol
 import (
 	"encoding/json"
 	"fmt"
+	"reasonix/internal/compat"
 	"reflect"
 	"sort"
 )
@@ -66,7 +67,7 @@ func extensionNotification[P any](name Method, class OperationClass) MethodSpec 
 	return MethodSpec{name, DirectionExtensionToHostNotification, class, typeOf[P](), typeOf[NoResult]()}
 }
 
-func typeOf[T any]() reflect.Type { return reflect.TypeFor[T]() }
+func typeOf[T any]() reflect.Type { return compat.TypeFor[T]() }
 
 // frozenRegistry is the Extension Protocol v2 method set. Adding, renaming,
 // or redirecting a method is a conscious protocol change: ValidateRegistry

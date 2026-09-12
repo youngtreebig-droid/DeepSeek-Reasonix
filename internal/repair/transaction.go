@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/config"
 	"reasonix/internal/fileutil"
 )
@@ -549,7 +548,9 @@ func UndoLastRepair() (*RepairTransaction, error) {
 		tx.Changes[i].Undone = true
 		return persistRepairTransaction(tx)
 	}
-	for i, v := range slices.Backward(tx.Changes) {
+	_rev1 := tx.Changes
+	for i := len(_rev1) - 1; i >= 0; i-- {
+		v := _rev1[i]
 		change := v
 		if change.Undone {
 			// Progress was persisted but the backup removal may have been cut

@@ -1,22 +1,23 @@
 package config
 
 import (
-	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
+	"reasonix/internal/compat"
 	"reflect"
 	"strings"
 
-	"github.com/BurntSushi/toml"
 	maps "reasonix/internal/compat/xmaps"
 	slices "reasonix/internal/compat/xslices"
 	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/provider"
+
+	"github.com/BurntSushi/toml"
 )
 
 const openCodeGoUpgradeVersion = 10
@@ -284,7 +285,7 @@ func upgradeOpenCodeGoFileWithWriterLocked(path string, write func(string, []byt
 		j.Previous = previous
 	}
 	if len(j.Aliases) > 0 || len(j.SearchAliases) > 0 {
-		j.CommitID = rand.Text()
+		j.CommitID = compat.RandText()
 		next, err = rawTOMLSet(next, []string{"opencode_go_migration_commit"}, j.CommitID)
 		if err != nil {
 			return false, err

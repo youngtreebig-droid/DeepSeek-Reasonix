@@ -7,7 +7,6 @@ import (
 	"strings"
 	"sync"
 
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 
@@ -159,7 +158,8 @@ func (s *Session) ConsumeFinalReadinessRecovery() bool {
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	for i := range slices.Backward(s.Messages) {
+	_rev1 := s.Messages
+	for i := len(_rev1) - 1; i >= 0; i-- {
 		message := &s.Messages[i]
 		if message.LocalOnly && message.FinalReadinessRecovery != nil && message.FinalReadinessRecovery.Pending {
 			consumed := *message.FinalReadinessRecovery

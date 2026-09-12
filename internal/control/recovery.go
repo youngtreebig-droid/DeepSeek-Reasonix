@@ -7,7 +7,6 @@ import (
 	"unicode/utf8"
 
 	"reasonix/internal/agent"
-	slices "reasonix/internal/compat/xslices"
 	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/recovery"
@@ -128,7 +127,9 @@ func (c *Controller) initRecoveryGate(reviewer recovery.Reviewer, headless bool)
 				return ""
 			}
 			msgs := c.executor.Session().Snapshot()
-			for _, v := range slices.Backward(msgs) {
+			_rev1 := msgs
+			for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+				v := _rev1[_ri1]
 				if string(v.Role) == "user" && strings.TrimSpace(v.Content) != "" {
 					text := agent.UserMessageText(v)
 					if len(text) > 800 {

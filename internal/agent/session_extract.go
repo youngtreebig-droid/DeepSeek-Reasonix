@@ -9,7 +9,6 @@ import (
 	"sync"
 
 	"reasonix/internal/compat"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 
@@ -212,7 +211,9 @@ func splitExtractChunks(msgs []provider.Message, overlap int, policy provider.Sh
 		spans[j].hi = hi
 	}
 	chunks := make([][]provider.Message, 0, len(spans))
-	for _, current := range slices.Backward(spans) { // oldest first
+	_rev1 := spans
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		current := _rev1[_ri1] // oldest first
 		lo := units[current.lo].lo
 		hi := units[current.hi-1].hi
 		chunks = append(chunks, msgs[lo:hi])

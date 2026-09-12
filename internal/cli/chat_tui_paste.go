@@ -17,7 +17,6 @@ import (
 
 	"reasonix/internal/agent"
 	"reasonix/internal/compat"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/control"
 	"reasonix/internal/i18n"
 	"reasonix/internal/provider"
@@ -134,7 +133,9 @@ func recoverOrphanedPasteLabelsFromHistory(sent string, knownBlocks []pastedBloc
 		var recovered string
 		found := false
 		ambiguous := false
-		for _, v := range slices.Backward(history) {
+		_rev1 := history
+		for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+			v := _rev1[_ri1]
 			if v.Role != provider.RoleUser || agent.IsPinnedContextRevision(v) {
 				continue
 			}

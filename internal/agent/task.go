@@ -14,7 +14,6 @@ import (
 
 	"reasonix/internal/ablation"
 	"reasonix/internal/checkpoint"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
 	"reasonix/internal/imageinput"
@@ -1856,7 +1855,9 @@ func latestAssistantAnswer(sess *Session) string {
 	if sess == nil {
 		return ""
 	}
-	for _, v := range slices.Backward(sess.Messages) {
+	_rev1 := sess.Messages
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		m := v
 		if m.Role == provider.RoleAssistant && strings.TrimSpace(m.Content) != "" {
 			return m.Content

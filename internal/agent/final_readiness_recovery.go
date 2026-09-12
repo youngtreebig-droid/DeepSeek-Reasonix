@@ -3,7 +3,6 @@ package agent
 import (
 	"encoding/json"
 
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/evidence"
 	"reasonix/internal/provider"
 )
@@ -39,7 +38,9 @@ func (a *Agent) pendingFinalReadinessRecovery() *provider.FinalReadinessRecovery
 	if a == nil || a.sess.conversation == nil {
 		return nil
 	}
-	for _, message := range slices.Backward(a.sess.conversation.Snapshot()) {
+	_rev1 := a.sess.conversation.Snapshot()
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		message := _rev1[_ri1]
 		if message.LocalOnly && message.FinalReadinessRecovery != nil && message.FinalReadinessRecovery.Pending {
 			copy := *message.FinalReadinessRecovery
 			copy.Missing = append([]string(nil), copy.Missing...)

@@ -583,14 +583,15 @@ func parseDocumentWithParser(name, content string, markdownParser parser.Parser)
 			return ast.WalkContinue, nil
 		}
 		heading := node.(*ast.Heading)
-		if heading.Level > 4 || heading.Pos() < 0 {
+		start := headingStartOffset(heading)
+		if heading.Level > 4 || start < 0 {
 			return ast.WalkContinue, nil
 		}
 		text := strings.TrimSpace(markdownHeadingText(heading, source))
 		if text == "" {
 			return ast.WalkContinue, nil
 		}
-		headingNodes = append(headingNodes, headingNode{start: heading.Pos(), level: heading.Level, text: text})
+		headingNodes = append(headingNodes, headingNode{start: start, level: heading.Level, text: text})
 		return ast.WalkContinue, nil
 	})
 	for _, heading := range headingNodes {

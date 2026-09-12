@@ -8,7 +8,6 @@ import (
 
 	"golang.org/x/crypto/ssh"
 
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/netclient"
 )
 
@@ -176,7 +175,9 @@ func handshakeTimeout(dialTimeout time.Duration) time.Duration {
 }
 
 func closeAll(clients []*ssh.Client) {
-	for _, v := range slices.Backward(clients) {
+	_rev1 := clients
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		_ = v.Close()
 	}
 }

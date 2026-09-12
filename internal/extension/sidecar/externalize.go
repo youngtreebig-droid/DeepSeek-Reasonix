@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"reasonix/internal/compat"
 	"reflect"
 
 	"reasonix/internal/extension/protocol"
@@ -66,7 +67,7 @@ func (c *Client) externalizeInterceptParams(params *protocol.InterceptParams) er
 // externalizeEventParams applies the outbound content-ref rule to one event
 // notification's payload.
 func (c *Client) externalizeEventParams(params *protocol.EventParams) error {
-	pointer, err := externalizablePointer(reflect.TypeFor[protocol.EventParams](), "/payload")
+	pointer, err := externalizablePointer(compat.TypeFor[protocol.EventParams](), "/payload")
 	if err != nil {
 		return err
 	}

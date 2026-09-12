@@ -3,7 +3,6 @@ package control
 import (
 	"os"
 	"path/filepath"
-	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 
@@ -66,7 +65,9 @@ func evalSymlinksAllowMissing(path string) (string, error) {
 	for {
 		resolved, err := filepath.EvalSymlinks(current)
 		if err == nil {
-			for _, component := range slices.Backward(missing) {
+			_rev1 := missing
+			for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+				component := _rev1[_ri1]
 				resolved = filepath.Join(resolved, component)
 			}
 			return filepath.Clean(resolved), nil

@@ -99,7 +99,7 @@ func extensionCardLines(pluginID string, c *event.ExtensionCardView, width int) 
 			body = c.Markdown
 		}
 	}
-	for ln := range strings.SplitSeq(strings.TrimRight(body, "\n"), "\n") {
+	for _, ln := range strings.Split(strings.TrimRight(body, "\n"), "\n") {
 		if ln == "" {
 			lines = append(lines, "")
 			continue
@@ -132,7 +132,7 @@ func extensionFormLines(pluginID string, f *event.ExtensionFormView) []string {
 		title = pluginID
 	}
 	lines := []string{accent("◆ " + title)}
-	for ln := range strings.SplitSeq(strings.TrimRight(f.Message, "\n"), "\n") {
+	for _, ln := range strings.Split(strings.TrimRight(f.Message, "\n"), "\n") {
 		if ln == "" {
 			continue
 		}

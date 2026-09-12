@@ -15,7 +15,8 @@ import (
 func (s *Session) addWriteIntent(callID string, raw json.RawMessage) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	for i := range slices.Backward(s.Messages) {
+	_rev1 := s.Messages
+	for i := len(_rev1) - 1; i >= 0; i-- {
 		for j, c := range s.Messages[i].ToolCalls {
 			if c.ID != callID {
 				continue

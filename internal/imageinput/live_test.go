@@ -16,9 +16,6 @@ import (
 	"testing"
 	"time"
 
-	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
-	"golang.org/x/image/math/fixed"
 	"reasonix/internal/config"
 	"reasonix/internal/event"
 	"reasonix/internal/imageinput"
@@ -26,6 +23,10 @@ import (
 	"reasonix/internal/provider/anthropic"
 	"reasonix/internal/provider/openai"
 	"reasonix/internal/provider/responses"
+
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
+	"golang.org/x/image/math/fixed"
 )
 
 func fixture(t *testing.T) (string, string) {

@@ -310,8 +310,8 @@ func (m *chatTUI) rewriteConnectorBlock(index int, lines []string) {
 func reasoningBlockLines(raw string, width, maxLines int) []string {
 	w := compat.Max(width-len([]rune(connector)), 8)
 	var lines []string
-	for ln := range strings.SplitSeq(strings.TrimRight(raw, "\n"), "\n") {
-		for wl := range strings.SplitSeq(ansi.Wrap(expandTabs(ln), w, ""), "\n") {
+	for _, ln := range strings.Split(strings.TrimRight(raw, "\n"), "\n") {
+		for _, wl := range strings.Split(ansi.Wrap(expandTabs(ln), w, ""), "\n") {
 			lines = append(lines, dim(wl))
 		}
 	}

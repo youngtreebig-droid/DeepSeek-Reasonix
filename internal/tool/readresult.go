@@ -148,7 +148,7 @@ func (w ReadWindow) Range() ReadRange {
 // fail closed rather than stitch unrelated windows into one observation.
 func ParseReadWindow(output string) (ReadWindow, bool) {
 	var w ReadWindow
-	for line := range strings.SplitSeq(output, "\n") {
+	for _, line := range strings.Split(output, "\n") {
 		arrow := strings.Index(line, "→")
 		if arrow <= 0 {
 			continue

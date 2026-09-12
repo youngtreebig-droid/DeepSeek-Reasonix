@@ -877,7 +877,9 @@ func (l *Ledger) IncompleteLatestTodos() ([]TodoStepMatch, bool) {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for _, v := range slices.Backward(l.receipts) {
+	_rev1 := l.receipts
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		r := v
 		if !r.Success || r.ToolName != "todo_write" {
 			continue
@@ -1176,7 +1178,9 @@ func (l *Ledger) MatchLatestTodoStep(step string) (TodoStepMatch, bool) {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for _, v := range slices.Backward(l.receipts) {
+	_rev2 := l.receipts
+	for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+		v := _rev2[_ri2]
 		r := v
 		if !r.Success || r.ToolName != "todo_write" {
 			continue
@@ -1193,7 +1197,9 @@ func (l *Ledger) LatestTodos() ([]TodoItem, bool) {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for _, v := range slices.Backward(l.receipts) {
+	_rev3 := l.receipts
+	for _ri3 := len(_rev3) - 1; _ri3 >= 0; _ri3-- {
+		v := _rev3[_ri3]
 		r := v
 		if r.Success && r.ToolName == "todo_write" {
 			return append([]TodoItem(nil), r.Todos...), true
@@ -1219,7 +1225,9 @@ func (l *Ledger) UnverifiedCompletedTodos(current []TodoItem) (missing []TodoSte
 
 	var previous []TodoItem
 	baseline := -1
-	for i, v := range slices.Backward(receipts) {
+	_rev4 := receipts
+	for i := len(_rev4) - 1; i >= 0; i-- {
+		v := _rev4[i]
 		r := v
 		if !r.Success || r.ToolName != "todo_write" {
 			continue
@@ -2580,7 +2588,9 @@ func hasSuccessfulCompleteStepForTodo(receipts []Receipt, index int, current []T
 }
 
 func latestTodoStep(step string, receipts []Receipt) TodoStepMatch {
-	for _, v := range slices.Backward(receipts) {
+	_rev5 := receipts
+	for _ri5 := len(_rev5) - 1; _ri5 >= 0; _ri5-- {
+		v := _rev5[_ri5]
 		r := v
 		if !r.Success || r.ToolName != "todo_write" {
 			continue

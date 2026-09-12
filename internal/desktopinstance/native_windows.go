@@ -15,6 +15,8 @@ import (
 	"unsafe"
 
 	"golang.org/x/sys/windows"
+
+	"reasonix/internal/compat"
 )
 
 var user32 = windows.NewLazySystemDLL("user32.dll")
@@ -186,7 +188,7 @@ func readStatus(p *process) (Status, error) {
 		ov := windows.Overlapped{HEvent: event}
 		err = windows.ReadFile(pipe, buffer, &n, &ov)
 		if errors.Is(err, windows.ERROR_IO_PENDING) {
-			remaining := max(time.Until(deadline), 0)
+			remaining := compat.Max(time.Until(deadline), 0)
 			wait, waitErr := windows.WaitForSingleObject(event, uint32(remaining.Milliseconds()))
 			if waitErr != nil || wait != windows.WAIT_OBJECT_0 {
 				_ = windows.CancelIoEx(pipe, &ov)

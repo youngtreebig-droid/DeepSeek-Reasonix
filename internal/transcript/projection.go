@@ -1,7 +1,6 @@
 package transcript
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -67,7 +66,7 @@ type Projection struct {
 }
 
 func NewProjection(identity Identity, baseline []Message, covered uint64) (*Projection, error) {
-	p := &Projection{incarnation: rand.Text(), identity: identity, covered: covered, revision: 1,
+	p := &Projection{incarnation: compat.RandText(), identity: identity, covered: covered, revision: 1,
 		attempts: make(map[string]ActiveAttempt), prompts: make(map[string]eventwire.Event)}
 	// Take ownership of nested metadata as well as the slice. Callers may
 	// reuse their conversion buffers immediately after construction.
@@ -207,7 +206,7 @@ func (p *Projection) SetRuntimeEpoch(epoch string) {
 	defer p.mu.Unlock()
 	if p.identity.RuntimeEpoch != epoch {
 		p.identity.RuntimeEpoch = epoch
-		p.incarnation = rand.Text()
+		p.incarnation = compat.RandText()
 		p.revision++
 	}
 }

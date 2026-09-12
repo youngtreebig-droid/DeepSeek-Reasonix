@@ -100,7 +100,7 @@ func DetectUTF16NoBOM(b []byte) (Kind, bool) {
 	}
 	n &^= 1 // examine an even-length window so parity counts are comparable
 	var evenNUL, oddNUL int
-	for i := range n {
+	for i := 0; i < n; i++ {
 		if b[i] != 0 {
 			continue
 		}

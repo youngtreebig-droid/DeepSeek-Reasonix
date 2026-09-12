@@ -14,7 +14,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/filelock"
 )
 
@@ -165,7 +164,9 @@ func lockConfigFilesEdits(paths ...string) (func(), error) {
 	unlockFiles := make([]func(), 0, len(lockPaths))
 	for _, lockPath := range lockPaths {
 		if err := os.MkdirAll(filepath.Dir(lockPath), 0o700); err != nil {
-			for _, v := range slices.Backward(unlockFiles) {
+			_rev1 := unlockFiles
+			for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+				v := _rev1[_ri1]
 				v()
 			}
 			userEditMu.Unlock()
@@ -173,7 +174,9 @@ func lockConfigFilesEdits(paths ...string) (func(), error) {
 		}
 		unlockFile, err := acquireConfigEditLockPath(ctx, lockPath)
 		if err != nil {
-			for _, v := range slices.Backward(unlockFiles) {
+			_rev2 := unlockFiles
+			for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+				v := _rev2[_ri2]
 				v()
 			}
 			userEditMu.Unlock()
@@ -187,7 +190,9 @@ func lockConfigFilesEdits(paths ...string) (func(), error) {
 	return func() {
 		once.Do(func() {
 			clearPins()
-			for _, v := range slices.Backward(unlockFiles) {
+			_rev3 := unlockFiles
+			for _ri3 := len(_rev3) - 1; _ri3 >= 0; _ri3-- {
+				v := _rev3[_ri3]
 				v()
 			}
 			userEditMu.Unlock()

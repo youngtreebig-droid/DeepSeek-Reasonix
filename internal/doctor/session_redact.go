@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"reasonix/internal/agent"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/fileutil"
 	"reasonix/internal/provider"
 	"reasonix/internal/secrets"
@@ -217,7 +216,9 @@ func acquireSessionRedactionWriters(sessionPath string) ([]*agent.SessionWriter,
 }
 
 func releaseSessionRedactionWriters(writers []*agent.SessionWriter) {
-	for _, writer := range slices.Backward(writers) {
+	_rev1 := writers
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		writer := _rev1[_ri1]
 		writer.Release()
 	}
 }

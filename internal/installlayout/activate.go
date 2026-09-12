@@ -14,7 +14,6 @@ import (
 	"strings"
 	"time"
 
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/filelock"
 )
 
@@ -248,7 +247,9 @@ func publishRootEntries(installRoot, stagingRoot string, members []Member) (roll
 	replacements := make([]replacement, 0, len(members))
 	rollbackFn := func() error {
 		var rollbackErr error
-		for _, v := range slices.Backward(replacements) {
+		_rev1 := replacements
+		for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+			v := _rev1[_ri1]
 			r := v
 			if err := os.Remove(r.destination); err != nil && !os.IsNotExist(err) {
 				rollbackErr = errors.Join(rollbackErr, err)
@@ -309,7 +310,7 @@ func ValidateMemberName(name string) error {
 	if path.IsAbs(name) || filepath.IsAbs(name) || path.Clean(name) != name {
 		return invalid
 	}
-	for part := range strings.SplitSeq(name, "/") {
+	for _, part := range strings.Split(name, "/") {
 		if part == "" || part == "." || part == ".." {
 			return invalid
 		}

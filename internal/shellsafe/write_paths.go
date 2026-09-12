@@ -1,9 +1,10 @@
 package shellsafe
 
 import (
-	"mvdan.cc/sh/v3/syntax"
 	"reasonix/internal/shellparse"
 	"strings"
+
+	"mvdan.cc/sh/v3/syntax"
 )
 
 // StaticWritePaths proves the complete write surface of a deliberately small

@@ -209,7 +209,7 @@ func ValidateActiveDir(installRoot, version, activeDir string) error {
 
 func rejectSymlinkPathComponents(root, rel string) error {
 	cur := root
-	for part := range strings.SplitSeq(rel, string(os.PathSeparator)) {
+	for _, part := range strings.Split(rel, string(os.PathSeparator)) {
 		if part == "" || part == "." {
 			continue
 		}

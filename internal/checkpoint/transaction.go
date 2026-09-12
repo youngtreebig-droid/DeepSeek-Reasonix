@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	slices "reasonix/internal/compat/xslices"
 	slog "reasonix/internal/compat/xslog"
 	fileenc "reasonix/internal/fileutil/encoding"
 )
@@ -951,7 +950,9 @@ func (s *Store) publishTarget(t *TransactionTarget) error {
 
 func (s *Store) compensatePublished(targets []TransactionTarget, stages []FileStage) error {
 	var first error
-	for _, v := range slices.Backward(targets) {
+	_rev1 := targets
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		t := v
 		if !t.Published {
 			if t.PublishTmp != "" {

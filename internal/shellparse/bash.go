@@ -88,7 +88,7 @@ func ParseStaticCommand(command string, policy StaticCommandPolicy) (StaticComma
 		return out, staticReject(StaticRejectControl, "")
 	}
 	stmt := file.Stmts[0]
-	if stmt == nil || stmt.Negated || stmt.Background || stmt.Coprocess || stmt.Disown {
+	if stmt == nil || stmt.Negated || stmt.Background || stmt.Coprocess || stmtDisown(stmt) {
 		return out, staticReject(StaticRejectControl, "")
 	}
 	call, ok := stmt.Cmd.(*syntax.CallExpr)
@@ -214,7 +214,7 @@ func AnalyzeApprovalFeatures(command string) (features ApprovalFeatures, ok bool
 		return features, false
 	}
 	stmt := file.Stmts[0]
-	if stmt == nil || stmt.Negated || stmt.Background || stmt.Coprocess || stmt.Disown {
+	if stmt == nil || stmt.Negated || stmt.Background || stmt.Coprocess || stmtDisown(stmt) {
 		return features, false
 	}
 	call, ok := stmt.Cmd.(*syntax.CallExpr)
@@ -297,7 +297,7 @@ func wordHasUnescapedBrace(word *syntax.Word) bool {
 
 func hasUnescapedMeta(value, meta string) bool {
 	escaped := false
-	for i := range len(value) {
+	for i := 0; i < len(value); i++ {
 		if escaped {
 			escaped = false
 			continue
@@ -351,7 +351,7 @@ func CanMaskEarlierFailure(command string) (canMask bool, ok bool) {
 }
 
 func stmtCanMaskEarlierFailure(stmt *syntax.Stmt) (bool, bool) {
-	if stmt == nil || stmt.Negated || stmt.Coprocess || stmt.Disown {
+	if stmt == nil || stmt.Negated || stmt.Coprocess || stmtDisown(stmt) {
 		return false, false
 	}
 	if stmt.Background {
@@ -404,7 +404,7 @@ func SplitTopLevel(command string) (segments []string, split bool, ok bool) {
 }
 
 func appendTopLevelSegments(source string, stmt *syntax.Stmt, segments *[]string, split *bool) bool {
-	if stmt == nil || stmt.Negated || stmt.Coprocess || stmt.Disown {
+	if stmt == nil || stmt.Negated || stmt.Coprocess || stmtDisown(stmt) {
 		return false
 	}
 	switch cmd := stmt.Cmd.(type) {
@@ -547,7 +547,7 @@ func IsAssignment(word string) bool {
 	if !ok || name == "" {
 		return false
 	}
-	for i := range len(name) {
+	for i := 0; i < len(name); i++ {
 		c := name[i]
 		if i == 0 {
 			if c != '_' && (c < 'A' || c > 'Z') && (c < 'a' || c > 'z') {

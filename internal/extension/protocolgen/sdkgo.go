@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go/format"
+	"reasonix/internal/compat"
 	"reflect"
 	"strconv"
 	"strings"
@@ -47,7 +48,7 @@ var sdkInitialisms = map[string]string{
 	"ui": "UI", "tui": "TUI", "acp": "ACP", "utf8": "UTF8",
 }
 
-var rawMessageType = reflect.TypeFor[json.RawMessage]()
+var rawMessageType = compat.TypeFor[json.RawMessage]()
 
 // sdkTypeWalk is the deterministic first-visit record of every named wire
 // type reachable from the frozen registry (plus the extra roots below).
@@ -77,11 +78,11 @@ func walkSDKTypes() (*sdkTypeWalk, error) {
 		}
 	}
 	roots = append(roots,
-		reflect.TypeFor[protocol.UIStatusPayload](),
-		reflect.TypeFor[protocol.UICardPayload](),
-		reflect.TypeFor[protocol.UIFormPayload](),
-		reflect.TypeFor[protocol.UINotificationPayload](),
-		reflect.TypeFor[protocol.ProtocolErrorData](),
+		compat.TypeFor[protocol.UIStatusPayload](),
+		compat.TypeFor[protocol.UICardPayload](),
+		compat.TypeFor[protocol.UIFormPayload](),
+		compat.TypeFor[protocol.UINotificationPayload](),
+		compat.TypeFor[protocol.ProtocolErrorData](),
 	)
 	for _, root := range roots {
 		if err := w.visit(root); err != nil {

@@ -50,7 +50,11 @@ import (
 )
 
 var (
-	runInteractiveSession = chatREPL
+	// runInteractiveSession launches the interactive chat session. The full
+	// build wires it to the charm.land/v2 TUI (chatREPL); the reduced Win7
+	// build wires a stub that reports the TUI is unavailable. See
+	// interactive_default.go / interactive_win7.go.
+	runInteractiveSession = defaultInteractiveSession
 	cliIsInteractive      = isInteractive
 	runWebCommand         = runWeb
 	openBrowserURL        = openInBrowser
@@ -2272,7 +2276,7 @@ func appendEnv(path string, lines []string) error {
 
 	var kept []string
 	if data, err := fileencoding.ReadFileUTF8(path); err == nil {
-		for raw := range strings.SplitSeq(string(data), "\n") {
+		for _, raw := range strings.Split(string(data), "\n") {
 			trimmed := strings.TrimSpace(raw)
 			check := strings.TrimPrefix(trimmed, "export ")
 			if k, _, ok := strings.Cut(check, "="); ok && target[strings.TrimSpace(k)] {

@@ -30,11 +30,11 @@ func gzipMiddleware(next http.Handler) http.Handler {
 
 func acceptsGzip(header string) bool {
 	gzipQ, wildcardQ := -1.0, -1.0
-	for part := range strings.SplitSeq(header, ",") {
+	for _, part := range strings.Split(header, ",") {
 		codingPart, parameters, _ := strings.Cut(part, ";")
 		coding := strings.ToLower(strings.TrimSpace(codingPart))
 		q := 1.0
-		for parameter := range strings.SplitSeq(parameters, ";") {
+		for _, parameter := range strings.Split(parameters, ";") {
 			name, value, ok := strings.Cut(parameter, "=")
 			if !ok || !strings.EqualFold(strings.TrimSpace(name), "q") {
 				continue

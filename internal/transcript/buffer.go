@@ -3,7 +3,6 @@ package transcript
 import (
 	"fmt"
 	"reasonix/internal/compat"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/eventwire"
 	"reasonix/internal/provider"
@@ -394,7 +393,9 @@ func updateBufferedToolCallSummary(buffer *Buffer, callID, output string) {
 	if callID == "" {
 		return
 	}
-	for _, v := range slices.Backward(buffer.messages) {
+	_rev1 := buffer.messages
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		for j := range v.message.ToolCalls {
 			call := &v.message.ToolCalls[j]
 			if call.ID != callID {

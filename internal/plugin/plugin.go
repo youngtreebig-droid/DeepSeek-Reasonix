@@ -1506,12 +1506,6 @@ func (s Spec) ServerAuthorized() bool {
 	return s.Authorized
 }
 
-// newTransport builds the transport for a spec's declared type. Empty / unknown
-// defaults to stdio.
-func newTransport(ctx context.Context, s Spec, profile HostProfile) (transport, error) {
-	return newSDKSessionTransport(ctx, s, profile)
-}
-
 func (c *Client) call(ctx context.Context, method string, params any) (json.RawMessage, error) {
 	params, unregisterProgress := c.withProgress(ctx, method, params)
 	defer unregisterProgress()

@@ -3,6 +3,7 @@ package protocol
 import (
 	"encoding/json"
 	"fmt"
+	"reasonix/internal/compat"
 	"reflect"
 )
 
@@ -147,13 +148,13 @@ func DecodeUIPublishPayload(kind UISurfaceKind, raw json.RawMessage) (any, error
 	var typ reflect.Type
 	switch kind {
 	case UISurfaceStatus:
-		typ = reflect.TypeFor[UIStatusPayload]()
+		typ = compat.TypeFor[UIStatusPayload]()
 	case UISurfaceCard:
-		typ = reflect.TypeFor[UICardPayload]()
+		typ = compat.TypeFor[UICardPayload]()
 	case UISurfaceForm:
-		typ = reflect.TypeFor[UIFormPayload]()
+		typ = compat.TypeFor[UIFormPayload]()
 	case UISurfaceNotification:
-		typ = reflect.TypeFor[UINotificationPayload]()
+		typ = compat.TypeFor[UINotificationPayload]()
 	default:
 		return nil, fmt.Errorf("protocol: unknown UI surface kind %q", kind)
 	}
@@ -167,7 +168,7 @@ func DecodeUIPublishPayload(kind UISurfaceKind, raw json.RawMessage) (any, error
 func DecodeUIRequestPayload(kind UIRequestKind, raw json.RawMessage) (any, error) {
 	switch kind {
 	case UIRequestConfirm, UIRequestInput, UIRequestSelect, UIRequestMultiselect:
-		return decodeAndValidate(raw, reflect.TypeFor[UIFormPayload]())
+		return decodeAndValidate(raw, compat.TypeFor[UIFormPayload]())
 	default:
 		return nil, fmt.Errorf("protocol: unknown UI request kind %q", kind)
 	}

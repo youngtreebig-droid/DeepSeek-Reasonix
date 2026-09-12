@@ -6,7 +6,6 @@ import (
 	"unicode/utf8"
 
 	"reasonix/internal/compat"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 
@@ -129,7 +128,9 @@ func renderTranscript(entries []TranscriptEntry) ([]string, string) {
 	}
 
 	// Fill remaining message budget with user entries from newest to oldest.
-	for _, v := range slices.Backward(userIdx) {
+	_rev1 := userIdx
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		idx := v
 		if idx >= len(all) || included[idx] {
 			continue

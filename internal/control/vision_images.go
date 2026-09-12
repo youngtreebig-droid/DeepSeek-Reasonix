@@ -33,7 +33,7 @@ func classifyVisionToken(tok string) (ref, bool) {
 func bareVisionRefs(line string) []ref {
 	var refs []ref
 	seen := map[string]bool{}
-	for tok := range strings.FieldsSeq(line) {
+	for _, tok := range strings.Fields(line) {
 		tok = strings.Trim(tok, `<>"'`)
 		tok = strings.TrimRight(tok, ".,;!?)]}")
 		if seen[tok] {

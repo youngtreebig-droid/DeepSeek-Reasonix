@@ -10,7 +10,6 @@ import (
 	"unicode/utf8"
 
 	"reasonix/internal/compat"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )
@@ -193,7 +192,9 @@ func (t *sessionToolResultTool) Execute(_ context.Context, args json.RawMessage)
 
 func findToolResultCandidate(msgs []provider.Message, toolCallID, resultRef string) (toolResultCandidate, error) {
 	candidates := make([]toolResultCandidate, 0, 2)
-	for _, msg := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		msg := _rev1[_ri1]
 		if msg.Role != provider.RoleTool || msg.ToolCallID != toolCallID {
 			continue
 		}

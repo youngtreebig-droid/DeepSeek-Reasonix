@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"reasonix/internal/compat"
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/fileutil"
 	fileenc "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/tool"
@@ -366,7 +365,9 @@ func stripReadFileLinePrefix(line string) (string, bool) {
 
 func replaceEditRanges(content string, ranges []editRange, replacement string) string {
 	updated := content
-	for _, v := range slices.Backward(ranges) {
+	_rev1 := ranges
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		r := v
 		updated = updated[:r.start] + replacement + updated[r.end:]
 	}

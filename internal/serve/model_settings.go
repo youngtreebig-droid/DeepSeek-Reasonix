@@ -1,10 +1,10 @@
 package serve
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"reasonix/internal/compat"
 	"sort"
 	"strings"
 
@@ -61,7 +61,7 @@ func (s *Server) admitModelSettingsRunLocked(w http.ResponseWriter, r *http.Requ
 
 func (s *Server) modelSettingsStatusLocked() modelSettingsStatusView {
 	if s.modelSettingsOwnership.OwnershipIncarnation == "" {
-		s.modelSettingsOwnership.OwnershipIncarnation = rand.Text()
+		s.modelSettingsOwnership.OwnershipIncarnation = compat.RandText()
 	}
 	s.modelSettingsOwnership.OwnershipSeq++
 	current := s.ctl()

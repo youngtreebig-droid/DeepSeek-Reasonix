@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strings"
 
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
 	"reasonix/internal/provider"
@@ -199,7 +198,9 @@ func (c *Controller) hasTodoUpdateSince(start int) bool {
 
 func latestTodoArgsSince(msgs []provider.Message, start int) (string, bool) {
 	for i := len(msgs) - 1; i >= start; i-- {
-		for _, v := range slices.Backward(msgs[i].ToolCalls) {
+		_rev1 := msgs[i].ToolCalls
+		for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+			v := _rev1[_ri1]
 			tc := v
 			if tc.Name == "todo_write" {
 				return tc.Arguments, true

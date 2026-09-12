@@ -2935,7 +2935,7 @@ func parseAskAnswers(questions []event.AskQuestion, raw string) []event.AskAnswe
 	}
 	answerMap := make(map[string][]string, len(questions))
 	if strings.Contains(raw, "=") {
-		for part := range strings.SplitSeq(raw, ";") {
+		for _, part := range strings.Split(raw, ";") {
 			k, v, ok := strings.Cut(part, "=")
 			if !ok {
 				continue

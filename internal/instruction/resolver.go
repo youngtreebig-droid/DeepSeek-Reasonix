@@ -166,45 +166,6 @@ func readOpenedDocument(f *os.File) (string, os.FileInfo, bool) {
 	return body, info, body != ""
 }
 
-func readConfinedDocument(path, boundary, escapeCode string) (string, os.FileInfo, bool, string) {
-	boundary = realDirectory(boundary)
-	root, err := os.OpenRoot(boundary)
-	if err != nil {
-		return "", nil, false, ""
-	}
-	defer root.Close()
-
-	rel, err := filepath.Rel(boundary, absolutePath(path))
-	if err == nil && filepath.IsLocal(rel) {
-		if f, openErr := root.Open(rel); openErr == nil {
-			body, info, ok := readOpenedDocument(f)
-			return body, info, ok, ""
-		}
-	}
-
-	// Root.Open deliberately rejects absolute symlinks, including ones whose
-	// target remains inside the root. Resolve those for compatibility, then open
-	// the resolved relative path through the same root handle. The second open
-	// remains confined if any component changes after EvalSymlinks.
-	realPath, err := filepath.EvalSymlinks(path)
-	if err != nil {
-		return "", nil, false, ""
-	}
-	if !pathWithin(realPath, boundary) {
-		return "", nil, false, escapeCode
-	}
-	rel, err = filepath.Rel(boundary, realPath)
-	if err != nil || !filepath.IsLocal(rel) {
-		return "", nil, false, escapeCode
-	}
-	f, err := root.Open(rel)
-	if err != nil {
-		return "", nil, false, ""
-	}
-	body, info, ok := readOpenedDocument(f)
-	return body, info, ok, ""
-}
-
 func resolveDocumentImports(body, sourcePath string, boundaries []string, depth int, state importState, imports *[]Import, diagnostics *[]Diagnostic) string {
 	if depth >= MaxImportDepth {
 		return body
@@ -347,7 +308,7 @@ func directoryChain(root, target string) []string {
 	}
 	chain := []string{root}
 	current := root
-	for part := range strings.SplitSeq(rel, string(filepath.Separator)) {
+	for _, part := range strings.Split(rel, string(filepath.Separator)) {
 		if part == "" || part == "." {
 			continue
 		}

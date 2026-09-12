@@ -16,7 +16,6 @@ import (
 
 	"mvdan.cc/sh/v3/syntax"
 
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/i18n"
 	"reasonix/internal/jobs"
 	"reasonix/internal/proc"
@@ -742,7 +741,9 @@ func runShellPATHCommand(parent context.Context, shell string, args []string) []
 
 func parseShellPATH(out []byte, marker string) string {
 	lines := strings.Split(strings.ReplaceAll(string(out), "\r\n", "\n"), "\n")
-	for _, line := range slices.Backward(lines) {
+	_rev1 := lines
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		line := _rev1[_ri1]
 		if rest, ok := strings.CutPrefix(line, marker); ok {
 			return strings.TrimSpace(rest)
 		}
@@ -783,7 +784,9 @@ func setEnvValue(env []string, key, value string) []string {
 }
 
 func envValue(env []string, key string) (string, bool) {
-	for _, entry := range slices.Backward(env) {
+	_rev2 := env
+	for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+		entry := _rev2[_ri2]
 		k, v, ok := strings.Cut(entry, "=")
 		if ok && envKeyEqual(k, key) {
 			return v, true

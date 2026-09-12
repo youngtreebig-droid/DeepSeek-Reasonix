@@ -1,3 +1,5 @@
+//go:build !win7
+
 package plugin
 
 import (
@@ -8,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"reasonix/internal/compat"
 	maps "reasonix/internal/compat/xmaps"
 	"strings"
 	"time"
@@ -111,7 +114,7 @@ func (rt *sameOriginMCPRoundTripper) RoundTrip(req *http.Request) (*http.Respons
 		requestCtx, cancel = context.WithCancel(req.Context())
 		cancelRequest = cancel
 		if rt.lifetime != nil {
-			stopLifetime = context.AfterFunc(rt.lifetime, cancelRequest)
+			stopLifetime = compat.ContextAfterFunc(rt.lifetime, cancelRequest)
 		}
 	}
 	cancelLifetimeRequest := func() {

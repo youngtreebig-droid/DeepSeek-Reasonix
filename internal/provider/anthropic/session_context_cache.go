@@ -1,7 +1,6 @@
 package anthropic
 
 import (
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/sessioncontext"
 )
 
@@ -26,7 +25,8 @@ func markPromptCacheBreakpoints(system []textBlock, tools []anthTool, messages [
 
 	contextMessage, contextBlock := -1, -1
 	for i := len(messages) - 1; i >= 0 && contextMessage < 0; i-- {
-		for j := range slices.Backward(messages[i].Content) {
+		_rev1 := messages[i].Content
+		for j := len(_rev1) - 1; j >= 0; j-- {
 			block := messages[i].Content[j]
 			if block.Type == "text" && sessioncontext.IsContent(block.Text) {
 				contextMessage, contextBlock = i, j

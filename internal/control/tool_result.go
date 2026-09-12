@@ -1,7 +1,6 @@
 package control
 
 import (
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )
@@ -58,7 +57,9 @@ func lookupToolResult(msgs []provider.Message, toolID string) *ToolResultData {
 	}
 	// Search backwards: tool result first (most recent), then find the args
 	// from the preceding assistant turn.
-	for i, msg := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for i := len(_rev1) - 1; i >= 0; i-- {
+		msg := _rev1[i]
 		if msg.Role != provider.RoleTool || msg.ToolCallID != toolID {
 			continue
 		}
@@ -82,7 +83,9 @@ func lookupToolResult(msgs []provider.Message, toolID string) *ToolResultData {
 		}
 		return out
 	}
-	for _, msg := range slices.Backward(msgs) {
+	_rev2 := msgs
+	for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+		msg := _rev2[_ri2]
 		if msg.Role != provider.RoleAssistant {
 			continue
 		}

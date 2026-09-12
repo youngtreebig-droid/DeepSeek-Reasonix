@@ -1,7 +1,6 @@
 package agent
 
 import (
-	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 
@@ -19,7 +18,9 @@ func activeTurnFoldBoundary(msgs []provider.Message, active, end int) int {
 	}
 	body := msgs[active+1 : end]
 	keep := activeTurnKeepRounds
-	for _, unit := range slices.Backward(extractMessageUnits(body)) {
+	_rev1 := extractMessageUnits(body)
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		unit := _rev1[_ri1]
 		if body[unit.lo].Role != provider.RoleAssistant {
 			continue
 		}

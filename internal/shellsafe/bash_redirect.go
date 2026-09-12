@@ -88,12 +88,17 @@ func safeRedirectSpan(source string, redir *syntax.Redirect) (redirectSpan, bool
 		if !isSafeFDDupWord(source, redir.Word) {
 			return redirectSpan{}, false
 		}
-	case syntax.RdrOut, syntax.AppOut, syntax.RdrClob, syntax.AppClob, syntax.RdrAll, syntax.AppAll, syntax.RdrAllClob, syntax.AppAllClob:
+	case syntax.RdrOut, syntax.AppOut, syntax.RdrAll, syntax.AppAll:
 		if !isNullRedirectWord(source, redir.Word) {
 			return redirectSpan{}, false
 		}
 	default:
-		return redirectSpan{}, false
+		if !isClobberRedirectOp(redir.Op) {
+			return redirectSpan{}, false
+		}
+		if !isNullRedirectWord(source, redir.Word) {
+			return redirectSpan{}, false
+		}
 	}
 	start := int(redir.OpPos.Offset())
 	if redir.N != nil && redir.N.Pos().IsValid() {

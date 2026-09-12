@@ -310,7 +310,7 @@ func autoRecallSearchText(memory Memory) string {
 }
 
 func distinctiveQueryTerm(query, normalizedTerm string) bool {
-	for field := range strings.FieldsSeq(query) {
+	for _, field := range strings.Fields(query) {
 		trimmed := strings.Trim(field, "#()[]{}<>,;:'\"`!?=+*/\\|")
 		if !strings.EqualFold(trimmed, normalizedTerm) {
 			continue

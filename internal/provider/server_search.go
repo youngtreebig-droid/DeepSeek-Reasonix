@@ -113,7 +113,7 @@ func ParseServerSearchOutput(output string) []ServerSearchHit {
 		return result.Sources
 	}
 	var out []ServerSearchHit
-	for line := range strings.SplitSeq(output, "\n") {
+	for _, line := range strings.Split(output, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue

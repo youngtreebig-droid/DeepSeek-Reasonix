@@ -92,7 +92,7 @@ func runGit(ctx context.Context, cwd string, args ...string) (string, error) {
 }
 
 func parseGitNumstat(out string) (added int, removed int) {
-	for line := range strings.SplitSeq(strings.TrimSpace(out), "\n") {
+	for _, line := range strings.Split(strings.TrimSpace(out), "\n") {
 		if line == "" {
 			continue
 		}
@@ -116,7 +116,7 @@ func parseGitNumstat(out string) (added int, removed int) {
 
 func countUntracked(out string) int {
 	n := 0
-	for line := range strings.SplitSeq(strings.TrimRight(out, "\n"), "\n") {
+	for _, line := range strings.Split(strings.TrimRight(out, "\n"), "\n") {
 		if strings.HasPrefix(line, "?? ") {
 			n++
 		}
