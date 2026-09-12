@@ -1,8 +1,8 @@
 package agent
 
 import (
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
-	"slices"
 )
 
 func confirmedRecoveryEffect(msgs []provider.Message, id provider.ActionIdentity) bool {

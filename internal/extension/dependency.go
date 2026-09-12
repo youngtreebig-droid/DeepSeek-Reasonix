@@ -2,10 +2,10 @@ package extension
 
 import (
 	"fmt"
-	"slices"
 	"sort"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/extensioncontract"
 )
 

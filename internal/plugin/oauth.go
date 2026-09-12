@@ -14,10 +14,10 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"slices"
 	"strings"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/mcpdiag"
 	"reasonix/internal/secrets"
 )

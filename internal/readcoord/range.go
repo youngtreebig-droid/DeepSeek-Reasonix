@@ -4,8 +4,8 @@
 package readcoord
 
 import (
-	"slices"
-
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/tool"
 )
 
@@ -31,7 +31,7 @@ func Normalize(ranges []tool.ReadRange) []tool.ReadRange {
 	for _, r := range out[1:] {
 		last := &merged[len(merged)-1]
 		if r.Start <= last.End {
-			last.End = max(last.End, r.End)
+			last.End = compat.Max(last.End, r.End)
 			continue
 		}
 		merged = append(merged, r)
@@ -55,7 +55,7 @@ func Subtract(want, have []tool.ReadRange) []tool.ReadRange {
 			if h.Start > cur.Start {
 				out = append(out, tool.ReadRange{Start: cur.Start, End: h.Start})
 			}
-			cur.Start = max(cur.Start, h.End)
+			cur.Start = compat.Max(cur.Start, h.End)
 			if cur.Empty() {
 				break
 			}

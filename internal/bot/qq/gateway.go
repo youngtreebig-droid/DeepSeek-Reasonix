@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,6 +16,7 @@ import (
 	"time"
 
 	"reasonix/internal/bot"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/textutil"
 
 	"golang.org/x/net/websocket"

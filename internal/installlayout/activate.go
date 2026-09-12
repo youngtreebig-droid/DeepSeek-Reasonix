@@ -11,10 +11,10 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strings"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/filelock"
 )
 

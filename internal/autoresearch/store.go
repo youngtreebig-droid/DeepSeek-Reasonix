@@ -16,6 +16,7 @@ import (
 	"strings"
 	"unicode"
 
+	"reasonix/internal/compat"
 	fileencoding "reasonix/internal/fileutil/encoding"
 )
 
@@ -543,7 +544,7 @@ func tailJSONLLines(root *os.Root, path string, limit int) ([][]byte, error) {
 		off = info.Size()
 	)
 	for off > 0 {
-		readLen := min(off, int64(chunkSize))
+		readLen := compat.Min(off, int64(chunkSize))
 		off -= readLen
 		chunk := make([]byte, readLen)
 		if _, err := f.ReadAt(chunk, off); err != nil {

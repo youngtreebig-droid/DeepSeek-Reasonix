@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"reasonix/internal/compat"
+)
 
 // anchorSafetySummary aggregates the content-free runtime audit. It measures
 // where the shadow policy would differ from the legacy fresh-read policy; it
@@ -53,7 +56,7 @@ func (t *trajScan) recordAnchorSafetyAudit(a anchorSafetyRecord) {
 	if a.SameBatchReadRejected {
 		s.SameBatchReads++
 	}
-	s.MaxObservationAge = max(s.MaxObservationAge, a.ObservationAge)
+	s.MaxObservationAge = compat.Max(s.MaxObservationAge, a.ObservationAge)
 	s.ByTaskMode[a.TaskMode]++
 	switch a.Reason {
 	case "would_block_no_eligible_read":
@@ -86,7 +89,7 @@ func renderAnchorSafety(results []result) string {
 		total.TargetChanged += a.TargetChanged
 		total.NativeInvalid += a.NativeInvalid
 		total.SameBatchReads += a.SameBatchReads
-		total.MaxObservationAge = max(total.MaxObservationAge, a.MaxObservationAge)
+		total.MaxObservationAge = compat.Max(total.MaxObservationAge, a.MaxObservationAge)
 		if total.ByTaskMode == nil {
 			total.ByTaskMode = map[string]int{}
 		}

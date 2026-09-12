@@ -7,12 +7,12 @@ package tool
 import (
 	"context"
 	"encoding/json"
-	"slices"
 	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/diff"
 	"reasonix/internal/provider"
 )

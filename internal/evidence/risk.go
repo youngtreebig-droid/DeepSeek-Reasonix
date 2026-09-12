@@ -3,7 +3,8 @@ package evidence
 import (
 	"encoding/json"
 	pathpkg "path"
-	"slices"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 
@@ -34,7 +35,7 @@ func ClassifyMutationRisk(receipts []Receipt, after int) RiskLevel {
 // checkout/temp ancestors are not change scope, while every path component
 // inside the workspace remains available to the sensitive-surface classifier.
 func ClassifyMutationRiskWithin(receipts []Receipt, after int, workspaceRoot string) RiskLevel {
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 	var paths []string
 	seen := map[string]bool{}
 	opaque := false
@@ -159,7 +160,7 @@ func (l *Ledger) PathsSince(after int) []string {
 	if l == nil {
 		return nil
 	}
-	start := max(after, 0)
+	start := compat.Max(after, 0)
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	seen := map[string]bool{}

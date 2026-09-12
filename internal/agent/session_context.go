@@ -2,8 +2,8 @@ package agent
 
 import (
 	"context"
-	"slices"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 	"reasonix/internal/sessioncontext"

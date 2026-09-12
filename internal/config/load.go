@@ -2,17 +2,17 @@ package config
 
 import (
 	"fmt"
-	"log/slog"
-	"maps"
 	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
-	"slices"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 
+	maps "reasonix/internal/compat/xmaps"
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/provider"

@@ -12,7 +12,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -23,6 +22,7 @@ import (
 
 	"reasonix/internal/agent"
 	"reasonix/internal/boot"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
 	"reasonix/internal/event"

@@ -11,10 +11,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"sync"
 	"time"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/eventwire"
 	"reasonix/internal/fileutil"
@@ -223,7 +224,7 @@ func Open(sessionPath, sessionID string) (*Ledger, error) {
 		}
 		if rec.TurnID != "" {
 			if rec.TurnID != l.active {
-				clear(pendingTools)
+				compat.Clear(pendingTools)
 				pendingToolOrder = pendingToolOrder[:0]
 				l.turnStartSeq = rec.Sequence
 				l.turnStarted = rec.CreatedAt

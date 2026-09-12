@@ -3,10 +3,10 @@ package agent
 import (
 	"crypto/sha256"
 	"fmt"
-	"log/slog"
 	"math"
 	"strings"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 )
 

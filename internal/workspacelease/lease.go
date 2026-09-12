@@ -12,12 +12,12 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"sort"
 	"strings"
 	"sync"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/filelock"
 )
 

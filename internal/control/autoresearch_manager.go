@@ -5,10 +5,10 @@ package control
 // task. New Goal runs never create, update, list, or expose those archives.
 
 import (
-	"log/slog"
 	"strings"
 
 	"reasonix/internal/autoresearch"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/evidence"
 )
 

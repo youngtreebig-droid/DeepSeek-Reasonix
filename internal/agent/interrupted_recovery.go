@@ -3,9 +3,9 @@ package agent
 import (
 	"fmt"
 	"html"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 

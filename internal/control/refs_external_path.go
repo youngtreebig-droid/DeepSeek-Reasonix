@@ -3,7 +3,7 @@ package control
 import (
 	"os"
 	"path/filepath"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 

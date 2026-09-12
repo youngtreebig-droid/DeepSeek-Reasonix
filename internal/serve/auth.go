@@ -12,7 +12,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log/slog"
 	"net"
 	"net/http"
 	"net/url"
@@ -23,6 +22,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 )
 

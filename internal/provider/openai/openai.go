@@ -27,7 +27,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"maps"
 	"net/http"
 	"sort"
 	"strings"
@@ -35,6 +34,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	maps "reasonix/internal/compat/xmaps"
 	"reasonix/internal/netclient"
 	"reasonix/internal/provider"
 )

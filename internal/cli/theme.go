@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"image/color"
-	"log/slog"
 	"os"
 	"strconv"
 	"strings"
@@ -12,6 +11,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 	"reasonix/internal/i18n"
 )

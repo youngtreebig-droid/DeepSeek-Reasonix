@@ -2,9 +2,9 @@ package checkpoint
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/diff"
 	fileenc "reasonix/internal/fileutil/encoding"
 )

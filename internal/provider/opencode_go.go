@@ -1,8 +1,8 @@
 package provider
 
 import (
-	"maps"
 	"net/url"
+	maps "reasonix/internal/compat/xmaps"
 	"sort"
 	"strings"
 )

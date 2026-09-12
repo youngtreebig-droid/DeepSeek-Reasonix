@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"reasonix/internal/compat"
 	"strings"
 )
 
@@ -68,7 +69,7 @@ func renderToolSurface(results []result) string {
 			continue
 		}
 		runs++
-		schemaMax = max(schemaMax, t.SchemaTokensMax)
+		schemaMax = compat.Max(schemaMax, t.SchemaTokensMax)
 		schemaTotal += t.SchemaTokensTotal
 		promptTotal += t.PromptTokensSeen
 		connects += t.ConnectCalls

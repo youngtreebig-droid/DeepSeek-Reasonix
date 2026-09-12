@@ -2,8 +2,8 @@ package pathidentity
 
 import (
 	"path/filepath"
+	slices "reasonix/internal/compat/xslices"
 	"runtime"
-	"slices"
 	"strings"
 )
 

@@ -9,6 +9,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/nilutil"
 	"reasonix/internal/provider"
 )
@@ -319,7 +320,7 @@ func (a *Agent) calibratedPromptTokens(shape requestCalibrationShape) (int, bool
 			// represented share and price only the excess at the cold rate,
 			// preserving exact calibration for stable CJK sessions.
 			if shape.cjkRunes*cal.requestChars > cal.cjkRunes*shape.requestChars {
-				trustedCJKBytes := min(cal.cjkBytes*shape.requestChars/cal.requestChars, shape.cjkBytes)
+				trustedCJKBytes := compat.Min(cal.cjkBytes*shape.requestChars/cal.requestChars, shape.cjkBytes)
 				excessCJKBytes = shape.cjkBytes - trustedCJKBytes
 				trustedChars -= excessCJKBytes
 			}
@@ -371,7 +372,7 @@ func (a *Agent) effectiveContextWindow() int {
 	}
 	switch {
 	case cfg > 0 && learned > 0:
-		return min(cfg, learned)
+		return compat.Min(cfg, learned)
 	case learned > 0:
 		return learned
 	default:
@@ -493,7 +494,7 @@ func outputBudgetReserveForWindow(window int) int {
 	if window <= 0 {
 		return outputBudgetReserve
 	}
-	return min(outputBudgetReserve, max(minOutputBudgetReserve, window/128))
+	return compat.Min(outputBudgetReserve, compat.Max(minOutputBudgetReserve, window/128))
 }
 
 // admitSummaryOutputBudget uses the summary request's dedicated protocol

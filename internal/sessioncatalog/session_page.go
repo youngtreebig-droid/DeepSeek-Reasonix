@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reasonix/internal/compat"
 	"strings"
 	"time"
 )
@@ -92,7 +93,7 @@ func (c *Catalog) ListSessions(ctx context.Context, req SessionPageRequest) (Ses
 	}
 	appendSessionTimeFilter(&where, &args, req.TimeFilter, c.opts.Now())
 	scanCursor := cursor
-	scanLimit := max(req.Limit+1, 64)
+	scanLimit := compat.Max(req.Limit+1, 64)
 	for len(out.Items) <= req.Limit {
 		pageWhere := append([]string(nil), where...)
 		pageArgs := append([]any(nil), args...)

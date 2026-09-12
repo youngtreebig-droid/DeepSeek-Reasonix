@@ -1,10 +1,9 @@
 package control
 
 import (
-	"log/slog"
-	"slices"
-
 	"reasonix/internal/agent"
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 	"reasonix/internal/turnevent"
 )

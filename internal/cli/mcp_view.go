@@ -8,6 +8,7 @@ import (
 
 	"github.com/charmbracelet/x/ansi"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/plugin"
 )
 
@@ -105,7 +106,7 @@ func writeMCPServer(b *strings.Builder, width int, s plugin.ServerStatus, prompt
 	}
 	if len(invalidTools) > 0 {
 		b.WriteString(viewSubhead("    unavailable tools") + "\n")
-		limit := min(len(invalidTools), mcpMaxItemsPerSection)
+		limit := compat.Min(len(invalidTools), mcpMaxItemsPerSection)
 		for _, t := range invalidTools[:limit] {
 			writeMCPItem(b, width, "      ", sanitizeExternalDisplayText(t.Name), sanitizeExternalDisplayText(t.SchemaError))
 		}
@@ -124,7 +125,7 @@ func writeMCPToolList(b *strings.Builder, width int, s plugin.ServerStatus, tool
 		return
 	}
 	b.WriteString(viewSubhead("    tools") + "\n")
-	limit := min(len(tools), mcpMaxItemsPerSection)
+	limit := compat.Min(len(tools), mcpMaxItemsPerSection)
 	src := sanitizeExternalDisplayText(s.ConfigSource)
 	for _, t := range tools[:limit] {
 		detail := sanitizeExternalDisplayText(t.Description)
@@ -174,7 +175,7 @@ func writeMCPFailure(b *strings.Builder, width int, f plugin.Failure) {
 
 func writeMCPPromptList(b *strings.Builder, width int, prompts []plugin.Prompt) {
 	b.WriteString(viewSubhead("    prompts") + "\n")
-	limit := min(len(prompts), mcpMaxItemsPerSection)
+	limit := compat.Min(len(prompts), mcpMaxItemsPerSection)
 	for _, p := range prompts[:limit] {
 		writeMCPItem(b, width, "      ", "/"+sanitizeExternalDisplayText(p.Name), sanitizeExternalDisplayText(p.Description))
 	}
@@ -185,7 +186,7 @@ func writeMCPPromptList(b *strings.Builder, width int, prompts []plugin.Prompt) 
 
 func writeMCPResourceList(b *strings.Builder, width int, resources []plugin.Resource) {
 	b.WriteString(viewSubhead("    resources") + "\n")
-	limit := min(len(resources), mcpMaxItemsPerSection)
+	limit := compat.Min(len(resources), mcpMaxItemsPerSection)
 	for _, r := range resources[:limit] {
 		label := sanitizeExternalDisplayText(r.Name)
 		if label == "" {
@@ -215,10 +216,10 @@ func writeMCPItem(b *strings.Builder, width int, indent, ref, desc string) {
 		b.WriteByte('\n')
 		return
 	}
-	descBudget := min(40, max(12, available/2))
+	descBudget := compat.Min(40, compat.Max(12, available/2))
 	refBudget := available - 2 - descBudget
 	if refBudget < 16 {
-		refBudget = min(16, available)
+		refBudget = compat.Min(16, available)
 		descBudget = available - refBudget - 2
 	}
 	line := indent + compactMiddle(ref, refBudget)

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go/ast"
+	"reasonix/internal/compat"
 )
 
 // Each independent scalar multiplies the states a guarded type can be in, and
@@ -71,7 +72,7 @@ func scalarFieldCount(st *ast.StructType) int {
 			continue
 		}
 		// An embedded scalar still occupies one slot in the product.
-		total += max(len(field.Names), 1)
+		total += compat.Max(len(field.Names), 1)
 	}
 	return total
 }

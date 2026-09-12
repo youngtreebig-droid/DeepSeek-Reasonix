@@ -2,10 +2,11 @@ package transcript
 
 import (
 	"fmt"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/eventwire"
 	"reasonix/internal/provider"
-	"slices"
 	"strings"
 )
 
@@ -191,7 +192,7 @@ func (buffer *Buffer) applyStreamAttempt(e event.Event) {
 				kept = append(kept, message)
 			}
 		}
-		clear(buffer.messages[len(kept):])
+		compat.ClearSlice(buffer.messages[len(kept):])
 		buffer.messages = kept
 		delete(buffer.byMessageID, e.MessageID)
 	}

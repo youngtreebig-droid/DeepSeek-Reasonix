@@ -5,6 +5,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/i18n"
 )
 
@@ -67,7 +68,7 @@ func (m chatTUI) renderCopyPicker() string {
 	if p == nil {
 		return ""
 	}
-	w := max(m.width, 10)
+	w := compat.Max(m.width, 10)
 	var b strings.Builder
 	b.WriteString(accent(i18n.M.SlashCopyListHeader) + "\n")
 	for i, part := range p.parts {

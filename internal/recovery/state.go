@@ -2,7 +2,8 @@ package recovery
 
 import (
 	"encoding/json"
-	"slices"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 	"unicode/utf8"
 )
@@ -99,7 +100,7 @@ func (st *taskRuntime) useTaskGrantScope(scope string) {
 		return
 	}
 	if st.taskGrantScope != "" && st.taskGrantScope != scope {
-		clear(st.taskGrants)
+		compat.Clear(st.taskGrants)
 	}
 	st.taskGrantScope = scope
 }

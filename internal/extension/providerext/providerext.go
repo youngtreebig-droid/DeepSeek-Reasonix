@@ -15,11 +15,11 @@ package providerext
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"strings"
 	"sync"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/extension"
 	"reasonix/internal/extension/protocol"
 	"reasonix/internal/extension/providerconv"

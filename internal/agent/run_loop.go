@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
 	"reasonix/internal/i18n"
@@ -330,7 +331,7 @@ var streamRetrySleep = sleepStreamRetryBackoff
 // sleepStreamRetryBackoff waits ~0.5s, 1s, 2s, 4s, 8s with small jitter.
 // Returns false when ctx is cancelled during the wait.
 func sleepStreamRetryBackoff(ctx context.Context, attempt int) bool {
-	return recoverySleep(ctx, time.Duration(1<<min(max(attempt-1, 0), 2))*2*time.Second)
+	return recoverySleep(ctx, time.Duration(1<<compat.Min(compat.Max(attempt-1, 0), 2))*2*time.Second)
 }
 
 var recoverySleep = sleepRecovery

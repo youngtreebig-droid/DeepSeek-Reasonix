@@ -1,6 +1,6 @@
 package checkpoint
 
-import "slices"
+import slices "reasonix/internal/compat/xslices"
 
 // CaptureAfter records the after fingerprint and reports a preimage change.
 func (s *Store) CaptureAfter(path string, opts CaptureAfterOpts) bool {

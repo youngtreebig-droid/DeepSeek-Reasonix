@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/control"
 	"reasonix/internal/event"
 	"reasonix/internal/extension/uihub"
@@ -91,7 +92,7 @@ func extensionCardLines(pluginID string, c *event.ExtensionCardView, width int) 
 	lines := []string{accent("◆ " + title)}
 	body := c.Text
 	if c.Markdown != "" {
-		bodyWidth := max(width-visibleWidth("  │ "), 1)
+		bodyWidth := compat.Max(width-visibleWidth("  │ "), 1)
 		if rendered := newMarkdownRenderer(bodyWidth).Render(c.Markdown); rendered != "" {
 			body = rendered
 		} else {

@@ -5,10 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"slices"
 	"strings"
 	"sync"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 
@@ -185,7 +186,7 @@ func splitExtractChunks(msgs []provider.Message, overlap int, policy provider.Sh
 	var spans []extractMessageSpan // unit indexes, newest -> oldest
 	end := len(units)
 	for i := 0; end > 0; i++ {
-		size := sizes[min(i, len(sizes)-1)]
+		size := sizes[compat.Min(i, len(sizes)-1)]
 		if i > 0 {
 			size -= overlap // the shared boundary region is counted by the newer chunk
 		}
@@ -358,7 +359,7 @@ func (a *Agent) mergeInputBudget() int {
 	if window <= 0 {
 		return math.MaxInt
 	}
-	return max(minMergeInputTokens, (window-a.summaryOutputBudget()-summaryPlanReserve(window))/2)
+	return compat.Max(minMergeInputTokens, (window-a.summaryOutputBudget()-summaryPlanReserve(window))/2)
 }
 
 // mergeGroup merges one group of fragment briefings. A group that cannot be
@@ -421,7 +422,7 @@ func (a *Agent) mergeFragmentsWithRun(ctx context.Context, parts []string, instr
 		var next []string
 		pairIndex := 0
 		for i := 0; i < len(parts); i += 2 {
-			group := parts[i:min(i+2, len(parts))]
+			group := parts[i:compat.Min(i+2, len(parts))]
 			if len(group) == 1 {
 				// Odd tail: carried into the next round unchanged.
 				next = append(next, group[0])

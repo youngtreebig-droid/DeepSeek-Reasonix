@@ -1,8 +1,7 @@
 package control
 
 import (
-	"slices"
-
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )

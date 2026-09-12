@@ -6,11 +6,11 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strings"
 	"unicode/utf8"
 
 	"reasonix/internal/command"
+	slices "reasonix/internal/compat/xslices"
 )
 
 var (

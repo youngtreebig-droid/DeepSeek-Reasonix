@@ -3,11 +3,11 @@ package control
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 	"strings"
 	"sync"
 
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 )
 
 // SessionLeaseKeeper owns at most one session lease on behalf of a frontend

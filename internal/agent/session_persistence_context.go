@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/fileutil"
 	"reasonix/internal/provider"
 )
@@ -118,7 +119,7 @@ func writeContextBytes(ctx context.Context, file *os.File, path string, data []b
 		if err := ctx.Err(); err != nil {
 			return err
 		}
-		chunk := min(len(data), sessionContextWriteChunk)
+		chunk := compat.Min(len(data), sessionContextWriteChunk)
 		written, writeErr := file.Write(data[:chunk])
 		if writeErr != nil {
 			return writeErr

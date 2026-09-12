@@ -3,11 +3,11 @@ package sessioncatalog
 import (
 	"context"
 	"errors"
-	"slices"
 	"sort"
 	"strings"
 
 	"reasonix/internal/agent"
+	slices "reasonix/internal/compat/xslices"
 )
 
 type repairBatchGeneration struct {

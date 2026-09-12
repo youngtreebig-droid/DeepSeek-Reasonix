@@ -3,6 +3,7 @@ package agent
 import (
 	"unicode/utf8"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 )
 
@@ -32,9 +33,9 @@ func (a *Agent) readAutoRecoveryBudgetFor() readAutoRecoveryBudget {
 		return readAutoRecoveryBudget{}
 	}
 	current := a.estimatedVisibleRequestTokens(a.modelVisibleMessages())
-	headroom := max(0, a.compactTrigger()-current-readAutoRecoveryContextReserveTokens)
+	headroom := compat.Max(0, a.compactTrigger()-current-readAutoRecoveryContextReserveTokens)
 	return readAutoRecoveryBudget{
-		maxTokens:      min(max(0, window/readAutoRecoveryContextShareDivisor), headroom),
+		maxTokens:      compat.Min(compat.Max(0, window/readAutoRecoveryContextShareDivisor), headroom),
 		windowTokens:   window,
 		currentTokens:  current,
 		headroomTokens: headroom,
@@ -56,7 +57,7 @@ func (a *Agent) estimatedReadResultTokens(result string) int {
 	calibrated := a.estimatedPromptTokens([]provider.Message{message})
 	message.Content = ""
 	calibrated -= a.estimatedPromptTokens([]provider.Message{message})
-	return max(conservative, calibrated)
+	return compat.Max(conservative, calibrated)
 }
 
 func estimateCrossLanguageReadTokens(result string) int {

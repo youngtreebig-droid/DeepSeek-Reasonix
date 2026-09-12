@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"reasonix/internal/bot"
+	"reasonix/internal/compat"
 
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 )
@@ -60,7 +61,7 @@ func (a *adapter) sendMedia(ctx context.Context, msg bot.OutboundMessage, media 
 }
 
 func (a *adapter) sendOneMedia(ctx context.Context, msg bot.OutboundMessage, media outboundMedia) (bot.SendResult, error) {
-	mimeType := http.DetectContentType(media.data[:min(len(media.data), 512)])
+	mimeType := http.DetectContentType(media.data[:compat.Min(len(media.data), 512)])
 	if strings.HasPrefix(mimeType, "image/") {
 		imageKey, err := a.uploadImage(ctx, media.data)
 		if err == nil {

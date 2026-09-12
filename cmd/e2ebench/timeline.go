@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"reasonix/internal/compat"
 	"strings"
 )
 
@@ -27,7 +28,7 @@ func renderTimelines(results []result) string {
 func taskTimeline(r result) string {
 	pos := func(ms int64) int {
 		p := int(ms * timelineWidth / r.WallMs)
-		return min(max(p, 0), timelineWidth)
+		return compat.Min(compat.Max(p, 0), timelineWidth)
 	}
 	markers := []struct {
 		at    int

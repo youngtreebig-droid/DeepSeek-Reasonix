@@ -10,6 +10,7 @@ import (
 	"unicode/utf8"
 
 	"reasonix/internal/ablation"
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )
@@ -106,7 +107,7 @@ func (a *Agent) compactTrigger() int {
 	if a.ablation.Off(ablation.Compaction) {
 		ratio = 0.5
 	}
-	return max(1, int(float64(window)*ratio))
+	return compat.Max(1, int(float64(window)*ratio))
 }
 
 // hardInputCeiling is a physical input-safety boundary, not another user
@@ -116,7 +117,7 @@ func (a *Agent) hardInputCeiling() int {
 	if a == nil || window <= 0 {
 		return 0
 	}
-	return max(1, window-protocolReserveTokens)
+	return compat.Max(1, window-protocolReserveTokens)
 }
 
 // recentTailBudget is the content-construction budget for the recent verbatim
@@ -126,7 +127,7 @@ func (a *Agent) recentTailBudget() int {
 	if a == nil || window <= 0 {
 		return 1
 	}
-	return max(1, int(float64(window)*recentTailBudgetRatio))
+	return compat.Max(1, int(float64(window)*recentTailBudgetRatio))
 }
 
 // foldEconomics estimates whether compacting the given region saves enough
@@ -284,7 +285,7 @@ func (a *Agent) planCompaction(msgs []provider.Message, min int, force bool) (he
 		start = tailStart(msgs, head, budget, a.tokPerChar(), a.tailFloor())
 		// Remeasure when force or non-strict roles; strict-alternating otherwise
 		// keeps a cheap tokPerChar overestimate of the tail under force.
-		floor := max(head, len(msgs)-a.tailFloor())
+		floor := compat.Max(head, len(msgs)-a.tailFloor())
 		remeasure := force || !a.strictAlternatingRoles
 		for remeasure && start < floor && estimateMessagesTokens(provider.ModelMessages(msgs[start:])) > budget {
 			start++
@@ -299,7 +300,7 @@ func (a *Agent) planCompaction(msgs []provider.Message, min int, force bool) (he
 			start--
 		}
 	}
-	start = max(start, head)
+	start = compat.Max(start, head)
 	if start-head < min {
 		return head, start, false
 	}

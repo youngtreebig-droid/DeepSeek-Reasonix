@@ -3,9 +3,9 @@ package cli
 import (
 	"fmt"
 	"path/filepath"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
 )

@@ -14,12 +14,13 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"slices"
 	"sort"
 	"strings"
 	"syscall"
 	"unicode"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/nilutil"
 )
 
@@ -767,7 +768,7 @@ func (p *Pricing) Cost(u *Usage) float64 {
 	// supplied input-token equivalent (for example Anthropic's 1.25x 5-minutewrites or 2x 1-hour writes).
 	// Olderproviders leave both fields at zero andkeep the legacy one-input-rate behavior.
 	// Awritecountwithoutbilledunits also falls back to 1xforbackward compatibility.
-	write := min(max(u.CacheWriteTokens, 0), miss)
+	write := compat.Min(compat.Max(u.CacheWriteTokens, 0), miss)
 	billedWrite := 0.0
 	if write > 0 {
 		billedWrite = u.CacheWriteBilledTokens

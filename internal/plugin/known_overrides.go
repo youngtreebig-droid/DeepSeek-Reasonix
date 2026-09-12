@@ -1,9 +1,9 @@
 package plugin
 
 import (
-	"maps"
 	"path/filepath"
-	"slices"
+	maps "reasonix/internal/compat/xmaps"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 

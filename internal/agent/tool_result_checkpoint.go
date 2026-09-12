@@ -1,8 +1,8 @@
 package agent
 
 import (
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
-	"slices"
 )
 
 func (s *Session) updateBatchGuardResults(calls []provider.ToolCall, results []string) {

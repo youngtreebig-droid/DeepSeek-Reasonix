@@ -3,11 +3,12 @@ package bot
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"strings"
 	"time"
 	"unicode"
 
+	"reasonix/internal/compat"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 )
 
@@ -248,7 +249,7 @@ func (s *renderSink) flushPrefix(idx int) {
 		// 当前块已有 live 消息：把最终内容原地编辑进去，而不是再发一条。
 		if err := s.editLive(text); err != nil {
 			s.logger.Warn("bot live message final edit failed; sending tail as new message", "err", err)
-			if tail := strings.TrimSpace(raw[min(s.liveSentBytes, idx):idx]); tail != "" {
+			if tail := strings.TrimSpace(raw[compat.Min(s.liveSentBytes, idx):idx]); tail != "" {
 				_ = s.send(s.textMessage(tail))
 			}
 			if s.liveSentBytes > resumeFrom {

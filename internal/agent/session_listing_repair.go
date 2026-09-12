@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/store"
 )
 
@@ -184,7 +185,7 @@ func repairSessionListingFromReplay(ctx context.Context, path string, meta Branc
 	}
 	ledgerRepaired := !ledgerCurrent
 	if ledgerRepaired {
-		meta.Revision = max(int64(1), meta.Revision+1)
+		meta.Revision = compat.Max(int64(1), meta.Revision+1)
 		meta.ContentDigest = state.DigestHex
 		if meta.Recovered || strings.TrimSpace(meta.RecoveryDigest) != "" {
 			meta.RecoveryDigest = state.DigestHex

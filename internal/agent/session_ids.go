@@ -5,10 +5,10 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/json"
-	"slices"
 	"strconv"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 

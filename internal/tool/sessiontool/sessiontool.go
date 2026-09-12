@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 	"reasonix/internal/textutil"
 	"reasonix/internal/tool"
@@ -178,7 +179,7 @@ loop:
 
 		case provider.RoleAssistant:
 			if m.Content != "" {
-				fmt.Fprintf(&b, "## Assistant (turn %d)\n", max(turnCount, 1))
+				fmt.Fprintf(&b, "## Assistant (turn %d)\n", compat.Max(turnCount, 1))
 				b.WriteString(truncateRunes(m.Content, 2000))
 				b.WriteString("\n\n")
 			}

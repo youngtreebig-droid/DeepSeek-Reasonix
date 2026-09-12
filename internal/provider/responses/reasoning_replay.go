@@ -1,8 +1,8 @@
 package responses
 
 import (
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
-	"slices"
 	"strings"
 )
 

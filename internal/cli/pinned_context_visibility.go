@@ -1,10 +1,10 @@
 package cli
 
 import (
-	"slices"
 	"strings"
 
 	"reasonix/internal/agent"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 

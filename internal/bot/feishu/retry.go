@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"io"
-	"log/slog"
 	mrand "math/rand"
 	"net"
 	"strings"
@@ -14,6 +13,7 @@ import (
 	"time"
 
 	"reasonix/internal/bot"
+	slog "reasonix/internal/compat/xslog"
 )
 
 // newIdempotencyKey returns a random key for the Feishu create/reply `uuid`

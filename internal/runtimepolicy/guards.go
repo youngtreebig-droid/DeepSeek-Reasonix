@@ -2,9 +2,9 @@ package runtimepolicy
 
 import (
 	"encoding/json"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/evidence"
 	"reasonix/internal/taskcontract"
 )

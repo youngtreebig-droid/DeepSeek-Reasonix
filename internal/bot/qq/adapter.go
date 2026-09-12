@@ -9,11 +9,11 @@ package qq
 
 import (
 	"context"
-	"log/slog"
 	"sync"
 	"time"
 
 	"reasonix/internal/bot"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 
 	"golang.org/x/net/websocket"

@@ -2,11 +2,11 @@ package stats
 
 import (
 	"context"
-	"maps"
 	"sort"
 	"strings"
 	"time"
 
+	maps "reasonix/internal/compat/xmaps"
 	"reasonix/internal/usagecatalog"
 )
 

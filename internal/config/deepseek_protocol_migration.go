@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"
 )

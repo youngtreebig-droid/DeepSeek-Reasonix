@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/skill"
 	"reasonix/internal/tool"
 )
@@ -216,7 +217,7 @@ func limitRouteCandidates(candidates []RouteCandidate) []RouteCandidate {
 			suggested = append(suggested, candidate)
 		}
 	}
-	slots := max(targetCandidates-len(strong), 0)
+	slots := compat.Max(targetCandidates-len(strong), 0)
 	if len(suggested) > slots {
 		suggested = suggested[:slots]
 	}

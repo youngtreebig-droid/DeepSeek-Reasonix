@@ -1,10 +1,10 @@
 package agent
 
 import (
-	"slices"
 	"time"
 
 	"reasonix/internal/agentpreset"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/completion"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"

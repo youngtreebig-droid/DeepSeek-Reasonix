@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log/slog"
 	"os"
 	"os/signal"
 	"strings"
@@ -14,6 +13,7 @@ import (
 	"reasonix/internal/bot"
 	"reasonix/internal/bot/weixin"
 	"reasonix/internal/botruntime"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 )
 

@@ -2,10 +2,10 @@ package control
 
 import (
 	"fmt"
-	"log/slog"
 	"time"
 
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 )
 

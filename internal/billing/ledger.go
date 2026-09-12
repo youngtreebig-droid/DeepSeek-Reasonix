@@ -1,7 +1,7 @@
 package billing
 
 import (
-	"maps"
+	maps "reasonix/internal/compat/xmaps"
 	"sort"
 	"strings"
 	"time"

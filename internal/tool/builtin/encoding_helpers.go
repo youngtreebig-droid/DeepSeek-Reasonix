@@ -3,9 +3,10 @@ package builtin
 import (
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/fileutil"
 	fileenc "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/tool"
@@ -445,7 +446,7 @@ func firstNonEmptyLine(s string) string {
 }
 
 func commonPrefixLen(a, b string) int {
-	n := min(len(b), len(a))
+	n := compat.Min(len(b), len(a))
 	for i := range n {
 		if a[i] != b[i] {
 			return i

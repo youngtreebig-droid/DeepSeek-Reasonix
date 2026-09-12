@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"path/filepath"
-	"slices"
 	"sync"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
 	"reasonix/internal/provider"
@@ -229,7 +230,7 @@ func observedTargetChanged(o evidence.TextObservation, target tool.EvidenceTarge
 		if r.Lines() < 0 || index+r.Lines() > len(target.Hashes) {
 			return false
 		}
-		for line := max(r.Start, o.StartLine-1); line < min(r.End, o.StartLine-1+len(o.LineHashes)); line++ {
+		for line := compat.Max(r.Start, o.StartLine-1); line < compat.Min(r.End, o.StartLine-1+len(o.LineHashes)); line++ {
 			if target.Hashes[index+line-r.Start] != o.LineHashes[line-(o.StartLine-1)] {
 				return true
 			}

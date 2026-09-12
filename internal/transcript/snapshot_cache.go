@@ -1,7 +1,7 @@
 package transcript
 
 import (
-	"maps"
+	maps "reasonix/internal/compat/xmaps"
 	"reflect"
 )
 

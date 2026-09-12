@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"reasonix/internal/compat"
 	"runtime"
 	"sort"
 	"strings"
@@ -379,7 +380,7 @@ func (s *Store) mutateOne(ctx context.Context, topicID string, mutate func(*Reco
 // for first migration and deterministic legacy reconciliation.
 func (s *Store) ReplaceAll(ctx context.Context, records map[string]Record) (State, error) {
 	return s.mutate(ctx, func(current map[string]Record) {
-		clear(current)
+		compat.Clear(current)
 		for id, record := range records {
 			record.TopicID = strings.TrimSpace(id)
 			normalizeRecord(&record)

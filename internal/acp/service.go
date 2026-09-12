@@ -7,8 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
-	"maps"
 	"os"
 	"path/filepath"
 	"sort"
@@ -18,6 +16,8 @@ import (
 
 	"reasonix/internal/agent"
 	"reasonix/internal/agentpreset"
+	maps "reasonix/internal/compat/xmaps"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/control"
 	"reasonix/internal/event"
 	"reasonix/internal/extension/uihub"

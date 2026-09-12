@@ -3,12 +3,12 @@ package control
 import (
 	"context"
 	"regexp"
-	"slices"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 
 	"reasonix/internal/agent"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/runtimepolicy"
 	"reasonix/internal/taskcontract"
 )

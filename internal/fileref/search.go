@@ -3,6 +3,7 @@ package fileref
 import (
 	"io/fs"
 	"path/filepath"
+	"reasonix/internal/compat"
 	"sort"
 	"strings"
 )
@@ -149,7 +150,7 @@ func Search(root, query string, limit int) []SearchResult {
 	// out by a large number of file matches.
 	const dirQuota = 5
 	out := make([]SearchResult, 0, limit)
-	nDirs := min(len(dirHits), dirQuota)
+	nDirs := compat.Min(len(dirHits), dirQuota)
 	out = append(out, dirHits[:nDirs]...)
 	remaining := limit - len(out)
 	if remaining > 0 {

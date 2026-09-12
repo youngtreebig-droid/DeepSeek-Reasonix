@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -15,6 +14,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/fileutil"
 )
 

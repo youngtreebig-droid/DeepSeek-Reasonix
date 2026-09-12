@@ -2,7 +2,6 @@ package cli
 
 import (
 	"encoding/json"
-	"maps"
 	"os"
 	"sort"
 	"strings"
@@ -11,6 +10,7 @@ import (
 
 	"reasonix/internal/billing"
 	"reasonix/internal/capability"
+	maps "reasonix/internal/compat/xmaps"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
 	"reasonix/internal/fileutil"

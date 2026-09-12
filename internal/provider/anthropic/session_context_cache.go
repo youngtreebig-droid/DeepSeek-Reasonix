@@ -1,8 +1,7 @@
 package anthropic
 
 import (
-	"slices"
-
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/sessioncontext"
 )
 

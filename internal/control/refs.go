@@ -19,6 +19,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/fileref"
 	"reasonix/internal/instruction"
 	"reasonix/internal/proc"
@@ -1026,7 +1027,7 @@ func readFileRefWithVision(path, baseDir string, vision bool) (content string, i
 	if mime := imageMime(data, rel); mime != "" {
 		return imageFileRefNote(displayPath, mime, info.Size(), true, vision), false, nil
 	}
-	if bytes.IndexByte(data[:min(n, 8192)], 0) >= 0 {
+	if bytes.IndexByte(data[:compat.Min(n, 8192)], 0) >= 0 {
 		return fmt.Sprintf("[binary file %s, %d bytes — not shown]", displayPath, info.Size()), false, nil
 	}
 	if n > maxFileRefBytes {
@@ -1105,7 +1106,7 @@ func readFileRefUnscoped(path string, vision bool) (content string, isDir bool, 
 	if mime := imageMime(data, path); mime != "" {
 		return imageFileRefNote(path, mime, info.Size(), false, vision), false, nil
 	}
-	if bytes.IndexByte(data[:min(n, 8192)], 0) >= 0 {
+	if bytes.IndexByte(data[:compat.Min(n, 8192)], 0) >= 0 {
 		return fmt.Sprintf("[binary file %s, %d bytes — not shown]", path, info.Size()), false, nil
 	}
 	if n > maxFileRefBytes {
@@ -1334,7 +1335,7 @@ with pdfplumber.open(path) as pdf:
 `
 
 func imageMime(data []byte, path string) string {
-	mime := http.DetectContentType(data[:min(len(data), 512)])
+	mime := http.DetectContentType(data[:compat.Min(len(data), 512)])
 	if strings.HasPrefix(mime, "image/") {
 		return mime
 	}

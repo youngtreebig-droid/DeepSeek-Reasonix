@@ -9,12 +9,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strings"
 	"sync"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/fileutil"
 	"reasonix/internal/provider"
 	"reasonix/internal/provider/openai"

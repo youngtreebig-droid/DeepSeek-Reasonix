@@ -3,9 +3,9 @@ package control
 import (
 	"context"
 	"errors"
-	"log/slog"
 	"sync"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/eventwire"
 	"reasonix/internal/evidence"

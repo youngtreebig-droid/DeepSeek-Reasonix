@@ -1,6 +1,9 @@
 package openai
 
-import "strings"
+import (
+	"reasonix/internal/compat"
+	"strings"
+)
 
 const (
 	thinkOpen  = "<think>"
@@ -88,7 +91,7 @@ func (t *thinkSplitter) drainPassthrough() string {
 // prefix of marker — the tail to hold back in case the rest of the tag arrives
 // in the next delta.
 func markerSuffixLen(s, marker string) int {
-	max := min(len(marker)-1, len(s))
+	max := compat.Min(len(marker)-1, len(s))
 	for n := max; n > 0; n-- {
 		if strings.HasPrefix(marker, s[len(s)-n:]) {
 			return n

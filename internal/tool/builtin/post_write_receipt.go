@@ -2,6 +2,7 @@ package builtin
 
 import (
 	"fmt"
+	"reasonix/internal/compat"
 	"strings"
 	"unicode/utf8"
 )
@@ -37,7 +38,7 @@ func renderPostWriteReceipts(receipts []editReplacementReceipt) string {
 	// Share the bounded body between the selected first/last receipts and their
 	// matched/replacement fields. The final clip below remains a defensive cap
 	// for unusually large counts or labels.
-	fieldBudget := min(max((maxPostWriteReceiptBytes-256)/(2*len(indexes)), 128), maxCapturedReceiptSpanBytes)
+	fieldBudget := compat.Min(compat.Max((maxPostWriteReceiptBytes-256)/(2*len(indexes)), 128), maxCapturedReceiptSpanBytes)
 
 	var b strings.Builder
 	b.Grow(maxPostWriteReceiptBytes)

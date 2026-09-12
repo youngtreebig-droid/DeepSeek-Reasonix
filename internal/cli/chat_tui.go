@@ -26,6 +26,7 @@ import (
 	"reasonix/internal/billing"
 	"reasonix/internal/boot"
 	"reasonix/internal/command"
+	"reasonix/internal/compat"
 	turncomp "reasonix/internal/completion"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
@@ -700,7 +701,7 @@ func transcriptContentWidth(termW int, nativeScrollback bool) int {
 	if !nativeScrollback {
 		termW-- // reserve the last column for the transcript scrollbar
 	}
-	return max(termW, 1)
+	return compat.Max(termW, 1)
 }
 
 func configureChatTextarea(ti *textarea.Model) {
@@ -873,7 +874,7 @@ func (m chatTUI) renderQueueIndicator() string {
 	highlightStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("250"))
 	var lines []string
 	// Ordinary status: at most three rows; full list via /queue.
-	limit := min(len(items), 3)
+	limit := compat.Min(len(items), 3)
 	for i := range limit {
 		it := items[i]
 		preview := it.Preview
@@ -1072,7 +1073,7 @@ func (m chatTUI) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.followComposerCursor()
 		m.width = msg.Width
 		m.height = msg.Height
-		m.input.SetWidth(max(msg.Width-4, 1))
+		m.input.SetWidth(compat.Max(msg.Width-4, 1))
 		// Commit the banner — and a resumed session's transcript — once, now
 		// that the width is known.
 		if !m.started {
@@ -1997,7 +1998,7 @@ func (m chatTUI) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, m.startTurnWithRaw(sent, msg.display, msg.restore, msg.display))
 
 	case clipboardImageMsg:
-		requests := max(m.clipboardImageRequests, 1)
+		requests := compat.Max(m.clipboardImageRequests, 1)
 		m.clipboardImagePending = false
 		m.clipboardImageRequests = 0
 		if msg.err != nil {
@@ -2175,7 +2176,7 @@ func chunkLines(s string, n int) []string {
 	}
 	var out []string
 	for i := 0; i < len(lines); i += n {
-		end := min(i+n, len(lines))
+		end := compat.Min(i+n, len(lines))
 		out = append(out, strings.Join(lines[i:end], "\n"))
 	}
 	return out
@@ -2321,7 +2322,7 @@ func (m chatTUI) renderMainManagerFooter() string {
 	if strings.TrimSpace(hint) == "" {
 		return ""
 	}
-	w := max(viewWidth(m.width), 40)
+	w := compat.Max(viewWidth(m.width), 40)
 	return managerFooterPanelStyle(w).Render(dim(hint))
 }
 
@@ -2332,7 +2333,7 @@ func (m chatTUI) renderTranscriptWithMainManager(card string) string {
 	}
 	cw := m.viewport.Width()
 	if cw <= 0 {
-		cw = max(m.width-1, 1)
+		cw = compat.Max(m.width-1, 1)
 	}
 
 	cardLines := strings.Split(strings.TrimRight(card, "\n"), "\n")
@@ -2347,7 +2348,7 @@ func (m chatTUI) renderTranscriptWithMainManager(card string) string {
 	var rows []string
 	if maxTranscriptRows > 0 {
 		lines := m.wrappedLines
-		start := max(0, len(lines)-maxTranscriptRows)
+		start := compat.Max(0, len(lines)-maxTranscriptRows)
 		rows = append(rows, lines[start:]...)
 	}
 	if len(rows) > 0 && len(cardLines) > 0 {
@@ -2688,7 +2689,7 @@ func (m *chatTUI) subagentProgressBlock(id string, sp *cliSubagentProgress) stri
 // subagentPreviewBlock renders a bounded trailing window of a preview channel
 // as dim, width-wrapped lines carrying a small glyph marker.
 func subagentPreviewBlock(glyph, raw string, width, maxLines int) string {
-	w := max(width-len([]rune(connector)), 8)
+	w := compat.Max(width-len([]rune(connector)), 8)
 	var lines []string
 	first := true
 	for ln := range strings.SplitSeq(strings.TrimRight(raw, "\n"), "\n") {
@@ -2928,7 +2929,7 @@ func (m *chatTUI) toggleShellOutput() {
 	} else {
 		// Expand: show up to shellExpandMaxLines lines.
 		m.shellExpanded[lastID] = true
-		show := min(total, shellExpandMaxLines)
+		show := compat.Min(total, shellExpandMaxLines)
 		rendered := make([]string, show)
 		for i := range show {
 			rendered[i] = dim(clampPlain(lines[i], innerW))
@@ -3317,7 +3318,7 @@ func (m chatTUI) View() tea.View {
 		}
 		return v
 	}
-	boxW := max(m.width, 10)
+	boxW := compat.Max(m.width, 10)
 	hideComposer := m.hideComposer()
 	shellMode := strings.HasPrefix(strings.TrimSpace(m.input.Value()), "!")
 	cancelRequested := m.cancelRequested()
@@ -3543,7 +3544,7 @@ func (m chatTUI) contextTag() string {
 	}
 	threshold := int(ratio * 100)
 	// Headroom to the compaction point, as a percentage of the window (clamped at 0).
-	left := max(threshold-pct, 0)
+	left := compat.Max(threshold-pct, 0)
 	body := fmt.Sprintf("%s ctx (%d%%) · %d%% to compact", shortTokens(used), pct, left)
 	switch {
 	case pct >= threshold:
@@ -3721,7 +3722,7 @@ func completionSummaryWarning(c *event.CompletionSummaryInfo) string {
 // renderApprovalBanner is the slim notice shown above the input while a tool
 // call (or a plan) awaits the user's decision.
 func (m chatTUI) renderApprovalBanner() string {
-	w := max(m.width, 10)
+	w := compat.Max(m.width, 10)
 	if m.pendingApproval == nil {
 		return ""
 	}
@@ -3781,7 +3782,7 @@ func approvalSubjectBody(full, preview string, width int) string {
 	if full == "" || full == preview {
 		return ""
 	}
-	wrapWidth := max(width-4, 20)
+	wrapWidth := compat.Max(width-4, 20)
 	lines := strings.Split(wrapStatusLine(full, wrapWidth), "\n")
 	if len(lines) > maxApprovalSubjectLines {
 		lines = lines[:maxApprovalSubjectLines]
@@ -3903,7 +3904,7 @@ func (m chatTUI) renderTodoPanel() string {
 	if end < len(p.Todos) {
 		b.WriteString(dim(fmt.Sprintf("  +%d more", len(p.Todos)-end)) + "\n")
 	}
-	return todoPanelStyle.Width(max(m.width, 10)).Render(strings.TrimRight(b.String(), "\n"))
+	return todoPanelStyle.Width(compat.Max(m.width, 10)).Render(strings.TrimRight(b.String(), "\n"))
 }
 
 func todoPanelWindow(todos []todoPanelTodo) (int, int) {
@@ -3920,7 +3921,7 @@ func todoPanelWindow(todos []todoPanelTodo) (int, int) {
 	if active < 0 {
 		return 0, todoPanelMaxRows
 	}
-	start := max(active-todoPanelMaxRows/2, 0)
+	start := compat.Max(active-todoPanelMaxRows/2, 0)
 	if maxStart := len(todos) - todoPanelMaxRows; start > maxStart {
 		start = maxStart
 	}
@@ -4019,8 +4020,8 @@ func (m chatTUI) inputHeightLimit() int {
 	limit := maxInputRows
 	// Match the bounded-composer convention used by other coding TUIs: borders
 	// are part of the half-screen budget, not extra rows added afterward.
-	halfScreen := max(1, m.height/2-composerBorderRows)
-	limit = min(limit, halfScreen)
+	halfScreen := compat.Max(1, m.height/2-composerBorderRows)
+	limit = compat.Min(limit, halfScreen)
 
 	// bottomRows includes the current composer. Remove it to get the fixed
 	// panels/status budget, then reserve the input borders and a readable slice
@@ -4029,8 +4030,8 @@ func (m chatTUI) inputHeightLimit() int {
 	if !m.hideComposer() {
 		fixedBottomRows -= m.input.Height() + composerBorderRows
 	}
-	available := max(1, m.height-fixedBottomRows-composerBorderRows-minTranscriptRows)
-	return max(1, min(limit, available))
+	available := compat.Max(1, m.height-fixedBottomRows-composerBorderRows-minTranscriptRows)
+	return compat.Max(1, compat.Min(limit, available))
 }
 
 func (m *chatTUI) syncInputHeightLimit() {
@@ -4042,14 +4043,14 @@ func (m *chatTUI) syncInputHeightLimit() {
 	m.input.MaxHeight = limit
 	// SetWidth recalculates DynamicHeight from the full soft-wrapped content,
 	// clamping the visible viewport to the new limit while preserving the text.
-	m.input.SetWidth(max(m.width-4, 1))
+	m.input.SetWidth(compat.Max(m.width-4, 1))
 }
 
 func (m *chatTUI) growInputToFit() {
 	if m.input.DynamicHeight {
 		return
 	}
-	lines := min(max(strings.Count(m.input.Value(), "\n")+1, 1), maxInputRows)
+	lines := compat.Min(compat.Max(strings.Count(m.input.Value(), "\n")+1, 1), maxInputRows)
 	if lines != m.input.Height() {
 		m.input.SetHeight(lines)
 	}

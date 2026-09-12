@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
 	"reasonix/internal/event"
@@ -878,7 +879,7 @@ func (m *cliTakeoverManager) retryPendingReturns(force bool) {
 			continue
 		}
 		m.mu.Lock()
-		item.backoff = min(item.backoff*2, 5*time.Second)
+		item.backoff = compat.Min(item.backoff*2, 5*time.Second)
 		item.nextTry = now.Add(item.backoff)
 		m.mu.Unlock()
 	}

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 	"sync"
 

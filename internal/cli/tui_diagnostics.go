@@ -3,9 +3,9 @@ package cli
 import (
 	"fmt"
 	"io"
-	"log/slog"
 	"os"
 	"path/filepath"
+	slog "reasonix/internal/compat/xslog"
 	"runtime"
 	"strings"
 	"sync"

@@ -3,7 +3,7 @@ package config
 import (
 	"crypto/sha256"
 	"fmt"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 

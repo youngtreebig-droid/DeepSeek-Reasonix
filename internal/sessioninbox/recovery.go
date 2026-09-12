@@ -1,6 +1,9 @@
 package sessioninbox
 
-import "time"
+import (
+	"reasonix/internal/compat"
+	"time"
+)
 
 // RecoverOrphanedInFlight converts admitted items that no live Controller owns
 // into reviewable pending work. The transition is atomic so a crash cannot
@@ -74,7 +77,7 @@ func (s *Store) RecoverOrphanedInFlightOwnedBy(ownedBy func(string) bool) (int, 
 	}
 	next.Paused = true
 	next.Recovered = true
-	next.RecoveredN = min(len(next.Items), next.RecoveredN+recovered)
+	next.RecoveredN = compat.Min(len(next.Items), next.RecoveredN+recovered)
 	if err := s.commitManifestLocked(next); err != nil {
 		return 0, err
 	}

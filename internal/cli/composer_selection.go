@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"reasonix/internal/compat"
 	"strings"
 	"unicode"
 
@@ -195,12 +196,12 @@ func (m chatTUI) composerRowsForRender() []composerVisualRow {
 // that cursor and the textarea's own offset untouched.
 func (m chatTUI) composerViewOffset() int {
 	rows := m.composerRowsForRender()
-	maximum := max(0, len(rows)-m.input.Height())
+	maximum := compat.Max(0, len(rows)-m.input.Height())
 	offset := m.input.ScrollYOffset()
 	if m.composerScrollDetached {
 		offset = m.composerScrollOffset
 	}
-	return min(max(offset, 0), maximum)
+	return compat.Min(compat.Max(offset, 0), maximum)
 }
 
 func (m *chatTUI) followComposerCursor() {
@@ -214,12 +215,12 @@ func (m *chatTUI) scrollComposer(delta int) bool {
 	if delta == 0 || m.hideComposer() || m.input.Height() <= 0 {
 		return false
 	}
-	maximum := max(0, len(m.composerRows())-m.input.Height())
+	maximum := compat.Max(0, len(m.composerRows())-m.input.Height())
 	if maximum == 0 {
 		return false
 	}
 	current := m.composerViewOffset()
-	next := min(max(current+delta, 0), maximum)
+	next := compat.Min(compat.Max(current+delta, 0), maximum)
 	if next == current {
 		return false
 	}
@@ -229,7 +230,7 @@ func (m *chatTUI) scrollComposer(delta int) bool {
 }
 
 func (m chatTUI) mouseOverComposer(screenX, screenY int) bool {
-	if m.hideComposer() || screenX < 0 || screenX >= max(m.width, 10) {
+	if m.hideComposer() || screenX < 0 || screenX >= compat.Max(m.width, 10) {
 		return false
 	}
 	_, contentY, ok := m.composerOrigin()
@@ -276,7 +277,7 @@ func composerClusters(row composerVisualRow) []composerCluster {
 		if len(clusterRunes) == 0 || cellIndex >= len(actual) {
 			continue
 		}
-		endIndex := min(cellIndex+len(clusterRunes), len(actual))
+		endIndex := compat.Min(cellIndex+len(clusterRunes), len(actual))
 		first := actual[cellIndex]
 		last := actual[endIndex-1]
 		width := graphemes.Width()
@@ -383,7 +384,7 @@ func (m *chatTUI) composerCaretAt(screenX, screenY int, clamp bool) (composerCar
 		relY = m.input.Height() - 1
 	}
 	rows := m.composerRows()
-	visualRow := max(m.composerViewOffset()+relY, 0)
+	visualRow := compat.Max(m.composerViewOffset()+relY, 0)
 	if visualRow >= len(rows) {
 		visualRow = len(rows) - 1
 	}
@@ -458,7 +459,7 @@ func composerRowSelectionSpan(row composerVisualRow, start, end int) (lo, hi int
 			lo = visualCol
 			ok = true
 		}
-		hi = max(hi, visualCol+1)
+		hi = compat.Max(hi, visualCol+1)
 	}
 	return lo, hi, ok
 }
@@ -512,8 +513,8 @@ func (m chatTUI) renderDetachedComposerInput() string {
 	display.MoveToBegin()
 
 	rows := m.composerRowsForRender()
-	targetRow := min(m.composerViewOffset()+m.input.Height()-1, len(rows)-1)
-	for range max(targetRow, 0) {
+	targetRow := compat.Min(m.composerViewOffset()+m.input.Height()-1, len(rows)-1)
+	for range compat.Max(targetRow, 0) {
 		display.CursorDown()
 	}
 	return display.View()

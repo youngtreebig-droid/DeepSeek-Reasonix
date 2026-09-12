@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
 	"reasonix/internal/jobs"
@@ -191,7 +192,7 @@ func (o *turnOrchestrator) runSubagentSkillTurns(ctx context.Context, skills []s
 		answer = tool.GuardSubagentHostDecisionText(answer)
 		toolEvent.Output = answer
 		c.sink.Emit(event.Event{Kind: event.ToolResult, Tool: toolEvent})
-		workDurationMs := max(int64(1), time.Since(turnStartedAt).Milliseconds())
+		workDurationMs := compat.Max(int64(1), time.Since(turnStartedAt).Milliseconds())
 		messageID := agent.NewMessageID()
 		c.executor.Session().Add(provider.Message{ID: messageID, Role: provider.RoleAssistant, Content: answer, WorkDurationMs: workDurationMs})
 		display := agent.DisplayAssistantText(answer)

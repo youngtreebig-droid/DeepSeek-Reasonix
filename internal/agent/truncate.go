@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 )
 
@@ -45,7 +46,7 @@ func (a *Agent) truncateView(visible []provider.Message, target int) ([]provider
 		return nil, 0
 	}
 	head := a.pinnedPrefixLen(visible)
-	budget := max(1, min(a.recentTailBudget(), target/truncateProtectShare))
+	budget := compat.Max(1, compat.Min(a.recentTailBudget(), target/truncateProtectShare))
 	protect := tailStart(visible, head, budget, a.tokPerChar(), minRecentKeep)
 	projected := append([]provider.Message(nil), visible...)
 	remaining, affected := total, 0

@@ -1,9 +1,9 @@
 package config
 
 import (
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 	"reasonix/internal/provider/openai"
 )

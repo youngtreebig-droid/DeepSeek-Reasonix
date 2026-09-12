@@ -2,6 +2,7 @@ package agent
 
 import (
 	"encoding/json"
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 )
 
@@ -62,8 +63,8 @@ func withReplayRecoveryFacts(original, repaired []provider.Message) []provider.M
 				if result.ToolCallID == call.ID && result.Name == call.Name {
 					state = provider.ToolResultRunState(result)
 					if state == provider.ToolRunCompleted && len(completed) < maxRecoveryTools && resultBytes < maxToolOutputBytes {
-						limit := min(8192, maxToolOutputBytes-resultBytes)
-						output := snapToRuneBoundary(result.Content, 0, min(len(result.Content), limit))
+						limit := compat.Min(8192, maxToolOutputBytes-resultBytes)
+						output := snapToRuneBoundary(result.Content, 0, compat.Min(len(result.Content), limit))
 						completed = append(completed, replayCompletedResult{UserTurn: sourceUserTurn, ID: call.ID, Name: call.Name, Output: output, Truncated: len(output) < len(result.Content)})
 						resultBytes += len(output)
 					}

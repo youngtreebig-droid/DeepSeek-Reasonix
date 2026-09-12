@@ -2,10 +2,11 @@ package guardian
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 	"unicode/utf8"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 
@@ -227,8 +228,8 @@ func truncateText(content string, tokCap int) (string, bool) {
 	runes := []rune(content)
 	// Estimate how many runes fit in head/tail bytes (conservative: assume
 	// max 4 bytes per rune).
-	headRunes := min(head/4, len(runes))
-	tailRunes := max(min(tail/4, len(runes)-headRunes), 0)
+	headRunes := compat.Min(head/4, len(runes))
+	tailRunes := compat.Max(compat.Min(tail/4, len(runes)-headRunes), 0)
 	return string(runes[:headRunes]) + marker + string(runes[len(runes)-tailRunes:]), true
 }
 

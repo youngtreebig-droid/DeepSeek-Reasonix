@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 
+	slices "reasonix/internal/compat/xslices"
 	fileencoding "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/permission"
 	"reasonix/internal/sandbox"

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/secrets"
 )
 
@@ -73,7 +74,7 @@ func newStartupFailure(stage string, started time.Time, stderr string, err error
 	if errors.As(err, &existing) {
 		return err
 	}
-	elapsed := max(time.Since(started), 0)
+	elapsed := compat.Max(time.Since(started), 0)
 	return &startupFailure{
 		Stage:   strings.TrimSpace(stage),
 		Elapsed: elapsed,

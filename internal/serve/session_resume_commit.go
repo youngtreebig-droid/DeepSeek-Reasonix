@@ -1,10 +1,10 @@
 package serve
 
 import (
-	"log/slog"
 	"net/http"
 
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/control"
 )
 

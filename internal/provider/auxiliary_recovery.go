@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"errors"
+	"reasonix/internal/compat"
 	"time"
 )
 
@@ -101,7 +102,7 @@ func StreamAuxiliary(ctx context.Context, p Provider, req Request) (<-chan Chunk
 				return
 			}
 			delay := time.Duration(1<<attempt) * 2 * time.Second
-			delay = max(delay, f.RetryAfter)
+			delay = compat.Max(delay, f.RetryAfter)
 			if !auxiliarySleep(ctx, delay) {
 				return
 			}

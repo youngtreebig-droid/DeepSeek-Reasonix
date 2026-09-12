@@ -2,11 +2,11 @@ package shellsafe
 
 import (
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"mvdan.cc/sh/v3/syntax"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/shellparse"
 )
 

@@ -8,6 +8,7 @@ import (
 	"sort"
 	"sync"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/eventwire"
 	"reasonix/internal/turnevent"
@@ -187,8 +188,8 @@ func (p *Projection) Apply(envelope turnevent.Envelope) error {
 	case "prompt_answered":
 		delete(p.prompts, owned.ItemID)
 	case "turn_done":
-		clear(p.prompts)
-		clear(p.attempts)
+		compat.Clear(p.prompts)
+		compat.Clear(p.attempts)
 		if owned.TranscriptDigest != "" {
 			p.identity.HeadID = owned.HeadID
 			p.identity.RewriteEpoch = owned.RewriteEpoch

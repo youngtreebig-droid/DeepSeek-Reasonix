@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"reasonix/internal/compat"
 	"sort"
 	"strings"
 	"time"
@@ -178,8 +179,8 @@ func OriginalCostAmount(rates RateCard, u UsageTokens) Amount {
 		miss = u.PromptTokens - hit
 	}
 	write := u.CacheWriteTokens
-	write = max(write, 0)
-	write = min(write, miss)
+	write = compat.Max(write, 0)
+	write = compat.Min(write, miss)
 	billedWrite := 0.0
 	if write > 0 {
 		billedWrite = u.CacheWriteBilledTokens

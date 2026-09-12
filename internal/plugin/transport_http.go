@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"maps"
 	"net/http"
 	"net/url"
+	maps "reasonix/internal/compat/xmaps"
 	"strings"
 	"time"
 

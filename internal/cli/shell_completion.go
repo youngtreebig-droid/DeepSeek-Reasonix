@@ -3,11 +3,12 @@ package cli
 import (
 	"fmt"
 	"os"
-	"slices"
 	"strconv"
 	"strings"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 )
 
 type cliCompletionValueKind uint8
@@ -478,7 +479,7 @@ func cliCompletionCandidatesWithValues(root cliCompletionSpec, cword int, words 
 	if cword < len(words) {
 		current = words[cword]
 	}
-	limit := min(cword, len(words))
+	limit := compat.Min(cword, len(words))
 
 	ctx := &root
 	positionalSeen := false

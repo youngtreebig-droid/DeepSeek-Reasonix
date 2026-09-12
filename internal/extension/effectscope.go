@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"sync"
 	"time"
 )

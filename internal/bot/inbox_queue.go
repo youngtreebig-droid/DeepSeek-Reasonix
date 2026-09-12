@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log/slog"
-	"slices"
 	"strings"
 	"time"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/control"
 	"reasonix/internal/sessioninbox"
 )
@@ -227,7 +228,7 @@ func formatBotInboxList(api control.SessionAPI) string {
 		b.WriteString(" paused")
 	}
 	b.WriteByte('\n')
-	limit := min(len(snap.Items), 15)
+	limit := compat.Min(len(snap.Items), 15)
 	for i := range limit {
 		it := snap.Items[i]
 		fmt.Fprintf(&b, "%d. [%s/%s] %s #%s\n", i+1, it.Intent, it.State, it.Preview, shortItemID(it.ID))

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
 )
@@ -28,7 +29,7 @@ func renderReceiptCard(r *event.CompletionReceipt, width int) []string {
 		return []string{wrapForViewport("  ✓ "+i18n.M.ReceiptVerified+receiptEvidenceTail(r), width, activeCLITheme.muted)}
 	}
 	lines := []string{wrapForViewport("  ⚠ "+i18n.M.ReceiptGapsHeader, width, activeCLITheme.warn)}
-	shown := min(len(gaps), maxReceiptGapLines)
+	shown := compat.Min(len(gaps), maxReceiptGapLines)
 	for _, gap := range gaps[:shown] {
 		lines = append(lines, wrapForViewport("      "+gap, width, activeCLITheme.muted))
 	}
@@ -96,7 +97,7 @@ const receiptGapIndent = 6
 // so the budget is the row, not the detail: a per-detail cap that fits English
 // overflows the moment a longer translation prefixes it.
 func clipToLine(s string, width int) string {
-	budget := max(width-receiptGapIndent-2, 24)
+	budget := compat.Max(width-receiptGapIndent-2, 24)
 	runes := []rune(s)
 	if len(runes) <= budget {
 		return s

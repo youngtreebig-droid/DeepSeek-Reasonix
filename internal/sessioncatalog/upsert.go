@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"reasonix/internal/compat"
 )
 
 func (c *Catalog) UpsertSession(ctx context.Context, record SessionRecord) error {
@@ -241,7 +242,7 @@ func (c *Catalog) sessionRowValues(record SessionRecord, pathKey, directoryKey s
 		record.ContentFingerprint, record.MetaFingerprint,
 		record.Health, 0, generation,
 		repairState, 0, 0, "", repairSourceFingerprint(record), repairEngineVersion,
-		max(record.LogFormat, 1), record.HeadCount, record.SelectedHeadID,
+		compat.Max(record.LogFormat, 1), record.HeadCount, record.SelectedHeadID,
 	}
 }
 

@@ -12,8 +12,6 @@ import (
 	"fmt"
 	"hash/fnv"
 	"io"
-	"log/slog"
-	"maps"
 	"net/http"
 	"reflect"
 	"regexp"
@@ -22,6 +20,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	maps "reasonix/internal/compat/xmaps"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/mcplaunch"
 	"reasonix/internal/sandbox"

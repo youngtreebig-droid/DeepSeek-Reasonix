@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log/slog"
 	"strings"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/store"
 )
 

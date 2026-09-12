@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 )
 
@@ -20,7 +21,7 @@ func (a *Agent) summaryOutputBudget() int {
 	if window <= 0 {
 		return summaryOutputMaxTokens
 	}
-	return min(summaryOutputMaxTokens, max(window/4, minSummaryOutputTokens))
+	return compat.Min(summaryOutputMaxTokens, compat.Max(window/4, minSummaryOutputTokens))
 }
 
 // foldSummary is what compaction reports about turning a fold into a digest.
@@ -52,7 +53,7 @@ func (a *Agent) summaryInputBudget(instructions string) int {
 	if window <= 0 {
 		return 0
 	}
-	return max(0, window-a.summaryOutputBudget()-estimateTextTokens(compactionInstruction)-estimateTextTokens(instructions)-protocolReserveTokens)
+	return compat.Max(0, window-a.summaryOutputBudget()-estimateTextTokens(compactionInstruction)-estimateTextTokens(instructions)-protocolReserveTokens)
 }
 
 // foldToSummary turns a fold region into one digest with exactly one provider

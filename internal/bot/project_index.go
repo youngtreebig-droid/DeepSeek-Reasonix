@@ -12,12 +12,12 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strings"
 	"time"
 
 	"reasonix/internal/agent"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/proc"
 	"reasonix/internal/secrets"
 )

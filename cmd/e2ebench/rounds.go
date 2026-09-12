@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 

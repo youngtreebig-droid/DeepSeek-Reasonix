@@ -25,6 +25,12 @@ linters:
         # a dedicated modernization change.
         - newexpr
         - stditerators
+        # minmax suggests the Go 1.21 builtins min/max. The Windows 7 build
+        # targets the go1.20.14 toolchain (the last that runs on Win7), where
+        # those builtins do not exist, so all uses are routed through
+        # reasonix/internal/compat.Min and .Max. Keep this check off so the
+        # linter does not fight the downgrade compatibility layer.
+        - minmax
     errcheck:
       check-type-assertions: false
       exclude-functions:

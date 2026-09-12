@@ -1,6 +1,9 @@
 package agent
 
-import "context"
+import (
+	"context"
+	"reasonix/internal/compat"
+)
 
 // childMaxSteps resolves a sub-agent budget; an explicit request always wins.
 func (t *TaskTool) childMaxSteps(requested int) int {
@@ -14,7 +17,7 @@ func childMaxStepsForParent(parent, requested int) int {
 	if parent <= 0 {
 		return 0
 	}
-	return max(parent/2, 5)
+	return compat.Max(parent/2, 5)
 }
 
 func (t *TaskTool) childMaxStepsForContext(_ context.Context, requested int) int {

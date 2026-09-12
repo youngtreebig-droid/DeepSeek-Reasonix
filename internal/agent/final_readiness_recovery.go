@@ -2,8 +2,8 @@ package agent
 
 import (
 	"encoding/json"
-	"slices"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/evidence"
 	"reasonix/internal/provider"
 )

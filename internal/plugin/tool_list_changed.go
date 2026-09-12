@@ -5,13 +5,13 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )

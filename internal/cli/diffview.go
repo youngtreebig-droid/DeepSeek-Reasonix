@@ -15,6 +15,7 @@ import (
 	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/charmbracelet/x/ansi"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
 )
@@ -144,13 +145,13 @@ func diffBody(d event.FileDiff, path string, width, maxLines int) []string {
 // bar mid-line — and padded to the bar width so it runs edge to edge.
 func diffBar(sign byte, code, path string, width int, bg, signFg string, lineNo, gw int) string {
 	gutter := dim(lpad(strconv.Itoa(lineNo), gw))
-	barW := max(width-2-gw-1, 4)
+	barW := compat.Max(width-2-gw-1, 4)
 	code = clampPlain(code, barW-2)
 	if !colorOn() {
 		return "  " + gutter + " " + string(sign) + " " + code
 	}
 	hl := reapplyBG(highlightCode(path, code), bg)
-	pad := max(barW-2-visibleWidth(code), 0)
+	pad := compat.Max(barW-2-visibleWidth(code), 0)
 	return "  " + gutter + " " + bg + signFg + string(sign) + ansiReset + bg + " " + hl + strings.Repeat(" ", pad) + ansiReset
 }
 

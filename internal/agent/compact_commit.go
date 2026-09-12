@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 )
 
@@ -66,7 +67,7 @@ func (a *Agent) summaryProjectionState(commit summaryProjectionCommit) Compactio
 		Action: "summary", Trigger: commit.trigger, SourceProjection: commit.projectionVersion,
 		ProjectionVersion: projectionVersion, CoveredCount: commit.covered, CoveredPrefixHash: coveredHash,
 		InputHash: commit.inputHash, OutputHash: commit.outputHash, InputTokens: commit.sourceTokens,
-		ResultTokens: commit.projectionTokens, SavedTokens: max(0, commit.sourceTokens-commit.projectionTokens),
+		ResultTokens: commit.projectionTokens, SavedTokens: compat.Max(0, commit.sourceTokens-commit.projectionTokens),
 		SummaryHash: summaryHash, CacheBreak: true, CreatedAt: now,
 	}
 	// LastReceipt is authoritative; do not mirror last_trigger/last_mode/token

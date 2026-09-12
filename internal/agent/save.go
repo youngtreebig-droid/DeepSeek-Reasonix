@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"hash"
-	"log/slog"
 	"math"
 	"os"
 	"path/filepath"
@@ -20,6 +19,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/filelock"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"

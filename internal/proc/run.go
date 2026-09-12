@@ -2,8 +2,8 @@ package proc
 
 import (
 	"context"
-	"log/slog"
 	"os/exec"
+	slog "reasonix/internal/compat/xslog"
 	"sync"
 	"time"
 )

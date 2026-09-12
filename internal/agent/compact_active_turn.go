@@ -1,8 +1,7 @@
 package agent
 
 import (
-	"slices"
-
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 

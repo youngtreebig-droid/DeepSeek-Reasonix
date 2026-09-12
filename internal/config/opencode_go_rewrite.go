@@ -2,8 +2,8 @@ package config
 
 import (
 	"fmt"
+	slices "reasonix/internal/compat/xslices"
 	"reflect"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"

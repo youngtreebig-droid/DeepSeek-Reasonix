@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 	"sync"
 )

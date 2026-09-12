@@ -7,6 +7,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
 )
@@ -208,7 +209,7 @@ func (m chatTUI) renderChooser() string {
 	if c == nil {
 		return ""
 	}
-	w := max(m.width, 10)
+	w := compat.Max(m.width, 10)
 	var b strings.Builder
 
 	if len(c.questions) > 1 {
@@ -244,7 +245,7 @@ func (m chatTUI) renderChooser() string {
 	}
 	b.WriteString(rowLine(c.cursor == typeRow, typeRow+1, "", typeLabel, c.typing && c.custom[c.tab] == "") + "\n")
 	// Chat about this
-	b.WriteString(dim(strings.Repeat("─", min(w-2, 40))) + "\n")
+	b.WriteString(dim(strings.Repeat("─", compat.Min(w-2, 40))) + "\n")
 	chatRow := typeRow + 1
 	b.WriteString(rowLine(c.cursor == chatRow, chatRow+1, "", i18n.M.AskChatInstead, false))
 

@@ -8,10 +8,10 @@ package outputstyle
 import (
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	fileencoding "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/frontmatter"
 )

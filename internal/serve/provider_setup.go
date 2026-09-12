@@ -7,10 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"strings"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 )
 

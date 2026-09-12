@@ -12,6 +12,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"github.com/charmbracelet/x/ansi"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/gitcmd"
 )
 
@@ -182,7 +183,7 @@ func (s gitStatus) compactIdentity(maxWidth int) (repo, branch string) {
 	dirtyWidth := visibleWidth(s.dirtyPlain())
 	nameBudget := maxWidth - dirtyWidth - visibleWidth("@")
 	if nameBudget <= 2 {
-		return compactEnd(repo, max(1, nameBudget)), ""
+		return compactEnd(repo, compat.Max(1, nameBudget)), ""
 	}
 	repoWidth := visibleWidth(repo)
 	branchWidth := visibleWidth(branch)
@@ -190,16 +191,16 @@ func (s gitStatus) compactIdentity(maxWidth int) (repo, branch string) {
 		return repo, branch
 	}
 
-	minRepo := min(repoWidth, 8)
+	minRepo := compat.Min(repoWidth, 8)
 	if repoBudget := nameBudget - branchWidth; repoBudget >= minRepo {
 		return compactMiddle(repo, repoBudget), branch
 	}
 
-	repoBudget := min(repoWidth, max(4, min(10, nameBudget/3)))
+	repoBudget := compat.Min(repoWidth, compat.Max(4, compat.Min(10, nameBudget/3)))
 	if nameBudget-repoBudget < 8 {
-		repoBudget = max(1, nameBudget-8)
+		repoBudget = compat.Max(1, nameBudget-8)
 	}
-	branchBudget := max(1, nameBudget-repoBudget)
+	branchBudget := compat.Max(1, nameBudget-repoBudget)
 	return compactMiddle(repo, repoBudget), compactMiddle(branch, branchBudget)
 }
 

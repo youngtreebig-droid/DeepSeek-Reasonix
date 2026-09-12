@@ -1,5 +1,7 @@
 package evidence
 
+import "reasonix/internal/compat"
+
 // The runway shadow prices one turn's investigation without changing any
 // runtime decision. Every round costs the same; observable outcomes buy some
 // or all of that cost back. Keeping the account private to OutcomeTracker makes
@@ -36,7 +38,7 @@ func (r *runwayShadow) observe(s OutcomeSample) runwayShadowState {
 	}
 	yield := runwayYield(s)
 	wasSolvent := r.balance > 0
-	r.balance = min(max(r.balance+yield-runwayRoundCost, 0), runwayMaxBalance)
+	r.balance = compat.Min(compat.Max(r.balance+yield-runwayRoundCost, 0), runwayMaxBalance)
 
 	if s.Discriminating > 0 || s.Objective > 0 || s.Churn > 0 {
 		r.idle = 0

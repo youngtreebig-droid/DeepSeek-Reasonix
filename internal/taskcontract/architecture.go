@@ -1,8 +1,7 @@
 package taskcontract
 
 import (
-	"slices"
-
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/evidence"
 )
 

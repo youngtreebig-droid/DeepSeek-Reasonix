@@ -3,11 +3,12 @@ package sidecar
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"sort"
 	"strings"
 	"sync"
 
+	"reasonix/internal/compat"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/extension"
 	"reasonix/internal/extension/protocol"
 	"reasonix/internal/pluginpkg"
@@ -125,7 +126,7 @@ func startLoadedPackages(ctx context.Context, packages []pluginpkg.InstalledPack
 		indices <- i
 	}
 	close(indices)
-	workers := min(maxConcurrentPackageStarts, len(jobs))
+	workers := compat.Min(maxConcurrentPackageStarts, len(jobs))
 	var wg sync.WaitGroup
 	wg.Add(workers)
 	for range workers {

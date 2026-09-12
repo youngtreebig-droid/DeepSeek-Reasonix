@@ -12,12 +12,13 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"slices"
 	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/proc"
 	"reasonix/internal/secrets"
 )
@@ -677,7 +678,7 @@ func detectedImageMime(raw []byte) string {
 	if len(raw) == 0 {
 		return ""
 	}
-	mime := http.DetectContentType(raw[:min(len(raw), 512)])
+	mime := http.DetectContentType(raw[:compat.Min(len(raw), 512)])
 	if imageExt(mime) == "" {
 		return ""
 	}

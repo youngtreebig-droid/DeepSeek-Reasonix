@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"slices"
 	"strconv"
 	"strings"
 
@@ -17,6 +16,8 @@ import (
 	"github.com/atotto/clipboard"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/control"
 	"reasonix/internal/i18n"
 	"reasonix/internal/provider"
@@ -250,7 +251,7 @@ func (m *chatTUI) takeNextPasteID() int {
 	if m.ctrl != nil {
 		m.syncPasteIDStateFromHistory(m.ctrl.History())
 	}
-	candidate := max(m.nextPasteID, 1)
+	candidate := compat.Max(m.nextPasteID, 1)
 	if m.usedPasteIDs == nil {
 		m.usedPasteIDs = make(map[int]struct{})
 	}

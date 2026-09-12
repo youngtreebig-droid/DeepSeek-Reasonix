@@ -16,8 +16,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
-	"maps"
 	"net/http"
 	"os"
 	"strings"
@@ -25,6 +23,8 @@ import (
 	"time"
 
 	"reasonix/internal/bot"
+	maps "reasonix/internal/compat/xmaps"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 
 	lark "github.com/larksuite/oapi-sdk-go/v3"

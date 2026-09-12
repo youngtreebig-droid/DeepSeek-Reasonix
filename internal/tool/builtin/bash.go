@@ -10,13 +10,13 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strings"
 	"sync"
 	"time"
 
 	"mvdan.cc/sh/v3/syntax"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/i18n"
 	"reasonix/internal/jobs"
 	"reasonix/internal/proc"

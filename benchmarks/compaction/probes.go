@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 	"unicode"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )
@@ -306,7 +307,7 @@ func matchesToken(lowered, want string) bool {
 func (p probe) settledAt() int {
 	at := p.plantAt
 	for gen := range p.later {
-		at = max(at, gen)
+		at = compat.Max(at, gen)
 	}
 	return at
 }

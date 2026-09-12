@@ -2,11 +2,11 @@ package agent
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 	"sync"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
 )

@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/fileutil"
 	"reasonix/internal/store"
 )

@@ -3,12 +3,12 @@ package control
 import (
 	"context"
 	"fmt"
-	"log/slog"
-	"slices"
 	"strings"
 	"unicode/utf8"
 
 	"reasonix/internal/agent"
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/recovery"
 )

@@ -10,11 +10,11 @@ import (
 	"reflect"
 	"regexp"
 	"runtime"
-	"slices"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/extension/protocol"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"

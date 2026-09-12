@@ -6,10 +6,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"slices"
 	"strings"
 	"unicode/utf8"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )
@@ -168,7 +169,7 @@ func (t *sessionToolResultTool) Execute(_ context.Context, args json.RawMessage)
 		return "", fmt.Errorf("session tool result: offset %d is not a UTF-8 character boundary", p.Offset)
 	}
 
-	end := min(len(candidate.body), p.Offset+p.Limit)
+	end := compat.Min(len(candidate.body), p.Offset+p.Limit)
 	for end > p.Offset && end < len(candidate.body) && !utf8.RuneStart(candidate.body[end]) {
 		end--
 	}

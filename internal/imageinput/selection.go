@@ -2,9 +2,9 @@ package imageinput
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 

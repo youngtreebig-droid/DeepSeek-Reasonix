@@ -16,6 +16,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/filelock"
 
 	moderncsqlite "modernc.org/sqlite"
@@ -220,7 +221,7 @@ func open(ctx context.Context, opts OpenOptions, mode Mode) (*sql.DB, error) {
 		maxOpen = 1
 	}
 	db.SetMaxOpenConns(maxOpen)
-	db.SetMaxIdleConns(min(maxOpen, 2))
+	db.SetMaxIdleConns(compat.Min(maxOpen, 2))
 	fail := func(err error) (*sql.DB, error) {
 		_ = db.Close()
 		return nil, err

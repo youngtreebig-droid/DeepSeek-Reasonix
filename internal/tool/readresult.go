@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"reasonix/internal/compat"
 	"strconv"
 	"strings"
 )
@@ -275,7 +276,7 @@ func (e ReadResultEnvelope) ClipTo(visible string) ReadResultEnvelope {
 	}
 	var kept []ReadRange
 	for _, r := range e.DeliveredRanges {
-		if start, end := max(r.Start, visibleRange.Start), min(r.End, visibleRange.End); start < end {
+		if start, end := compat.Max(r.Start, visibleRange.Start), compat.Min(r.End, visibleRange.End); start < end {
 			kept = append(kept, ReadRange{Start: start, End: end})
 		}
 	}

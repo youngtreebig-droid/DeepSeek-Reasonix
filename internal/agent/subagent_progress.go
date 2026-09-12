@@ -3,11 +3,11 @@ package agent
 import (
 	"context"
 	"errors"
-	"slices"
 	"sync"
 	"time"
 	"unicode/utf8"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 )
 

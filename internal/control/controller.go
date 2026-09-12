@@ -15,11 +15,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -35,6 +33,9 @@ import (
 	"reasonix/internal/capability"
 	"reasonix/internal/checkpoint"
 	"reasonix/internal/command"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
@@ -4135,7 +4136,7 @@ func (c *Controller) hasInterruptedDisplayAfter(idx int, fallback provider.Messa
 	if start, ok := resolveInterruptedTurnStart(msgs, idx, true, c.inFlightTurnStartedAt(), fallback); ok {
 		idx = start
 	}
-	idx = max(0, min(idx, len(msgs)))
+	idx = compat.Max(0, compat.Min(idx, len(msgs)))
 	for _, m := range msgs[idx:] {
 		if m.LocalOnly && m.InterruptedTurn != nil {
 			return true

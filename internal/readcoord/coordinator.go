@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/tool"
 )
 
@@ -321,7 +322,7 @@ func evaluate(ob *Obligation, env tool.ReadResultEnvelope) State {
 		if ob.SawEOF && ob.SourceEnd != nil {
 			var required []tool.ReadRange
 			for _, r := range ob.Requirement.Ranges {
-				if end := min(r.End, *ob.SourceEnd); r.Start < end {
+				if end := compat.Min(r.End, *ob.SourceEnd); r.Start < end {
 					required = append(required, tool.ReadRange{Start: r.Start, End: end})
 				}
 			}

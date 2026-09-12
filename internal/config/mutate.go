@@ -8,13 +8,13 @@ import (
 	osuser "os/user"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/filelock"
 )
 

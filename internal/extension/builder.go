@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"maps"
 	"strings"
 
+	maps "reasonix/internal/compat/xmaps"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )

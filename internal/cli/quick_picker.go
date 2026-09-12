@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"reasonix/internal/compat"
 	"strings"
 	"unicode/utf8"
 
@@ -119,11 +120,11 @@ func (p *quickPicker) render(width int) string {
 	if p == nil {
 		return ""
 	}
-	w := max(width, 10)
-	contentWidth := max(w-8, 12)
+	w := compat.Max(width, 10)
+	contentWidth := compat.Max(w-8, 12)
 	items := p.filteredItems()
 	if p.selected >= len(items) {
-		p.selected = max(len(items)-1, 0)
+		p.selected = compat.Max(len(items)-1, 0)
 	}
 
 	var b strings.Builder
@@ -165,7 +166,7 @@ func quickPickerWindow(total, selected int) (int, int) {
 	if total <= quickPickerMaxVisible {
 		return 0, total
 	}
-	start := max(selected-quickPickerMaxVisible/2, 0)
+	start := compat.Max(selected-quickPickerMaxVisible/2, 0)
 	if maxStart := total - quickPickerMaxVisible; start > maxStart {
 		start = maxStart
 	}

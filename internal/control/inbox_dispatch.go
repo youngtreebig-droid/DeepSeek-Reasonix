@@ -2,9 +2,9 @@ package control
 
 import (
 	"errors"
-	"log/slog"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/sessioninbox"
 )
 

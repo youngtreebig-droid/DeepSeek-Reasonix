@@ -1,9 +1,9 @@
 package agent
 
 import (
-	"log/slog"
 	"sync"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/readcoord"
 	"reasonix/internal/tool"

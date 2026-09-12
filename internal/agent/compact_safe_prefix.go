@@ -3,6 +3,7 @@ package agent
 import (
 	"fmt"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 )
 
@@ -12,7 +13,7 @@ import (
 const summaryPlanMarginRatio = 0.05
 
 func summaryPlanReserve(window int) int {
-	return max(protocolReserveTokens, int(float64(window)*summaryPlanMarginRatio))
+	return compat.Max(protocolReserveTokens, int(float64(window)*summaryPlanMarginRatio))
 }
 
 // maximumSafeSummaryPrefixEnd returns the largest balanced contiguous prefix

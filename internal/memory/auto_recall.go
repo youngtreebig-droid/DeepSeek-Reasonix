@@ -10,6 +10,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/retrieval"
 )
 
@@ -458,7 +459,7 @@ func clippedRecallEntry(hit RecallHit, maxRunes int) string {
 		if utf8.RuneCountInString(entry) <= maxRunes {
 			return entry
 		}
-		cut := max(len(runes)/4, 1)
+		cut := compat.Max(len(runes)/4, 1)
 		runes = runes[:len(runes)-cut]
 	}
 	return ""

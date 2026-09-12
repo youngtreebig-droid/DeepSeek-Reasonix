@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 )
 
@@ -39,7 +40,7 @@ func (a *Agent) installMaintenanceProjection(in maintenanceInstall) (bool, error
 		OperationID: fmt.Sprintf("%s-%d-%s", in.action, projectionVersion, outputHash), Status: "applied", Action: in.action,
 		Trigger: in.trigger, SourceProjection: in.state.Projection.ProjectionVersion, ProjectionVersion: projectionVersion,
 		CoveredCount: len(in.canonical), CoveredPrefixHash: coveredHash, InputHash: inputHash, OutputHash: outputHash,
-		InputTokens: sourceTokens, ResultTokens: resultTokens, SavedTokens: max(0, sourceTokens-resultTokens),
+		InputTokens: sourceTokens, ResultTokens: resultTokens, SavedTokens: compat.Max(0, sourceTokens-resultTokens),
 		AffectedToolResults: in.affected, CacheBreak: true, CreatedAt: now,
 	}
 	next := in.state

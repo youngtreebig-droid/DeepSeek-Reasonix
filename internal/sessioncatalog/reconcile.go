@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/projectiondb"
 )
 
@@ -65,7 +66,7 @@ func (c *Catalog) reconcileDirectory(ctx context.Context, target DirectoryTarget
 			c.failDirectoryScan(context.Background(), target.Path, err)
 			return err
 		}
-		end := min(start+64, len(ordered))
+		end := compat.Min(start+64, len(ordered))
 		for _, info := range ordered[start:end] {
 			records = append(records, recordFromOrder(target, info))
 		}
@@ -392,7 +393,7 @@ func (c *Catalog) commitDirectoryProjection(ctx context.Context, target Director
 			_ = stmt.Close()
 			return rollback(err)
 		}
-		end := min(start+64, len(records))
+		end := compat.Min(start+64, len(records))
 		for _, record := range records[start:end] {
 			pathKey := c.pathKey(record.Path)
 			remapped, err := removeRemappedSessionIdentity(ctx, tx, record.Path, pathKey)

@@ -3,6 +3,7 @@ package agent
 import (
 	"errors"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 	"reasonix/internal/readcoord"
 	"reasonix/internal/tool"
@@ -133,8 +134,8 @@ func (a *Agent) recordLegacyReadCompletion() {
 }
 
 func boundedReadRanges(ranges []tool.ReadRange) [][2]int {
-	result := make([][2]int, 0, min(64, len(ranges)))
-	for _, r := range ranges[:min(64, len(ranges))] {
+	result := make([][2]int, 0, compat.Min(64, len(ranges)))
+	for _, r := range ranges[:compat.Min(64, len(ranges))] {
 		result = append(result, [2]int{r.Start, r.End})
 	}
 	return result

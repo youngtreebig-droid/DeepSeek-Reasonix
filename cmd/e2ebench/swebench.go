@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"slices"
 	"strings"
 
 	"reasonix/internal/ablation"
+	slices "reasonix/internal/compat/xslices"
 )
 
 // SWE-bench mode runs the agent inside the official per-instance evaluation

@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log/slog"
-	"maps"
 	"strings"
 	"sync"
 	"time"
 
 	"reasonix/internal/agent"
+	maps "reasonix/internal/compat/xmaps"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/sessioninbox"
 )

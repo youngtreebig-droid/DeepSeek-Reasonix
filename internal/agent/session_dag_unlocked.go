@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log/slog"
 	"os"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/store"
 )
 

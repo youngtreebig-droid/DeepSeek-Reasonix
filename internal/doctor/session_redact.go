@@ -8,11 +8,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strings"
 
 	"reasonix/internal/agent"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/fileutil"
 	"reasonix/internal/provider"
 	"reasonix/internal/secrets"

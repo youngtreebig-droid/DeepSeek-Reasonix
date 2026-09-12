@@ -1,6 +1,6 @@
 package provider
 
-import "slices"
+import slices "reasonix/internal/compat/xslices"
 
 // Two copies of a transcript are derived from the stored one: the bytes a
 // provider receives, and the projection compaction writes back. They differ in

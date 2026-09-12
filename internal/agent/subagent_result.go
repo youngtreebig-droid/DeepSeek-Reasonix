@@ -5,10 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"slices"
 	"strings"
 	"unicode/utf8"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )
@@ -94,7 +95,7 @@ func (t *SubagentResultTool) Execute(ctx context.Context, args json.RawMessage) 
 	if p.OffsetBytes < len(answer) && !utf8.RuneStart(answer[p.OffsetBytes]) {
 		return "", fmt.Errorf("offset_bytes %d is not at a UTF-8 character boundary; use next_offset_bytes from the previous page", p.OffsetBytes)
 	}
-	end := min(p.OffsetBytes+p.LimitBytes, len(answer))
+	end := compat.Min(p.OffsetBytes+p.LimitBytes, len(answer))
 	for end > p.OffsetBytes && end < len(answer) && !utf8.RuneStart(answer[end]) {
 		end--
 	}
@@ -208,7 +209,7 @@ func formatBoundedSubagentAggregate(prefix string, items []subagentAggregateItem
 			completed++
 		}
 	}
-	available := max(subagentAggregateBudgetBytes-baseBytes, 0)
+	available := compat.Max(subagentAggregateBudgetBytes-baseBytes, 0)
 	perAnswer := 0
 	if completed > 0 {
 		perAnswer = available / completed

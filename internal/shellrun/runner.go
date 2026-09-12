@@ -14,6 +14,7 @@ import (
 	"sync"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/proc"
 	"reasonix/internal/tool"
 )
@@ -277,7 +278,7 @@ func (b *boundedBuffer) Write(p []byte) (int, error) {
 	}
 	if !b.truncated {
 		b.truncated = true
-		headLimit := max(0, b.limit-b.tailLimit-len(b.marker))
+		headLimit := compat.Max(0, b.limit-b.tailLimit-len(b.marker))
 		previous := b.buf.Bytes()
 		b.tail = appendBoundedTail(b.tail, previous, b.tailLimit)
 		if b.buf.Len() > headLimit {
@@ -342,7 +343,7 @@ type progressWriter struct {
 }
 
 func newProgressWriter(emit func(string), limit int, marker string) *progressWriter {
-	return &progressWriter{emit: emit, limit: max(0, limit), marker: marker}
+	return &progressWriter{emit: emit, limit: compat.Max(0, limit), marker: marker}
 }
 
 func (w *progressWriter) Write(p []byte) (int, error) {
@@ -354,8 +355,8 @@ func (w *progressWriter) Write(p []byte) (int, error) {
 	if w.emit == nil || w.truncated {
 		return len(p), nil
 	}
-	remaining := max(0, w.limit-w.forwarded)
-	forward := min(len(p), remaining)
+	remaining := compat.Max(0, w.limit-w.forwarded)
+	forward := compat.Min(len(p), remaining)
 	if forward > 0 {
 		w.emit(string(p[:forward]))
 		w.forwarded += forward

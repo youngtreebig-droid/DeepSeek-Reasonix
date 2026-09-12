@@ -5,6 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/i18n"
 )
 
@@ -17,7 +18,7 @@ func truncateReadFileOutput(s, toolName, toolCallID string) (string, string) {
 	if headKeep < 1024 {
 		headKeep = maxToolOutputBytes / 2
 	}
-	head := snapToRuneBoundary(s, 0, min(headKeep, len(s)))
+	head := snapToRuneBoundary(s, 0, compat.Min(headKeep, len(s)))
 	if newline := strings.LastIndexByte(head, '\n'); newline >= 1024 {
 		head = head[:newline+1]
 	}

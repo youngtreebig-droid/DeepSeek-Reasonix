@@ -2,9 +2,9 @@ package agent
 
 import (
 	"encoding/json"
-	"maps"
 	"strings"
 
+	maps "reasonix/internal/compat/xmaps"
 	"reasonix/internal/tool"
 )
 

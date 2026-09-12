@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )
@@ -18,7 +19,7 @@ func (a *Agent) runSamplingAttempt(ctx context.Context, turn int, sink event.Sin
 	if result.err == nil && isEmptyStreamResult(result.text, result.reasoning, result.calls, result.responsesItems, result.serverSearch) {
 		result.err = fmt.Errorf("%w: model returned a completed response with no content", provider.ErrEmptyResponse)
 	}
-	delta := max(provider.RequestAttemptCount(ctx)-before, 0)
+	delta := compat.Max(provider.RequestAttemptCount(ctx)-before, 0)
 	result.usage = estimateFailedAttemptUsage(result.usage, *frozen, result, delta)
 	if result.usage != nil {
 		if delta > 0 {

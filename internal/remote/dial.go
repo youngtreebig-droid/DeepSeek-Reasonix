@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"slices"
 	"time"
 
 	"golang.org/x/crypto/ssh"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/netclient"
 )
 

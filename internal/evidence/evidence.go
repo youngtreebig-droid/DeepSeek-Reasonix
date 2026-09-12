@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -16,6 +15,8 @@ import (
 
 	"mvdan.cc/sh/v3/syntax"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 	"reasonix/internal/shellparse"
 	"reasonix/internal/shellsafe"
@@ -637,7 +638,7 @@ func (l *Ledger) HasSuccessfulCompleteStepAfter(after int) bool {
 	if l == nil {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -659,7 +660,7 @@ func (l *Ledger) HasSuccessfulDeliverySignoffAfter(after int) bool {
 	if l == nil {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 
 	l.mu.Lock()
 	receipts := append([]Receipt(nil), l.receipts...)
@@ -697,7 +698,7 @@ func (l *Ledger) HasSuccessfulReviewAfter(after int) bool {
 	if l == nil {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 
 	l.mu.Lock()
 	receipts := append([]Receipt(nil), l.receipts...)
@@ -718,7 +719,7 @@ func (l *Ledger) HasHostReviewCoverageAfter(after int, requiredPaths []string) b
 	if l == nil {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 	l.mu.Lock()
 	receipts := append([]Receipt(nil), l.receipts...)
 	l.mu.Unlock()
@@ -1050,7 +1051,7 @@ func (l *Ledger) HasSuccessfulVerificationCommandAfter(after int) bool {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for _, r := range l.receipts[max(after+1, 0):] {
+	for _, r := range l.receipts[compat.Max(after+1, 0):] {
 		if r.Success && r.ToolName == "bash" && bashCommandIsVerification(r.Command) {
 			return true
 		}
@@ -1098,7 +1099,7 @@ func (l *Ledger) HasSuccessfulAnchorRefreshReadAfter(paths []string, after int) 
 	if l == nil || len(wanted) == 0 {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -1288,7 +1289,7 @@ func hasFailedCompleteStepRecoveryForTodo(receipts []Receipt, baseline int, inde
 // Recovery only trusts progress that happened before the failed sign-off.
 // Later unrelated work must not retroactively authorize an earlier completion.
 func hasSuccessfulProgressBeforeReceipt(receipts []Receipt, baseline int, before int) bool {
-	start := max(baseline+1, 0)
+	start := compat.Max(baseline+1, 0)
 	for i := start; i < before && i < len(receipts); i++ {
 		r := receipts[i]
 		if !r.Success || r.ToolName == "todo_write" || r.ToolName == "complete_step" || r.Read {

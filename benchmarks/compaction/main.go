@@ -21,6 +21,7 @@ import (
 
 	"reasonix/internal/ablation"
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 	_ "reasonix/internal/provider/openai"
@@ -159,7 +160,7 @@ func (h *harness) runGeneration(ctx context.Context, gen int, probes []probe) ge
 	r.SummarizerCalls = len(h.calls.calls)
 	for _, c := range h.calls.calls {
 		r.SummarizerInput += c.tokens
-		r.LargestCall = max(r.LargestCall, c.tokens)
+		r.LargestCall = compat.Max(r.LargestCall, c.tokens)
 	}
 	if st, ok, sterr := agent.LoadCompactionState(h.path); sterr == nil && ok {
 		r.ProjectionTokens = st.Projection.ProjectionTokens

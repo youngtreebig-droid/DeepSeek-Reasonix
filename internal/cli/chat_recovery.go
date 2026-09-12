@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"time"
 )
@@ -10,7 +11,7 @@ func (m *chatTUI) waitingRecoveryLine() (string, bool) {
 	if m.recovery == nil || !m.recovery.Waiting {
 		return "", false
 	}
-	return fmt.Sprintf("  %s waiting for provider (%s), retry in %ds — Esc to stop", m.spinner.View(), m.recovery.Phase, max(0, (m.recovery.NextAttemptAt-time.Now().UnixMilli()+999)/1000)), true
+	return fmt.Sprintf("  %s waiting for provider (%s), retry in %ds — Esc to stop", m.spinner.View(), m.recovery.Phase, compat.Max(0, (m.recovery.NextAttemptAt-time.Now().UnixMilli()+999)/1000)), true
 }
 func (m *chatTUI) setRecoveryStatus(e event.Event) {
 	m.retryAttempt = e.RetryAttempt

@@ -4,10 +4,10 @@ package agent
 
 import (
 	"bytes"
-	"slices"
 	"strings"
 	"sync"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 

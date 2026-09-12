@@ -2,9 +2,9 @@ package acp
 
 import (
 	"errors"
-	"log/slog"
 
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 )
 

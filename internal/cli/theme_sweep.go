@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"reasonix/internal/compat"
 	"strings"
 	"time"
 
@@ -45,7 +46,7 @@ func (m *chatTUI) startThemeSweep(from, to cliPalette) tea.Cmd {
 	if len(before) != len(after) {
 		return nil
 	}
-	step := max(m.width/themeSweepFrames, 1)
+	step := compat.Max(m.width/themeSweepFrames, 1)
 	m.themeSweep = &themeSweep{
 		before: before,
 		after:  after,
@@ -87,7 +88,7 @@ func (s *themeSweep) render() string {
 // cannot split a double-width rune, so both sides are re-clamped and padded;
 // otherwise a CJK transcript pushes the boundary out of vertical alignment.
 func (s *themeSweep) composeRow(after, before string) string {
-	lead := min(max(s.col, 0), s.width)
+	lead := compat.Min(compat.Max(s.col, 0), s.width)
 	row := padCells(ansi.Truncate(after, lead, ""), lead)
 	if lead == s.width {
 		return row
