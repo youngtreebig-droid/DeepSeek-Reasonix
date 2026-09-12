@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/evidence"
 	"reasonix/internal/tool"
 )
@@ -43,7 +44,7 @@ func (a *Agent) invokeResolvedTool(ctx context.Context, plan *toolCallPlan) (res
 		if err == nil {
 			err = readCtx.Err()
 		}
-		plan.readActiveMillis += max(1, time.Since(start).Milliseconds())
+		plan.readActiveMillis += compat.Max(1, time.Since(start).Milliseconds())
 		if err == nil && plan.readSnapshot != "" && env.Source.Snapshot != plan.readSnapshot {
 			return "", nil, nil, &tool.OperationError{Diagnostic: tool.OperationDiagnostic{Code: tool.ReadSourceChanged, Path: env.Source.CanonicalPath, ExpectedSnapshot: plan.readSnapshot, ActualSnapshot: env.Source.Snapshot, Recovery: "restart the read with a fresh explicit range"}, Cause: fmt.Errorf("read source changed")}
 		}

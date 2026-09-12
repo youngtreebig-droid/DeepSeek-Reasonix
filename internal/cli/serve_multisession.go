@@ -8,16 +8,16 @@ import (
 	"reasonix/internal/boot"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
-	"reasonix/internal/remote/bootstrap"
+	"reasonix/internal/remote/serveenv"
 	"reasonix/internal/serve"
 )
 
 func registerServeCapabilityFlags(fs *flag.FlagSet) {
-	_ = fs.Bool("session-events", false, "tag session events and finish switched-away turns in background ("+bootstrap.ServeCapsToken+")")
+	_ = fs.Bool("session-events", false, "tag session events and finish switched-away turns in background ("+serveenv.ServeCapsToken+")")
 	_ = fs.Bool("detached-heal", false, "retire background sessions after provider credential-channel repair")
 	// browser-broker is the capability marker a desktop bootstrap greps for;
 	// the broker itself is configured through the environment only.
-	_ = fs.Bool("browser-broker", false, "use the desktop browser broker from "+bootstrap.BrowserBrokerEnv+"/"+bootstrap.BrowserTokenEnv+" when set ("+bootstrap.ServeBrowserBrokerMarker+")")
+	_ = fs.Bool("browser-broker", false, "use the desktop browser broker from "+serveenv.BrowserBrokerEnv+"/"+serveenv.BrowserTokenEnv+" when set ("+serveenv.ServeBrowserBrokerMarker+")")
 }
 
 func newServeBootstrap() (*serve.Broadcaster, *serve.SessionTagSink, *config.Config) {

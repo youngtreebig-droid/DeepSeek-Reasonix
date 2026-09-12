@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )
@@ -219,12 +220,12 @@ func (a *Agent) waitSamplingRetry(ctx context.Context, s *samplingRecoveryState,
 	if !failure.Retryable || (attempt >= maxSamplingAttempts && !waiting) {
 		return false
 	}
-	base := time.Duration(1<<min(attempt-1, 2)) * 2 * time.Second
+	base := time.Duration(1<<compat.Min(attempt-1, 2)) * 2 * time.Second
 	delay := base
 	if waiting {
 		delay = time.Minute + time.Duration(rand.Intn(6001))*time.Millisecond
 	}
-	delay = max(delay, failure.RetryAfter)
+	delay = compat.Max(delay, failure.RetryAfter)
 	if waiting && s.waited+delay > recoveryWaitBudget {
 		result.err = &provider.RecoveryWaitExhaustedError{Phase: failure.Phase, Code: failure.Code, Status: failure.Status, Waited: s.waited, Attempts: attempt, Cause: result.err}
 		return false

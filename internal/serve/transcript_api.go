@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat/httpmux"
 	"reasonix/internal/control"
 	"reasonix/internal/transcript"
 )
 
-func (s *Server) registerTranscriptRoutes(mux *http.ServeMux) {
+func (s *Server) registerTranscriptRoutes(mux *httpmux.Mux) {
 	mux.HandleFunc("GET /transcript/snapshot", s.transcriptSnapshot)
 	mux.HandleFunc("GET /transcript/page", s.transcriptSnapshot)
 	mux.HandleFunc("GET /transcript/content", s.transcriptContent)

@@ -26,7 +26,11 @@ func (gw *BotGateway) dispatchQueueResult(ctx context.Context, adapter Adapter, 
 	}
 	// Keep the dispatch loop free to deliver approval/answer replies while the
 	// active turn blocks. The per-session lock still serializes all turns.
-	gw.turnWG.Go(func() { gw.runTurn(ctx, adapter, key, msg, cleanup) })
+	gw.turnWG.Add(1)
+	go func() {
+		defer gw.turnWG.Done()
+		gw.runTurn(ctx, adapter, key, msg, cleanup)
+	}()
 }
 
 func (gw *BotGateway) finishTurnItem(ctx context.Context, adapter Adapter, key string, fallback InboundMessage, cleanup func()) {

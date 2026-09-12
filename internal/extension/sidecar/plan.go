@@ -3,9 +3,9 @@ package sidecar
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"strings"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/extension"
 	"reasonix/internal/extension/protocol"
 	"reasonix/internal/pluginpkg"

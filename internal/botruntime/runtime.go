@@ -2,7 +2,6 @@ package botruntime
 
 import (
 	"fmt"
-	"log/slog"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -13,6 +12,7 @@ import (
 	"reasonix/internal/bot/feishu"
 	"reasonix/internal/bot/qq"
 	"reasonix/internal/bot/weixin"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 )
 

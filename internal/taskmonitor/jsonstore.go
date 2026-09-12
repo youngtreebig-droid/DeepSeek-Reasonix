@@ -98,7 +98,7 @@ func rejectSymlinkChain(root, target string) error {
 	if rel == "." {
 		return nil
 	}
-	for part := range strings.SplitSeq(rel, string(filepath.Separator)) {
+	for _, part := range strings.Split(rel, string(filepath.Separator)) {
 		cur = filepath.Join(cur, part)
 		if err := rejectSymlink(cur); err != nil {
 			return err
@@ -113,7 +113,7 @@ func rejectStoreParents(projectDir, root string) error {
 		return err
 	}
 	cur := projectDir
-	for part := range strings.SplitSeq(rel, string(filepath.Separator)) {
+	for _, part := range strings.Split(rel, string(filepath.Separator)) {
 		if part == "." || part == "" {
 			continue
 		}
@@ -231,7 +231,7 @@ func (s *FileStore) RenewRuntimeLease(ctx context.Context, projectDir, taskID, o
 		return false, nil
 	}
 	const maxAttempts = 4
-	for range maxAttempts {
+	for _i := 0; _i < maxAttempts; _i++ {
 		snap, err := s.getTaskRaw(ctx, projectDir, taskID)
 		if err != nil || snap == nil {
 			return false, err
@@ -498,7 +498,7 @@ func (s *FileStore) AppendAuditEvent(ctx context.Context, projectDir string, ev 
 		return err
 	}
 	max := 0
-	for line := range strings.SplitSeq(string(raw), "\n") {
+	for _, line := range strings.Split(string(raw), "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue

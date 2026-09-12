@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/json"
-	"slices"
 	"strconv"
 	"time"
 
@@ -111,7 +110,9 @@ func (s *Session) IndexOfID(id string) int {
 	}
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	for i, m := range slices.Backward(s.Messages) {
+	_rev1 := s.Messages
+	for i := len(_rev1) - 1; i >= 0; i-- {
+		m := _rev1[i]
 		if m.ID == id {
 			return i
 		}

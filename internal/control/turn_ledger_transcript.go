@@ -1,10 +1,8 @@
 package control
 
 import (
-	"log/slog"
-	"slices"
-
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 	"reasonix/internal/turnevent"
 )
@@ -25,7 +23,9 @@ func (c *Controller) updateTurnLedgerTranscript(ledger *turnevent.Ledger) *provi
 		} else {
 			ledger.SetTranscriptHead("", "")
 		}
-		for _, message := range slices.Backward(messages) {
+		_rev1 := messages
+		for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+			message := _rev1[_ri1]
 			if message.ReadCompletion != nil {
 				return message.ReadCompletion
 			}

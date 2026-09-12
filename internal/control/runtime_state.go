@@ -3,10 +3,10 @@ package control
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"log/slog"
 	"sync"
 
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/jobs"
 	"reasonix/internal/turnevent"

@@ -1,6 +1,9 @@
 package agent
 
-import "reasonix/internal/provider"
+import (
+	"reasonix/internal/compat"
+	"reasonix/internal/provider"
+)
 
 // ContextMaintenanceSnapshot is a read-only view of the current provider-bound
 // context. It separates present composition from cumulative summary-call cost.
@@ -80,7 +83,7 @@ func (a *Agent) ContextMaintenanceSnapshot() ContextMaintenanceSnapshot {
 			snapshot.SummaryTokens += a.estimatedPromptTokens([]provider.Message{msg})
 		}
 	}
-	snapshot.Headroom = max(0, snapshot.HardInputCeiling-snapshot.ProjectedTokens)
+	snapshot.Headroom = compat.Max(0, snapshot.HardInputCeiling-snapshot.ProjectedTokens)
 	currentHash := a.contextMaintenanceInputHash(visible)
 	if state.LastReceipt != nil {
 		receipt := *state.LastReceipt

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log/slog"
 	"net/http"
 	"os"
 	"sync"
@@ -12,6 +11,7 @@ import (
 
 	"reasonix/internal/agent"
 	"reasonix/internal/boot"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
 	"reasonix/internal/event"

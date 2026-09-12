@@ -12,9 +12,10 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/BurntSushi/toml"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"
+
+	"github.com/BurntSushi/toml"
 )
 
 const openCodeGoUpgradeFixture = `# keep the user's introduction

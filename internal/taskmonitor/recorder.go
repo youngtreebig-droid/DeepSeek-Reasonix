@@ -181,7 +181,7 @@ func (r *TaskRecorder) RecordDone(id string, st jobs.Status, jobErr error) {
 	}
 	r.stopHeartbeat(monitorID)
 	const maxSaveAttempts = 4
-	for range maxSaveAttempts {
+	for _i := 0; _i < maxSaveAttempts; _i++ {
 		cur, gerr := r.store.GetTask(ctx, r.projectDir, monitorID)
 		if gerr != nil || cur == nil {
 			return // never recorded (recorder attached after the job started)

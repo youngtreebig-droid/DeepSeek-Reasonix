@@ -89,7 +89,7 @@ func probeGit(path string) bool {
 func gitCandidatesFromWindowsBash(bashPath string) []string {
 	var out []string
 	dir := pathDir(bashPath)
-	for range 3 {
+	for _i := 0; _i < 3; _i++ {
 		if dir == "" || dir == "." {
 			break
 		}

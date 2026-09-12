@@ -1,6 +1,9 @@
 package agent
 
-import "strings"
+import (
+	"reasonix/internal/compat"
+	"strings"
+)
 
 func (s *Session) prepareRecoveryBranchMetaLocked(path string, opts RecoveryBranchOptions, preview string, turns int, digest string, depth int, contentUnchanged bool) (BranchMeta, error) {
 	existing, ok, err := LoadBranchMeta(path)
@@ -51,7 +54,7 @@ func (s *Session) prepareRecoveryBranchMetaLocked(path string, opts RecoveryBran
 		if ledgerCurrent {
 			meta.Revision = existing.Revision
 		} else {
-			meta.Revision = max(int64(1), existing.Revision+1)
+			meta.Revision = compat.Max(int64(1), existing.Revision+1)
 		}
 		meta.InFlightTurn = existing.InFlightTurn
 		meta.DismissedTodoBatches = MergeDismissedTodoBatches(existing.DismissedTodoBatches, meta.DismissedTodoBatches)

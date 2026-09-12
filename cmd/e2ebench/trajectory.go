@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"slices"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 )
 
 // trajectorySummary is the harness-side digest of one run's trajectory file:
@@ -193,10 +194,10 @@ func renderTimeAttribution(results []result) string {
 			singleReads += r.Trajectory.SingleReadRounds
 			parallelBatches += r.Trajectory.ParallelBatches
 			savedMs += r.Trajectory.ParallelSavedMs
-			delayP95 = max(delayP95, r.Trajectory.StartDelayP95Ms)
+			delayP95 = compat.Max(delayP95, r.Trajectory.StartDelayP95Ms)
 			recoveryRounds += r.Trajectory.RecoveryRounds
 			recoveryGapMs += r.Trajectory.RecoveryGapMs
-			cleanP95 = max(cleanP95, r.Trajectory.CleanGapP95Ms)
+			cleanP95 = compat.Max(cleanP95, r.Trajectory.CleanGapP95Ms)
 			streamRetries += r.Trajectory.StreamRetries
 			headerRetries += r.Trajectory.HeaderRetries
 			replays += r.Trajectory.ReasoningReplays
@@ -458,7 +459,7 @@ func (t *trajScan) recordModelPhase(rec trajectoryRecord) {
 			t.s.CompletionTokensTotal += u.CompletionTokens
 			t.gapReason += u.ReasoningTokens
 			t.gapCompl += u.CompletionTokens
-			t.gapPrompt = max(t.gapPrompt, u.PromptTokens)
+			t.gapPrompt = compat.Max(t.gapPrompt, u.PromptTokens)
 		case "subagent":
 			t.s.SubagentRequests++
 			return
@@ -475,7 +476,7 @@ func (t *trajScan) recordModelPhase(rec trajectoryRecord) {
 		t.s.PromptTokensSeen += u.PromptTokens
 		if d := u.CacheDiagnostics; d != nil {
 			t.s.SchemaTokensTotal += d.ToolSchemaTokens
-			t.s.SchemaTokensMax = max(t.s.SchemaTokensMax, d.ToolSchemaTokens)
+			t.s.SchemaTokensMax = compat.Max(t.s.SchemaTokensMax, d.ToolSchemaTokens)
 			if d.PrefixChanged {
 				t.s.PrefixResets++
 			}
@@ -575,11 +576,11 @@ func (t *trajScan) closeBatch() {
 	}
 	s.ToolBatches++
 	s.TopLevelCalls += b.calls
-	s.MaxBatchSize = max(s.MaxBatchSize, b.calls)
+	s.MaxBatchSize = compat.Max(s.MaxBatchSize, b.calls)
 	if b.calls == 1 && b.results == 1 && b.readOnly == 1 {
 		s.SingleReadRounds++
 		t.streakRun++
-		s.SingleReadStreak = max(s.SingleReadStreak, t.streakRun)
+		s.SingleReadStreak = compat.Max(s.SingleReadStreak, t.streakRun)
 	} else {
 		t.streakRun = 0
 	}
@@ -704,6 +705,6 @@ func pctile(values []int64, p int) int64 {
 	}
 	sorted := append([]int64(nil), values...)
 	slices.Sort(sorted)
-	index := min((len(sorted)*p+99)/100, len(sorted))
+	index := compat.Min((len(sorted)*p+99)/100, len(sorted))
 	return sorted[index-1]
 }

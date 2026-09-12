@@ -17,12 +17,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log/slog"
 	"regexp"
 	"sort"
 	"strings"
 	"sync"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/extension"
 	"reasonix/internal/extension/protocol"

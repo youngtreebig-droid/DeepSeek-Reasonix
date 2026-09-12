@@ -4,8 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"maps"
-	"slices"
+	"sort"
 	"strings"
 
 	"reasonix/internal/tool"
@@ -176,7 +175,12 @@ func decodeAct(args json.RawMessage, allowed map[string]bool) (actArgs, error) {
 	if err := decode(args, &raw); err != nil {
 		return actArgs{}, err
 	}
-	for _, name := range slices.Sorted(maps.Keys(raw)) {
+	names := make([]string, 0, len(raw))
+	for name := range raw {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
 		if !allowed[name] {
 			return actArgs{}, fmt.Errorf("invalid args: unknown field %q", name)
 		}

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/evidence"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"

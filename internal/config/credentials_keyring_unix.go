@@ -5,7 +5,7 @@ package config
 import (
 	"context"
 	"fmt"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 
 	dbus "github.com/godbus/dbus/v5"

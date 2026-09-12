@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 // mcp_manager_actions.go applies /mcp manager actions: connect, disable, remove,
@@ -7,7 +9,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"runtime"
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
@@ -387,21 +388,6 @@ func mcpEditorDisplayName(editor string) string {
 		return ""
 	}
 	return fields[0]
-}
-
-func mcpOpenCommand(target string) (*exec.Cmd, error) {
-	target = strings.TrimSpace(target)
-	if target == "" {
-		return nil, fmt.Errorf("empty target")
-	}
-	switch runtime.GOOS {
-	case "darwin":
-		return exec.Command("open", target), nil
-	case "windows":
-		return exec.Command("rundll32", "url.dll,FileProtocolHandler", target), nil
-	default:
-		return exec.Command("xdg-open", target), nil
-	}
 }
 
 func mcpAuthStatus(v mcpServerView) string {

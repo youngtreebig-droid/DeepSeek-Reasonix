@@ -1,16 +1,19 @@
+//go:build !win7
+
 package cli
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strings"
 
 	"charm.land/lipgloss/v2"
 	rw "github.com/mattn/go-runewidth"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
 	"reasonix/internal/fileref"
@@ -205,7 +208,7 @@ func (m *chatTUI) inputCursorByteOffset() int {
 					// cur.X is screen-relative and includes the "❯ " prompt
 					// gutter (composerPromptWidth columns). Subtract it so
 					// we measure content columns only.
-					col := max(cur.X-composerPromptWidth, 0)
+					col := compat.Max(cur.X-composerPromptWidth, 0)
 					visual := 0
 					for _, cell := range row.cells {
 						w := rw.RuneWidth(cell.r)
@@ -494,7 +497,7 @@ func activeAtToken(val string, cursor int) (at, end int, query string, ok bool) 
 		case '@':
 			if i == 0 || val[i-1] == ' ' || val[i-1] == '\t' || val[i-1] == '\n' {
 				end = tokenEnd(val, i+1)
-				queryEnd := min(max(cursor, i+1), end)
+				queryEnd := compat.Min(compat.Max(cursor, i+1), end)
 				return i, end, val[i+1 : queryEnd], true
 			}
 			return 0, 0, "", false
@@ -591,7 +594,7 @@ func (m *chatTUI) fileItems(token string) []compItem {
 		for _, it := range items {
 			seen[strings.TrimPrefix(it.insert, "@")] = true
 		}
-		remaining := min(maxCompItems-len(items), maxFileSearchItems)
+		remaining := compat.Min(maxCompItems-len(items), maxFileSearchItems)
 		results := m.searchFileRefs(fsFrag)
 		if len(results) > remaining {
 			results = results[:remaining]
@@ -758,7 +761,7 @@ func (m *chatTUI) acceptCompletion() {
 	// Place caret at the end of the inserted completion only. Fall back to
 	// CursorEnd when the layout has no width yet (unit tests).
 	if m.width > 0 {
-		m.setComposerCursor(len([]rune(newVal[:min(insertEnd, len(newVal))])))
+		m.setComposerCursor(len([]rune(newVal[:compat.Min(insertEnd, len(newVal))])))
 	} else {
 		m.input.CursorEnd()
 	}
@@ -814,9 +817,9 @@ func (m chatTUI) renderCompletion() string {
 	items := m.completion.items
 	start := 0
 	if len(items) > maxCompRows {
-		start = min(max(m.completion.sel-maxCompRows/2, 0), len(items)-maxCompRows)
+		start = compat.Min(compat.Max(m.completion.sel-maxCompRows/2, 0), len(items)-maxCompRows)
 	}
-	end := min(start+maxCompRows, len(items))
+	end := compat.Min(start+maxCompRows, len(items))
 
 	var b strings.Builder
 	for i := start; i < end; i++ {

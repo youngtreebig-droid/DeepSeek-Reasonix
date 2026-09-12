@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"reasonix/internal/compat"
 	"strings"
 )
 
@@ -168,7 +169,7 @@ func (l *Ledger) HasStructuredReviewAfter(kind ReviewKind, after int, requiredPa
 	if l == nil {
 		return false, false, nil
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	for i := start; i < len(l.receipts); i++ {

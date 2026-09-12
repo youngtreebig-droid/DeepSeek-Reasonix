@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/control"
 )
 
@@ -66,7 +67,7 @@ func saveOneInboundMedia(ctx context.Context, workspaceRoot, rawURL string) (str
 		contentType = strings.TrimSpace(contentType[:semi])
 	}
 	if strings.TrimSpace(contentType) == "" || strings.EqualFold(contentType, "application/octet-stream") {
-		contentType = http.DetectContentType(raw[:min(len(raw), 512)])
+		contentType = http.DetectContentType(raw[:compat.Min(len(raw), 512)])
 	}
 	name := mediaFilename(u, contentType)
 	if strings.HasPrefix(strings.ToLower(contentType), "image/") {
@@ -106,7 +107,7 @@ func saveOneInboundMediaItem(ctx context.Context, workspaceRoot string, item Inb
 	}
 	contentType := strings.TrimSpace(item.MIME)
 	if contentType == "" || strings.EqualFold(contentType, "application/octet-stream") {
-		contentType = http.DetectContentType(item.Data[:min(len(item.Data), 512)])
+		contentType = http.DetectContentType(item.Data[:compat.Min(len(item.Data), 512)])
 	}
 	if strings.HasPrefix(strings.ToLower(contentType), "image/") {
 		if ref, err := control.SaveImageBytesInRoot(workspaceRoot, contentType, item.Data); err == nil {

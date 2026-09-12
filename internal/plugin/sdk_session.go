@@ -1,3 +1,5 @@
+//go:build !win7
+
 package plugin
 
 import (
@@ -5,56 +7,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"runtime/debug"
+	"reasonix/internal/compat"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 
-	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 	"reasonix/internal/mcpdiag"
 	"reasonix/internal/mcpinteraction"
 	"reasonix/internal/tool"
+
+	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 )
-
-// SessionState is the transport lifecycle state exposed to local diagnostics.
-// It intentionally contains no endpoint, project path, or session identifier.
-type SessionState string
-
-const (
-	SessionStateConnecting   SessionState = "connecting"
-	SessionStateListening    SessionState = "listening"
-	SessionStateReady        SessionState = "ready"
-	SessionStateReconnecting SessionState = "reconnecting"
-	SessionStateFailed       SessionState = "failed"
-	SessionStateClosed       SessionState = "closed"
-)
-
-// SessionErrorKind classifies failures without exposing transport secrets.
-type SessionErrorKind string
-
-const (
-	SessionErrorNone           SessionErrorKind = ""
-	SessionErrorAuthRequired   SessionErrorKind = "auth_required"
-	SessionErrorSessionMissing SessionErrorKind = "session_missing"
-	SessionErrorStreamClosed   SessionErrorKind = "stream_closed"
-	SessionErrorTimeout        SessionErrorKind = "timeout"
-	SessionErrorProtocol       SessionErrorKind = "protocol"
-	SessionErrorTransport      SessionErrorKind = "transport"
-)
-
-type sessionDiagnostics struct {
-	ProtocolVersion   string
-	State             SessionState
-	SessionIDPresent  bool
-	ReconnectAttempts int
-	LastErrorKind     SessionErrorKind
-	LastError         string
-}
-
-type sessionDiagnosticsProvider interface {
-	sessionDiagnostics() sessionDiagnostics
-}
 
 type sdkEndpoint struct {
 	transport     mcpsdk.Transport
@@ -120,28 +83,6 @@ var defaultSessionReconnectDelays = []time.Duration{
 	5 * time.Second,
 	10 * time.Second,
 	30 * time.Second,
-}
-
-var linkedMCPClientVersion atomic.Pointer[string]
-
-// SetMCPClientVersion supplies the release version injected into an executable.
-// Library and development builds fall back to module metadata or "dev".
-func SetMCPClientVersion(version string) {
-	version = strings.TrimSpace(version)
-	if version == "" {
-		version = "dev"
-	}
-	linkedMCPClientVersion.Store(&version)
-}
-
-func mcpClientVersion() string {
-	if version := linkedMCPClientVersion.Load(); version != nil {
-		return *version
-	}
-	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
-		return info.Main.Version
-	}
-	return "dev"
 }
 
 func newSDKSessionTransport(ctx context.Context, s Spec, profile HostProfile) (*sdkSessionTransport, error) {
@@ -295,7 +236,7 @@ func (t *sdkSessionTransport) build(ctx context.Context, generation uint64) (*ma
 	// handshake. Give the connection a session-scoped context and let the bounded
 	// build context cancel it only while Connect is still in flight.
 	sessionCtx, cancelSession := context.WithCancel(t.lifeCtx)
-	stopBuildCancel := context.AfterFunc(ctx, cancelSession)
+	stopBuildCancel := compat.ContextAfterFunc(ctx, cancelSession)
 	endpoint, err := t.newEndpoint(sessionCtx)
 	if err != nil {
 		stopBuildCancel()
@@ -425,7 +366,7 @@ func (t *sdkSessionTransport) handleElicitation(ctx context.Context, req *mcpsdk
 		broker = legacyBroker
 		var cancel context.CancelFunc
 		decisionCtx, cancel = context.WithCancel(callCtx)
-		stop := context.AfterFunc(ctx, cancel)
+		stop := compat.ContextAfterFunc(ctx, cancel)
 		cleanup = func() {
 			stop()
 			cancel()
@@ -492,9 +433,12 @@ func (t *sdkSessionTransport) generationActive(generation uint64) bool {
 }
 
 func (t *sdkSessionTransport) watch(managed *managedMCPSession) {
-	t.wg.Go(func() {
+	t.wg.Add(1)
+	go func() {
+		defer t.wg.Done()
+
 		t.handleSessionEnd(managed, managed.session.Wait())
-	})
+	}()
 }
 
 func (t *sdkSessionTransport) handleSessionEnd(managed *managedMCPSession, err error) {

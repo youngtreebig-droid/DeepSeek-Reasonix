@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"maps"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
+	maps "reasonix/internal/compat/xmaps"
 	fileencoding "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/provider"
 	"reasonix/internal/retrieval"
@@ -248,7 +249,7 @@ func (s *Searcher) Around(ctx context.Context, req AroundRequest) ([]MessageCont
 	}
 	before := clamp(req.Before, defaultAround, maxAround)
 	after := clamp(req.After, defaultAround, maxAround)
-	start := max(req.MessageIndex-before, 0)
+	start := compat.Max(req.MessageIndex-before, 0)
 	remainingAfter := len(msgs) - req.MessageIndex - 1
 	end := len(msgs)
 	if after < remainingAfter {

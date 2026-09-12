@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log/slog"
 	"os"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/store"
 )
 
@@ -35,7 +35,7 @@ func appendSessionDAGEntriesUnlocked(sessionPath string, entries []sessionDAGEnt
 	if err != nil {
 		return 0, err
 	}
-	for range 3 {
+	for __i := 0; __i < 3; __i++ {
 		size, moved, err := appendUnlockedOnce(sessionPath, path, data)
 		if err != nil || !moved {
 			return size, err

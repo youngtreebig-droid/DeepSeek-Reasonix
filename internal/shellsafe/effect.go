@@ -2,11 +2,11 @@ package shellsafe
 
 import (
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"mvdan.cc/sh/v3/syntax"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/shellparse"
 )
 
@@ -664,7 +664,7 @@ func bashHasUnsafeLifecycle(command string) bool {
 	unsafe := false
 	syntax.Walk(file, func(node syntax.Node) bool {
 		stmt, ok := node.(*syntax.Stmt)
-		if ok && (stmt.Background || stmt.Coprocess || stmt.Disown) {
+		if ok && (stmt.Background || stmt.Coprocess || stmtDisownEffect(stmt)) {
 			unsafe = true
 			return false
 		}
@@ -680,7 +680,7 @@ func staticFieldsWithOutputRedirect(command string) ([]string, bool, bool) {
 	}
 	stmt := file.Stmts[0]
 	call, ok := stmt.Cmd.(*syntax.CallExpr)
-	if !ok || len(call.Assigns) > 0 || stmt.Background || stmt.Negated || stmt.Coprocess || stmt.Disown {
+	if !ok || len(call.Assigns) > 0 || stmt.Background || stmt.Negated || stmt.Coprocess || stmtDisownEffect(stmt) {
 		return nil, false, false
 	}
 	fields := make([]string, 0, len(call.Args))
@@ -694,10 +694,13 @@ func staticFieldsWithOutputRedirect(command string) ([]string, bool, bool) {
 	writes := false
 	for _, redirect := range stmt.Redirs {
 		switch redirect.Op {
-		case syntax.RdrOut, syntax.AppOut, syntax.RdrClob, syntax.AppClob, syntax.RdrAll, syntax.AppAll, syntax.RdrAllClob, syntax.AppAllClob:
+		case syntax.RdrOut, syntax.AppOut, syntax.RdrAll, syntax.AppAll:
 			writes = true
 		default:
-			return nil, false, false
+			if !isClobberRedirectOp(redirect.Op) {
+				return nil, false, false
+			}
+			writes = true
 		}
 	}
 	return fields, writes, len(fields) > 0

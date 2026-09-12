@@ -1,9 +1,12 @@
+//go:build !win7
+
 package cli
 
 import (
 	"fmt"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/control"
 	"reasonix/internal/sessioninbox"
 )
@@ -217,7 +220,7 @@ func (m *chatTUI) renderQueueList() string {
 		fmt.Fprintf(&b, " recovered=%d", snap.RecoveredN)
 	}
 	b.WriteByte('\n')
-	limit := min(len(snap.Items), 20)
+	limit := compat.Min(len(snap.Items), 20)
 	for i := range limit {
 		it := snap.Items[i]
 		fmt.Fprintf(&b, "  %d. [%s/%s] %s #%s\n", i+1, it.Intent, it.State, it.Preview, shortID(it.ID))

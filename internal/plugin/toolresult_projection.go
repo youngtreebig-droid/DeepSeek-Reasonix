@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"reasonix/internal/compat"
 	"strings"
 	"unicode/utf8"
 )
@@ -306,7 +307,7 @@ func validToolResultUTF8Prefix(text string, limit int) string {
 	if len(text) <= limit {
 		return text
 	}
-	limit = min(limit, len(text))
+	limit = compat.Min(limit, len(text))
 	for limit > 0 && !utf8.ValidString(text[:limit]) {
 		limit--
 	}

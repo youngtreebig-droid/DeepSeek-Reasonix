@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"slices"
 	"strings"
 
 	"reasonix/internal/event"
@@ -709,7 +708,8 @@ func (a *Agent) partitionFoldForProjectionAt(region []provider.Message, offset, 
 }
 
 func latestSessionContextIndex(messages []provider.Message) int {
-	for i := range slices.Backward(messages) {
+	_rev1 := messages
+	for i := len(_rev1) - 1; i >= 0; i-- {
 		if isSessionContextMessage(messages[i]) {
 			return i
 		}

@@ -3,8 +3,8 @@ package sessioninbox
 import (
 	"encoding/json"
 	"fmt"
-	"maps"
 	"path/filepath"
+	maps "reasonix/internal/compat/xmaps"
 	"strings"
 	"time"
 )

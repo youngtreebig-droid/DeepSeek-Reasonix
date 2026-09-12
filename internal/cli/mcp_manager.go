@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -7,6 +9,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/config"
 	"reasonix/internal/mcpdiag"
 	"reasonix/internal/plugin"
@@ -429,7 +432,7 @@ func visibleRange(total, sel, limit int) (int, int) {
 	if sel >= total {
 		sel = total - 1
 	}
-	start := max(sel-limit/2, 0)
+	start := compat.Max(sel-limit/2, 0)
 	if start+limit > total {
 		start = total - limit
 	}

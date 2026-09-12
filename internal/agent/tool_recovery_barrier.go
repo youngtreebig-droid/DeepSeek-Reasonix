@@ -2,9 +2,9 @@ package agent
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
 	"fmt"
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )
@@ -49,7 +49,7 @@ func assignRecoveryCallIDs(calls []provider.ToolCall) error {
 	seen := map[string]bool{}
 	for i := range calls {
 		if calls[i].ID == "" {
-			calls[i].ID = "call_" + rand.Text()
+			calls[i].ID = "call_" + compat.RandText()
 		}
 		if seen[calls[i].ID] {
 			return fmt.Errorf("provider returned duplicate tool call IDs")

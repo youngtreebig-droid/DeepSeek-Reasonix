@@ -558,7 +558,7 @@ func profileFlagsChanged(values subagentProfileFlags) bool {
 func parseToolList(raw string) []string {
 	seen := map[string]bool{}
 	var tools []string
-	for item := range strings.SplitSeq(raw, ",") {
+	for _, item := range strings.Split(raw, ",") {
 		name := strings.TrimSpace(item)
 		if name == "" || seen[name] {
 			continue

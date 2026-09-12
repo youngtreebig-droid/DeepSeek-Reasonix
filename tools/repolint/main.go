@@ -4,10 +4,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"maps"
 	"os"
 	"path/filepath"
-	"slices"
+	maps "reasonix/internal/compat/xmaps"
+	slices "reasonix/internal/compat/xslices"
 	"sort"
 )
 

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -16,6 +15,8 @@ import (
 
 	"mvdan.cc/sh/v3/syntax"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 	"reasonix/internal/shellparse"
 	"reasonix/internal/shellsafe"
@@ -637,7 +638,7 @@ func (l *Ledger) HasSuccessfulCompleteStepAfter(after int) bool {
 	if l == nil {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -659,7 +660,7 @@ func (l *Ledger) HasSuccessfulDeliverySignoffAfter(after int) bool {
 	if l == nil {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 
 	l.mu.Lock()
 	receipts := append([]Receipt(nil), l.receipts...)
@@ -697,7 +698,7 @@ func (l *Ledger) HasSuccessfulReviewAfter(after int) bool {
 	if l == nil {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 
 	l.mu.Lock()
 	receipts := append([]Receipt(nil), l.receipts...)
@@ -718,7 +719,7 @@ func (l *Ledger) HasHostReviewCoverageAfter(after int, requiredPaths []string) b
 	if l == nil {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 	l.mu.Lock()
 	receipts := append([]Receipt(nil), l.receipts...)
 	l.mu.Unlock()
@@ -876,7 +877,9 @@ func (l *Ledger) IncompleteLatestTodos() ([]TodoStepMatch, bool) {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for _, v := range slices.Backward(l.receipts) {
+	_rev1 := l.receipts
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		r := v
 		if !r.Success || r.ToolName != "todo_write" {
 			continue
@@ -1050,7 +1053,7 @@ func (l *Ledger) HasSuccessfulVerificationCommandAfter(after int) bool {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for _, r := range l.receipts[max(after+1, 0):] {
+	for _, r := range l.receipts[compat.Max(after+1, 0):] {
 		if r.Success && r.ToolName == "bash" && bashCommandIsVerification(r.Command) {
 			return true
 		}
@@ -1098,7 +1101,7 @@ func (l *Ledger) HasSuccessfulAnchorRefreshReadAfter(paths []string, after int) 
 	if l == nil || len(wanted) == 0 {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -1175,7 +1178,9 @@ func (l *Ledger) MatchLatestTodoStep(step string) (TodoStepMatch, bool) {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for _, v := range slices.Backward(l.receipts) {
+	_rev2 := l.receipts
+	for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+		v := _rev2[_ri2]
 		r := v
 		if !r.Success || r.ToolName != "todo_write" {
 			continue
@@ -1192,7 +1197,9 @@ func (l *Ledger) LatestTodos() ([]TodoItem, bool) {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for _, v := range slices.Backward(l.receipts) {
+	_rev3 := l.receipts
+	for _ri3 := len(_rev3) - 1; _ri3 >= 0; _ri3-- {
+		v := _rev3[_ri3]
 		r := v
 		if r.Success && r.ToolName == "todo_write" {
 			return append([]TodoItem(nil), r.Todos...), true
@@ -1218,7 +1225,9 @@ func (l *Ledger) UnverifiedCompletedTodos(current []TodoItem) (missing []TodoSte
 
 	var previous []TodoItem
 	baseline := -1
-	for i, v := range slices.Backward(receipts) {
+	_rev4 := receipts
+	for i := len(_rev4) - 1; i >= 0; i-- {
+		v := _rev4[i]
 		r := v
 		if !r.Success || r.ToolName != "todo_write" {
 			continue
@@ -1288,7 +1297,7 @@ func hasFailedCompleteStepRecoveryForTodo(receipts []Receipt, baseline int, inde
 // Recovery only trusts progress that happened before the failed sign-off.
 // Later unrelated work must not retroactively authorize an earlier completion.
 func hasSuccessfulProgressBeforeReceipt(receipts []Receipt, baseline int, before int) bool {
-	start := max(baseline+1, 0)
+	start := compat.Max(baseline+1, 0)
 	for i := start; i < before && i < len(receipts); i++ {
 		r := receipts[i]
 		if !r.Success || r.ToolName == "todo_write" || r.ToolName == "complete_step" || r.Read {
@@ -2579,7 +2588,9 @@ func hasSuccessfulCompleteStepForTodo(receipts []Receipt, index int, current []T
 }
 
 func latestTodoStep(step string, receipts []Receipt) TodoStepMatch {
-	for _, v := range slices.Backward(receipts) {
+	_rev5 := receipts
+	for _ri5 := len(_rev5) - 1; _ri5 >= 0; _ri5-- {
+		v := _rev5[_ri5]
 		r := v
 		if !r.Success || r.ToolName != "todo_write" {
 			continue

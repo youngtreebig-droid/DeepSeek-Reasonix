@@ -17,7 +17,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"sort"
@@ -25,6 +24,7 @@ import (
 	"sync"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/diff"
 	"reasonix/internal/fileutil"
 	fileenc "reasonix/internal/fileutil/encoding"

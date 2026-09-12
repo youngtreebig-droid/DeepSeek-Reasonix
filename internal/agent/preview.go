@@ -132,7 +132,7 @@ func unwrapMemoryCompilerExecution(content string) string {
 	// exposes the next. A single (or fixed two) pass leaves raw contract JSON in
 	// the transcript (#5361). maxDepth bounds pathological accretion.
 	const maxDepth = 24
-	for range maxDepth {
+	for __i := 0; __i < maxDepth; __i++ {
 		if !ContainsMemoryCompilerExecution(content) {
 			return content
 		}

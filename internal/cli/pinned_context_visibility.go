@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"slices"
 	"strings"
 
 	"reasonix/internal/agent"
@@ -30,7 +29,9 @@ func cliHistoryWithoutPinnedContextRevisions(messages []provider.Message) []prov
 // The result is chronological (oldest first).
 func copyAssistantParts(msgs []provider.Message) []string {
 	lastUserIdx := -1
-	for i, v := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for i := len(_rev1) - 1; i >= 0; i-- {
+		v := _rev1[i]
 		if v.Role == provider.RoleUser && !agent.IsPinnedContextRevision(v) {
 			lastUserIdx = i
 			break

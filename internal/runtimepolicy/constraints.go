@@ -381,7 +381,7 @@ func hasFieldPrefix(fields, prefix []string) bool {
 func stripFences(s string) string {
 	var b strings.Builder
 	inFence := false
-	for line := range strings.SplitSeq(s, "\n") {
+	for _, line := range strings.Split(s, "\n") {
 		trim := strings.TrimSpace(line)
 		if strings.HasPrefix(trim, "```") {
 			inFence = !inFence

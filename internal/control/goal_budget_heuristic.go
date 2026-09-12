@@ -1,7 +1,7 @@
 package control
 
 import (
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 	"unicode/utf8"
 )

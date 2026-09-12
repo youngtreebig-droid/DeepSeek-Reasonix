@@ -13,7 +13,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -21,6 +20,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/filelock"
 )
 

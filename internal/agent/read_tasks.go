@@ -1,10 +1,10 @@
 package agent
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"reasonix/internal/compat"
 	"strconv"
 	"sync"
 
@@ -44,7 +44,7 @@ type readTask struct {
 }
 
 func newReadTasks(sessionID string, generation uint64) *readTasks {
-	return &readTasks{sessionID: sessionID, generation: generation, binding: rand.Text(), byID: map[string]readTask{}}
+	return &readTasks{sessionID: sessionID, generation: generation, binding: compat.RandText(), byID: map[string]readTask{}}
 }
 
 // accept reports whether the cursor may continue a live read task.

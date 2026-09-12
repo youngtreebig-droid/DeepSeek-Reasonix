@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"reasonix/internal/compat"
 	"strings"
 )
 
@@ -43,12 +44,12 @@ func viewMore(n int, noun string) string {
 
 func viewCompactPath(path string, width int) string {
 	path = oneLineText(path)
-	return compactMiddle(path, max(1, width))
+	return compactMiddle(path, compat.Max(1, width))
 }
 
 func viewCompactText(s string, width int) string {
 	s = oneLineText(s)
-	return compactEnd(s, max(1, width))
+	return compactEnd(s, compat.Max(1, width))
 }
 
 func viewBodyPreview(body string, maxLines int) (string, int) {
@@ -80,5 +81,5 @@ func viewPadWidth(s string, minWidth int) int {
 }
 
 func viewBudget(width, used int) int {
-	return max(1, viewWidth(width)-used)
+	return compat.Max(1, viewWidth(width)-used)
 }

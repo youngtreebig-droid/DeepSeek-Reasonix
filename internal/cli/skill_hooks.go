@@ -1,14 +1,16 @@
+//go:build !win7
+
 package cli
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
-	"slices"
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
 
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
 	"reasonix/internal/skill"

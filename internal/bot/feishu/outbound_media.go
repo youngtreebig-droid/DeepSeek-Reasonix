@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	"reasonix/internal/bot"
+	"reasonix/internal/compat"
+	"reasonix/internal/compat/rootfs"
 
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 )
@@ -60,7 +62,7 @@ func (a *adapter) sendMedia(ctx context.Context, msg bot.OutboundMessage, media 
 }
 
 func (a *adapter) sendOneMedia(ctx context.Context, msg bot.OutboundMessage, media outboundMedia) (bot.SendResult, error) {
-	mimeType := http.DetectContentType(media.data[:min(len(media.data), 512)])
+	mimeType := http.DetectContentType(media.data[:compat.Min(len(media.data), 512)])
 	if strings.HasPrefix(mimeType, "image/") {
 		imageKey, err := a.uploadImage(ctx, media.data)
 		if err == nil {
@@ -103,7 +105,7 @@ func (a *adapter) readOutboundFile(ref string) ([]byte, string, error) {
 		if !filepath.IsAbs(root) {
 			return nil, "", fmt.Errorf("feishu outbound media: configured root %d must be absolute", i+1)
 		}
-		rootHandle, err := os.OpenRoot(root)
+		rootHandle, err := rootfs.OpenRoot(root)
 		if err != nil {
 			if os.IsNotExist(err) {
 				continue

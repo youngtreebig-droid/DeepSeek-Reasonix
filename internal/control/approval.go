@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
 	"reasonix/internal/permission"
@@ -617,9 +618,9 @@ func (a *approvalManager) cancelAskResolutionLocked(id string) {
 func (a *approvalManager) clearAll() {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	clear(a.approvals)
-	clear(a.asks)
-	clear(a.mcpInteractions.pending)
+	compat.Clear(a.approvals)
+	compat.Clear(a.asks)
+	compat.Clear(a.mcpInteractions.pending)
 	for id := range a.approvalResolutions {
 		a.cancelApprovalResolutionLocked(id)
 	}

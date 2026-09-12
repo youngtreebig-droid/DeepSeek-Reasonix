@@ -3,6 +3,7 @@ package plancontract
 import (
 	"errors"
 	"fmt"
+	"reasonix/internal/compat"
 	"strings"
 )
 
@@ -69,7 +70,7 @@ type Verification struct {
 func (p Plan) Normalize() Plan {
 	out := Plan{
 		ID:               strings.TrimSpace(p.ID),
-		Revision:         max(p.Revision, 1),
+		Revision:         compat.Max(p.Revision, 1),
 		Objective:        strings.TrimSpace(p.Objective),
 		NonGoals:         cleanStrings(p.NonGoals),
 		RequiresApproval: p.RequiresApproval,

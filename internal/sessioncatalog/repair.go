@@ -4,12 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"maps"
 	"runtime"
 	"strings"
 	"time"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
+	maps "reasonix/internal/compat/xmaps"
 )
 
 const repairWakeKey = "session-catalog-repair-wake"
@@ -214,7 +215,7 @@ func (c *Catalog) runRepairWave(workerCtx context.Context) {
 	}
 	if processed {
 		c.statusMu.Lock()
-		c.status.LastRepairDurationMS = max(int64(0), c.opts.Now().Sub(started).Milliseconds())
+		c.status.LastRepairDurationMS = compat.Max(int64(0), c.opts.Now().Sub(started).Milliseconds())
 		c.statusMu.Unlock()
 	}
 }

@@ -1,9 +1,12 @@
+//go:build !win7
+
 package cli
 
 import (
 	"fmt"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/i18n"
 	"reasonix/internal/skill"
 )
@@ -18,7 +21,7 @@ func (m chatTUI) renderSkillPicker() string {
 	if p == nil {
 		return ""
 	}
-	w := max(viewWidth(m.width), 40)
+	w := compat.Max(viewWidth(m.width), 40)
 	switch p.mode {
 	case pickerSkills:
 		return managerContentPanelStyle(w).Render(m.renderSkillPickerSkills())
@@ -56,7 +59,7 @@ func (m chatTUI) skillPickerFooterHint() string {
 
 func (m chatTUI) renderSkillPickerSkills() string {
 	p := m.skillPick
-	w := max(viewWidth(m.width), 40)
+	w := compat.Max(viewWidth(m.width), 40)
 	var b strings.Builder
 
 	fmt.Fprintf(&b, "%s\n", viewHeader("Manage skills"))
@@ -107,7 +110,7 @@ func (m chatTUI) skillPickerVisibleRows() int {
 	if m.height <= 0 {
 		return skillDialogMaxRows
 	}
-	return min(skillDialogMaxRows, max(skillDialogMinRows, m.height-14))
+	return compat.Min(skillDialogMaxRows, compat.Max(skillDialogMinRows, m.height-14))
 }
 
 func skillListWindow(sel, total, limit int) (int, int) {
@@ -123,7 +126,7 @@ func skillListWindow(sel, total, limit int) (int, int) {
 	if sel >= total {
 		sel = total - 1
 	}
-	start := max(sel-limit/2, 0)
+	start := compat.Max(sel-limit/2, 0)
 	if start+limit > total {
 		start = total - limit
 	}
@@ -131,8 +134,8 @@ func skillListWindow(sel, total, limit int) (int, int) {
 }
 
 func renderSkillSearchBox(query string, active bool, w int) string {
-	boxWidth := max(8, w-4)
-	innerWidth := max(1, boxWidth-4)
+	boxWidth := compat.Max(8, w-4)
+	innerWidth := compat.Max(1, boxWidth-4)
 	text := "/ " + i18n.M.SkillPickerSearchPlaceholder
 	if active || query != "" {
 		text = "/ " + query
@@ -184,7 +187,7 @@ func (m chatTUI) renderSkillPickerSourceSkills() string {
 	}
 	skills := p.selectedRootSkills()
 	b.WriteString(accent(i18n.M.SkillPickerSourceTitle))
-	b.WriteString("  " + dim(viewCompactPath(root.dir, max(8, m.width-18))))
+	b.WriteString("  " + dim(viewCompactPath(root.dir, compat.Max(8, m.width-18))))
 	b.WriteByte('\n')
 	b.WriteByte('\n')
 	if len(skills) == 0 {
@@ -239,7 +242,7 @@ func (m chatTUI) renderSkillPickerConfirmDelete() string {
 	b.WriteByte('\n')
 	path := skillDeleteTargetLabel(p.deleteSkill)
 	if path != "" {
-		b.WriteString(dim("  " + viewCompactPath(path, max(8, m.width-4))))
+		b.WriteString(dim("  " + viewCompactPath(path, compat.Max(8, m.width-4))))
 		b.WriteByte('\n')
 	}
 	b.WriteByte('\n')
@@ -254,7 +257,7 @@ func renderSkillRow(num int, selected bool, s skill.Skill, enabled bool, w int) 
 	if selected {
 		prefix = accent("  › ")
 	}
-	nameWidth := min(30, max(14, w/3))
+	nameWidth := compat.Min(30, compat.Max(14, w/3))
 	name := compactMiddle(s.SlashName(), nameWidth)
 	if selected {
 		name = bold(name)
@@ -300,7 +303,7 @@ func approxSkillTokens(s skill.Skill) int {
 	if text == "" {
 		return 0
 	}
-	estimate := max(len([]rune(text))/4, len(strings.Fields(text)))
+	estimate := compat.Max(len([]rune(text))/4, len(strings.Fields(text)))
 	if estimate <= 10 {
 		return 10
 	}
@@ -308,7 +311,7 @@ func approxSkillTokens(s skill.Skill) int {
 }
 
 func sourceRowLabel(r skillRootLine, w int) string {
-	path := viewCompactPath(r.dir, max(8, w-40))
+	path := viewCompactPath(r.dir, compat.Max(8, w-40))
 	scope := dim(scopeLabel(r.scope))
 	status := statusLabel(r.status)
 	if r.status == skill.StatusOK {
@@ -375,13 +378,13 @@ func renderSkillDetailHeader(s skill.Skill, w int) string {
 	b.WriteByte('\n')
 
 	if s.Path != "" && s.Scope != skill.ScopeBuiltin {
-		b.WriteString(dim("  " + viewCompactPath(s.Path, max(8, w-4))))
+		b.WriteString(dim("  " + viewCompactPath(s.Path, compat.Max(8, w-4))))
 		b.WriteByte('\n')
 	}
 
 	if strings.TrimSpace(s.Description) != "" {
 		b.WriteByte('\n')
-		b.WriteString(viewCompactText(s.Description, max(8, w-4)))
+		b.WriteString(viewCompactText(s.Description, compat.Max(8, w-4)))
 		b.WriteByte('\n')
 	}
 

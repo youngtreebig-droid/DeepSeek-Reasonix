@@ -12,6 +12,7 @@ import (
 	"unicode/utf8"
 
 	"reasonix/internal/ablation"
+	"reasonix/internal/compat"
 	"reasonix/internal/shellparse"
 )
 
@@ -44,7 +45,7 @@ func runDiff(o diffOpts) string {
 	pkgs := packagesOf(srcFiles)
 	prompt := buildDiffPrompt(srcFiles, pkgs, truncate(gitOut(o.repo, "diff", o.base+"...HEAD", "--")))
 
-	attempts := max(o.attempts, 1)
+	attempts := compat.Max(o.attempts, 1)
 	var best diffReport
 	made := 0
 	for i := 1; i <= attempts; i++ {

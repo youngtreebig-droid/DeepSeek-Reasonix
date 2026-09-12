@@ -23,11 +23,12 @@ import (
 	"time"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
 	"reasonix/internal/event"
 	"reasonix/internal/eventwire"
-	"reasonix/internal/remote/bootstrap"
+	"reasonix/internal/remote/serveenv"
 	"reasonix/internal/store"
 )
 
@@ -80,7 +81,7 @@ func discoverCLIServes() []cliServeRecord {
 		if err != nil {
 			continue
 		}
-		state, err := bootstrap.UnmarshalState(data)
+		state, err := serveenv.UnmarshalState(data)
 		if err != nil || state.PID <= 0 {
 			continue
 		}
@@ -878,7 +879,7 @@ func (m *cliTakeoverManager) retryPendingReturns(force bool) {
 			continue
 		}
 		m.mu.Lock()
-		item.backoff = min(item.backoff*2, 5*time.Second)
+		item.backoff = compat.Min(item.backoff*2, 5*time.Second)
 		item.nextTry = now.Add(item.backoff)
 		m.mu.Unlock()
 	}

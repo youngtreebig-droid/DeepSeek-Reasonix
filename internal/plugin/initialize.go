@@ -3,7 +3,7 @@ package plugin
 import (
 	"context"
 	"encoding/json"
-	"log/slog"
+	slog "reasonix/internal/compat/xslog"
 )
 
 func (c *Client) initialize(ctx context.Context) error {

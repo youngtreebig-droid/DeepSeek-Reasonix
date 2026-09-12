@@ -15,11 +15,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -35,6 +33,9 @@ import (
 	"reasonix/internal/capability"
 	"reasonix/internal/checkpoint"
 	"reasonix/internal/command"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
@@ -1045,9 +1046,12 @@ func (c *Controller) spawnGuardedTurn(ctx context.Context, cancel context.Cancel
 	body = c.prepareTurnAdmission(body)
 	ctx, completion := withGuardedTurnCompletion(ctx)
 	c.liveness.reset(time.Now())
-	c.autosaveWG.Go(func() {
+	c.autosaveWG.Add(1)
+	go func() {
+		defer c.autosaveWG.Done()
+
 		c.autosaveWhileRunning(ctx)
-	})
+	}()
 	go func() {
 		defer cancel()
 		defer func() {
@@ -1292,7 +1296,9 @@ func (c *Controller) stopGoal(status string) {
 // lastAssistantText returns the content of the most recent assistant message with
 // non-empty text — the model's final answer for the turn (its plan, in plan mode).
 func lastAssistantText(msgs []provider.Message) string {
-	for _, msg := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		msg := _rev1[_ri1]
 		if msg.Role == provider.RoleAssistant && strings.TrimSpace(msg.Content) != "" {
 			return msg.Content
 		}
@@ -4115,7 +4121,9 @@ func resolveInterruptedTurnStart(msgs []provider.Message, idx int, preserveUser 
 	// graceful fallback still distinguishes the current visible turn; search
 	// backward so a repeated prompt selects the newest occurrence.
 	if fallbackContent != "" {
-		for i, msg := range slices.Backward(msgs) {
+		_rev2 := msgs
+		for i := len(_rev2) - 1; i >= 0; i-- {
+			msg := _rev2[i]
 			if matchesKind(msg) {
 				return i, true
 			}
@@ -4135,7 +4143,7 @@ func (c *Controller) hasInterruptedDisplayAfter(idx int, fallback provider.Messa
 	if start, ok := resolveInterruptedTurnStart(msgs, idx, true, c.inFlightTurnStartedAt(), fallback); ok {
 		idx = start
 	}
-	idx = max(0, min(idx, len(msgs)))
+	idx = compat.Max(0, compat.Min(idx, len(msgs)))
 	for _, m := range msgs[idx:] {
 		if m.LocalOnly && m.InterruptedTurn != nil {
 			return true
@@ -4193,7 +4201,7 @@ func interruptedToolSummary(call provider.ToolCall) provider.InterruptedToolSumm
 			}
 		}
 	}
-	for line := range strings.SplitSeq(call.Diff, "\n") {
+	for _, line := range strings.Split(call.Diff, "\n") {
 		line = strings.TrimSpace(line)
 		switch {
 		case strings.HasPrefix(line, "+++ b/"):

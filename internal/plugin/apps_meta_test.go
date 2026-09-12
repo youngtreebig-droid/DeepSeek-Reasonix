@@ -7,8 +7,9 @@ import (
 	"testing"
 	"time"
 
-	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 	"reasonix/internal/tool"
+
+	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
 // appsFixtureServer advertises the Apps extension and serves tools with

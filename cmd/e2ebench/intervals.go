@@ -1,6 +1,9 @@
 package main
 
-import "slices"
+import (
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
+)
 
 // Interval math shared by the trajectory summarizer: wall-clock spans,
 // overlap-free unions, and subtraction for the disjoint wall decomposition.
@@ -22,7 +25,7 @@ func intervalSpan(intervals [][2]int64) (wall int64, overlapped bool) {
 		if iv[0] < maxEnd {
 			overlapped = true
 		}
-		maxEnd = max(maxEnd, iv[1])
+		maxEnd = compat.Max(maxEnd, iv[1])
 	}
 	return maxEnd - minStart, overlapped
 }
@@ -50,7 +53,7 @@ func mergeIntervals(intervals [][2]int64) [][2]int64 {
 	out := [][2]int64{sorted[0]}
 	for _, iv := range sorted[1:] {
 		if last := &out[len(out)-1]; iv[0] <= last[1] {
-			last[1] = max(last[1], iv[1])
+			last[1] = compat.Max(last[1], iv[1])
 			continue
 		}
 		out = append(out, iv)
@@ -73,7 +76,7 @@ func clipIntervals(base, covered [][2]int64) [][2]int64 {
 			if covered[k][0] > lo {
 				out = append(out, [2]int64{lo, covered[k][0]})
 			}
-			if lo = max(lo, covered[k][1]); lo >= iv[1] {
+			if lo = compat.Max(lo, covered[k][1]); lo >= iv[1] {
 				break
 			}
 		}

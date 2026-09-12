@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"reasonix/internal/compat/httpmux"
 	"reasonix/internal/control"
 )
 
-func (s *Server) registerRuntimeRecoveryRoutes(mux *http.ServeMux) {
+func (s *Server) registerRuntimeRecoveryRoutes(mux *httpmux.Mux) {
 	mux.HandleFunc("GET /status", s.status)
 	mux.HandleFunc("GET /tool-recovery", s.toolRecovery)
 	mux.HandleFunc("POST /tool-recovery", s.foregroundMutation(s.resolveToolRecovery))

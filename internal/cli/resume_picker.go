@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -8,6 +10,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/i18n"
 )
 
@@ -149,7 +152,7 @@ func (m chatTUI) renderResumePicker() string {
 	if r.quick != nil {
 		return r.quick.render(m.width)
 	}
-	w := max(m.width, 10)
+	w := compat.Max(m.width, 10)
 	var b strings.Builder
 	b.WriteString(accent(i18n.M.ResumePickTitle) + "\n")
 	for i, entry := range r.entries {

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 )
 
@@ -112,7 +113,7 @@ func (s *Session) rotateRecoveryLane(current string) {
 // compact so repeated in-place rewrites stay bounded.
 
 func writeRecoveryEventLog(path string, msgs []provider.Message, digest [sha256.Size]byte, revision int64, isolated bool) error {
-	baseRevision := max(int64(0), revision-1)
+	baseRevision := compat.Max(int64(0), revision-1)
 	if isolated {
 		return compactSessionEventLog(path, msgs, digest, baseRevision, "recovery")
 	}

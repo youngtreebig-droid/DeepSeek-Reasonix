@@ -1,7 +1,6 @@
 package evidence
 
 import (
-	"slices"
 	"strings"
 )
 
@@ -56,7 +55,9 @@ func (l *Ledger) ReceiptIDForCall(callID string) string {
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	for _, r := range slices.Backward(l.receipts) {
+	_rev1 := l.receipts
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		r := _rev1[_ri1]
 		if r.ToolCallID == callID && r.Read {
 			return r.ID
 		}

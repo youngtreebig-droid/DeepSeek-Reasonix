@@ -3,6 +3,7 @@ package sessioncatalog
 import (
 	"context"
 	"database/sql"
+	"reasonix/internal/compat"
 	"strings"
 )
 
@@ -34,7 +35,7 @@ func (c *Catalog) ListTopics(ctx context.Context, req TopicPageRequest) (TopicPa
 		args = append(args, cutoff)
 	}
 	scanCursor := cursor
-	scanLimit := max(req.Limit+1, 64)
+	scanLimit := compat.Max(req.Limit+1, 64)
 	for len(out.Items) <= req.Limit {
 		query, pageArgs := topicPageQuery(req, where, args, scanCursor, scanLimit)
 		rows, queryErr := c.db.QueryContext(ctx, query, pageArgs...)

@@ -85,7 +85,7 @@ func approvalChoiceLabels(a *event.Approval) []string {
 		choices = fmt.Sprintf(i18n.M.BashPrefixChoices, rule, rule)
 	}
 	var labels []string
-	for line := range strings.SplitSeq(choices, "\n") {
+	for _, line := range strings.Split(choices, "\n") {
 		line = strings.TrimSpace(line)
 		if len(line) >= 3 && line[0] >= '1' && line[0] <= '9' && line[1] == '.' {
 			labels = append(labels, strings.TrimSpace(line[2:]))

@@ -12,8 +12,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/charmbracelet/colorprofile"
 	"time"
+
+	"github.com/charmbracelet/colorprofile"
 
 	tea "charm.land/bubbletea/v2"
 	"github.com/charmbracelet/x/ansi"

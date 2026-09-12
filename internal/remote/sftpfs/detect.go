@@ -1,7 +1,7 @@
 package sftpfs
 
 import (
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"unicode/utf8"
 )
 

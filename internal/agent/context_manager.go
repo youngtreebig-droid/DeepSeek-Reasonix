@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log/slog"
 	"sync/atomic"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 )
 

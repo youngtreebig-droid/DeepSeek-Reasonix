@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"reasonix/internal/compat"
+)
 
 // outcomeSummary condenses one run's outcome-progress series: did claimed
 // progress become objective transitions, and did the run end below its best
@@ -128,7 +131,7 @@ func summarizeOutcomePoints(points []outcomePoint, firstTS, lastTS int64) *outco
 		if p.discriminating > 0 && o.TTFDCMs == 0 && p.ts > firstTS {
 			o.TTFDCMs = p.ts - firstTS
 		}
-		o.DebtAgeMax = max(o.DebtAgeMax, p.debtAge)
+		o.DebtAgeMax = compat.Max(o.DebtAgeMax, p.debtAge)
 		o.Objective += p.objective
 		o.Regression += p.regression
 		if p.legacyGain > 0 {
@@ -139,10 +142,10 @@ func summarizeOutcomePoints(points []outcomePoint, firstTS, lastTS int64) *outco
 				o.RunwayMin = *p.runway
 			}
 			o.RunwaySamples++
-			o.RunwayMin = min(o.RunwayMin, *p.runway)
+			o.RunwayMin = compat.Min(o.RunwayMin, *p.runway)
 			o.RunwayFinal = *p.runway
-			o.RunwayDryMax = max(o.RunwayDryMax, p.runwayDry)
-			o.RunwayIdleMax = max(o.RunwayIdleMax, p.runwayIdle)
+			o.RunwayDryMax = compat.Max(o.RunwayDryMax, p.runwayDry)
+			o.RunwayIdleMax = compat.Max(o.RunwayIdleMax, p.runwayIdle)
 			if o.RunwayFirstSpentRound == 0 && p.runwaySpent {
 				o.RunwayFirstSpentRound = p.round
 				if o.RunwayFirstSpentRound == 0 {
@@ -161,7 +164,7 @@ func summarizeOutcomePoints(points []outcomePoint, firstTS, lastTS int64) *outco
 				stall = 0
 			} else {
 				stall++
-				o.SolutionStallMax = max(o.SolutionStallMax, stall)
+				o.SolutionStallMax = compat.Max(o.SolutionStallMax, stall)
 			}
 		}
 		score += p.objective - p.regression
@@ -175,7 +178,7 @@ func summarizeOutcomePoints(points []outcomePoint, firstTS, lastTS int64) *outco
 				continue
 			}
 			redeemed := false
-			for j := i; j < min(i+1+falseProgressWindow, len(points)); j++ {
+			for j := i; j < compat.Min(i+1+falseProgressWindow, len(points)); j++ {
 				if points[j].objective > 0 {
 					redeemed = true
 					break
@@ -198,7 +201,7 @@ func (t *trajScan) attachEBMChain(o *outcomeSummary) {
 	fire := -1
 	for i, p := range pts {
 		o.DebtArea += p.debtAge
-		o.BlindPeak = max(o.BlindPeak, p.blindMutations)
+		o.BlindPeak = compat.Max(o.BlindPeak, p.blindMutations)
 		if o.EBMEligibleRound == 0 && p.ebmEligible {
 			o.EBMEligibleRound = i + 1
 		}
@@ -322,7 +325,7 @@ func renderOutcomeProgress(results []result) string {
 		falseProgress += o.FalseProgressRounds
 		objective += o.Objective
 		regression += o.Regression
-		stallMax = max(stallMax, o.SolutionStallMax)
+		stallMax = compat.Max(stallMax, o.SolutionStallMax)
 		if o.RegressedFromBest {
 			regressed++
 			regretMs += o.SearchRegretMs
@@ -338,7 +341,7 @@ func renderOutcomeProgress(results []result) string {
 			continue
 		}
 		o := r.Trajectory.Outcome
-		debtMax = max(debtMax, o.DebtAgeMax)
+		debtMax = compat.Max(debtMax, o.DebtAgeMax)
 		if o.TTFDCMs > 0 {
 			discRuns++
 			ttfdcs = append(ttfdcs, o.TTFDCMs)
@@ -408,8 +411,8 @@ func runwayShadowLine(results []result) string {
 		}
 		o := r.Trajectory.Outcome
 		measured++
-		dryMax = max(dryMax, o.RunwayDryMax)
-		idleMax = max(idleMax, o.RunwayIdleMax)
+		dryMax = compat.Max(dryMax, o.RunwayDryMax)
+		idleMax = compat.Max(idleMax, o.RunwayIdleMax)
 		if o.RunwayFirstSpentRound > 0 {
 			spent++
 			spentRounds = append(spentRounds, int64(o.RunwayFirstSpentRound))

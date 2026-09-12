@@ -2,7 +2,7 @@ package evidence
 
 import (
 	"path"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 	"unicode"
 )

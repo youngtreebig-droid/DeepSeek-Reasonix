@@ -4,10 +4,10 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
-	"log/slog"
 	"os"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 	"reasonix/internal/store"
 )

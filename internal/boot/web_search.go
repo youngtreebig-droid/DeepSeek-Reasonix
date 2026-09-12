@@ -1,8 +1,7 @@
 package boot
 
 import (
-	"slices"
-
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/config"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"

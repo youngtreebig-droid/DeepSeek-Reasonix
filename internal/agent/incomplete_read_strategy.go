@@ -45,7 +45,7 @@ func parseReadStrategyReceiptArgs(raw json.RawMessage) (readStrategyReceiptArgs,
 func grepMatchLines(output string) []int {
 	var lines []int
 	seen := make(map[int]bool)
-	for line := range strings.SplitSeq(output, "\n") {
+	for _, line := range strings.Split(output, "\n") {
 		for start := 0; start < len(line); {
 			colon := strings.IndexByte(line[start:], ':')
 			if colon < 0 {

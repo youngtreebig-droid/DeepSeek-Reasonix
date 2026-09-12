@@ -6,7 +6,6 @@ import (
 	"errors"
 	"math"
 	"runtime"
-	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -766,7 +765,9 @@ func finalAssistantSummary(ctrl acpController) string {
 		return ""
 	}
 	history := ctrl.History()
-	for _, v := range slices.Backward(history) {
+	_rev1 := history
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		if v.Role == provider.RoleAssistant && strings.TrimSpace(v.Content) != "" {
 			return v.Content
 		}

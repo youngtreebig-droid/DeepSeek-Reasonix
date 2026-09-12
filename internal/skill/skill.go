@@ -19,10 +19,10 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/config"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"
@@ -1283,7 +1283,7 @@ func parseCSVFrontmatter(raw string) []string {
 		raw = strings.TrimSpace(raw[1 : len(raw)-1])
 	}
 	var out []string
-	for p := range strings.SplitSeq(raw, ",") {
+	for _, p := range strings.Split(raw, ",") {
 		if t := strings.Trim(strings.TrimSpace(p), `"'`); t != "" {
 			out = append(out, t)
 		}

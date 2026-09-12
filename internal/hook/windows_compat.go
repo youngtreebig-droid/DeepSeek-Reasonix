@@ -144,7 +144,7 @@ func isPOSIXShellScriptFile(path string) bool {
 	if line == "" {
 		return false
 	}
-	for field := range strings.FieldsSeq(line) {
+	for _, field := range strings.Fields(line) {
 		field = strings.Trim(strings.ToLower(field), `"'`)
 		field = strings.TrimSuffix(filepath.Base(filepath.ToSlash(field)), ".exe")
 		switch field {
@@ -157,7 +157,7 @@ func isPOSIXShellScriptFile(path string) bool {
 
 func isSimpleWindowsBatchTail(tail string) bool {
 	quoted := false
-	for i := range len(tail) {
+	for i := 0; i < len(tail); i++ {
 		switch tail[i] {
 		case '\r', '\n':
 			return false

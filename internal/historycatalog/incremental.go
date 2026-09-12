@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/store"
 )
 
@@ -25,7 +26,7 @@ func (c *Catalog) tryAppendPath(ctx context.Context, root Root, path string, gen
 		return false, nil
 	}
 	meta, _, _ := agent.LoadBranchMeta(path)
-	lastActivity := max(int64(0), agent.SessionContentModTime(path).UnixMilli())
+	lastActivity := compat.Max(int64(0), agent.SessionContentModTime(path).UnixMilli())
 	tx, err := c.db.BeginTx(ctx, nil)
 	if err != nil {
 		return false, err

@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
 	"os"
-	"slices"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 )
 

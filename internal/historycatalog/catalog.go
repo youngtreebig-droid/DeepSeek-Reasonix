@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/projectiondb"
 	"reasonix/internal/retrieval"
 	"reasonix/internal/store"
@@ -109,9 +110,12 @@ func Open(ctx context.Context, opts Options) (*Catalog, error) {
 	// blocks. Registered roots rescan afterwards and re-index truncated.
 	if !opts.InMemory && strings.TrimSpace(opts.Path) != "" &&
 		historyDBFileSize(opts.Path) > rebuildOversizeFactor*opts.MaxBytes {
-		c.wg.Go(func() {
+		c.wg.Add(1)
+		go func() {
+			defer c.wg.Done()
+
 			c.wipeForRebuild(c.ctx)
-		})
+		}()
 	}
 	return c, nil
 }
@@ -533,7 +537,7 @@ func (c *Catalog) indexPath(ctx context.Context, root Root, path string, generat
 		digest = hex.EncodeToString(h.Sum(nil))
 	}
 	meta, _, _ := agent.LoadBranchMeta(path)
-	lastActivity := max(int64(0), agent.SessionContentModTime(path).UnixMilli())
+	lastActivity := compat.Max(int64(0), agent.SessionContentModTime(path).UnixMilli())
 	// Hide stale terms as soon as the authoritative fingerprint changes. Rows
 	// remain available for retry and are atomically replaced below.
 	if _, err := c.db.ExecContext(ctx, `UPDATE history_sources SET health='stale',last_error='' WHERE path=?`, path); err != nil {

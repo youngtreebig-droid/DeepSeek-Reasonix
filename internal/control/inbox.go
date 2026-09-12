@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log/slog"
-	"maps"
 	"strings"
 	"sync"
 	"time"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
+	maps "reasonix/internal/compat/xmaps"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/sessioninbox"
 )
@@ -150,7 +151,7 @@ func (s *inboxState) clearActive() {
 		return
 	}
 	s.activeItemIDs = nil
-	s.activeOwnership.Clear()
+	compat.ClearSyncMap(&s.activeOwnership)
 }
 
 func (s *inboxState) trackAdmission(id string) {

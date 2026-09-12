@@ -12,6 +12,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"reasonix/internal/compat"
 	fileencoding "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/store"
 )
@@ -455,7 +456,7 @@ func BeginSessionInFlightTurn(sessionPath string, startMessageIndex int, preserv
 	}
 	marker.StartRevision = meta.Revision
 	marker.StartDigest = strings.TrimSpace(meta.ContentDigest)
-	marker.StartMessageIndex = max(marker.StartMessageIndex, 0)
+	marker.StartMessageIndex = compat.Max(marker.StartMessageIndex, 0)
 	meta.InFlightTurn = &marker
 	if err := saveBranchMeta(sessionPath, meta, false); err != nil {
 		return InFlightTurnMeta{}, err
@@ -468,7 +469,7 @@ func BeginSessionInFlightTurn(sessionPath string, startMessageIndex int, preserv
 // what lets crash recovery relocate the turn after an in-turn compaction has
 // rewritten its original message index.
 func SetSessionInFlightTurn(sessionPath string, marker InFlightTurnMeta) error {
-	startMessageIndex := max(marker.StartMessageIndex, 0)
+	startMessageIndex := compat.Max(marker.StartMessageIndex, 0)
 	// The sidecar is read-modify-write; the per-path save lock keeps concurrent
 	// writers (autosave's UpdateSessionMeta, listing backfill) from dropping
 	// each other's fields.

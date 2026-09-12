@@ -20,7 +20,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime/debug"
-	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -1331,7 +1330,9 @@ func rebaseArtifactMigrationJobs(jobs []artifactMigrationJob, dir string) {
 }
 
 func unlockArtifactMigrationJobs(jobs []artifactMigrationJob) {
-	for _, v := range slices.Backward(jobs) {
+	_rev1 := jobs
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		if v.job != nil {
 			v.job.mu.Unlock()
 		}

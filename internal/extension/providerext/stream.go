@@ -5,10 +5,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"log/slog"
 	"sync"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/extension/protocol"
 	"reasonix/internal/extension/providerconv"
 	"reasonix/internal/provider"

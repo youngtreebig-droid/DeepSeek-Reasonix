@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"hash/fnv"
-	"maps"
 	"os"
 	"path/filepath"
 	"regexp"
-	"slices"
 	"sort"
 	"strings"
 
+	maps "reasonix/internal/compat/xmaps"
+	slices "reasonix/internal/compat/xslices"
 	fileencoding "reasonix/internal/fileutil/encoding"
 	"reasonix/internal/frontmatter"
 )
@@ -93,7 +93,7 @@ func claudeMatcherNeverFires(matcher string) bool {
 	if matcher == "" || matcher == "*" {
 		return false
 	}
-	for part := range strings.SplitSeq(matcher, "|") {
+	for _, part := range strings.Split(matcher, "|") {
 		part = strings.TrimSpace(part)
 		if !bareClaudeToolNamePattern.MatchString(part) || !claudeUnsupportedToolMatchers[part] {
 			return false
@@ -524,7 +524,7 @@ func splitCSV(raw string) []string {
 		raw = strings.TrimSpace(raw[1 : len(raw)-1])
 	}
 	var out []string
-	for item := range strings.SplitSeq(raw, ",") {
+	for _, item := range strings.Split(raw, ",") {
 		if item = strings.Trim(strings.TrimSpace(item), `"'`); item != "" {
 			out = append(out, item)
 		}

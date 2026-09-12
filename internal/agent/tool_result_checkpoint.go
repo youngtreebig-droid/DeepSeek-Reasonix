@@ -2,7 +2,6 @@ package agent
 
 import (
 	"reasonix/internal/provider"
-	"slices"
 )
 
 func (s *Session) updateBatchGuardResults(calls []provider.ToolCall, results []string) {
@@ -10,7 +9,9 @@ func (s *Session) updateBatchGuardResults(calls []provider.ToolCall, results []s
 	defer s.mu.Unlock()
 	end := len(s.Messages) - 1
 	changed, durableChange := false, false
-	for i, call := range slices.Backward(calls) {
+	_rev1 := calls
+	for i := len(_rev1) - 1; i >= 0; i-- {
+		call := _rev1[i]
 		for j := end; j >= 0; j-- {
 			m := s.Messages[j]
 			if m.Role != provider.RoleTool || m.ToolCallID != call.ID || m.Name != call.Name {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
 	"reasonix/internal/provider"
@@ -134,8 +135,8 @@ func deferredIncompleteReadOutcome(plan *toolCallPlan, rawOutput string, readObs
 
 func readStrategyPreview(raw, readID string, totalTokens, limitTokens int) string {
 	const maxPreview = 8 * 1024
-	headLimit := min(len(raw), maxPreview-1024)
-	head := snapToRuneBoundary(raw, 0, max(0, headLimit))
+	headLimit := compat.Min(len(raw), maxPreview-1024)
+	head := snapToRuneBoundary(raw, 0, compat.Max(0, headLimit))
 	if newline := strings.LastIndexByte(head, '\n'); newline >= 0 {
 		head = head[:newline+1]
 	}

@@ -3,10 +3,10 @@ package control
 import (
 	"context"
 	"fmt"
-	"slices"
 	"sync"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/plugin"
 	"reasonix/internal/tool"
 )

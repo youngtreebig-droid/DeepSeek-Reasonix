@@ -13,13 +13,14 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"maps"
 	"net/http"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	"reasonix/internal/compat"
+	maps "reasonix/internal/compat/xmaps"
 	"reasonix/internal/netclient"
 	"reasonix/internal/provider"
 	"reasonix/internal/provider/openai"
@@ -732,7 +733,7 @@ func usageFromResponse(response *sseResponse) *provider.Usage {
 	if u.OutputTokensDetails != nil {
 		reasoning = u.OutputTokensDetails.ReasoningTokens
 	}
-	miss := max(u.InputTokens-cached, 0)
+	miss := compat.Max(u.InputTokens-cached, 0)
 	total := u.TotalTokens
 	if total == 0 {
 		total = u.InputTokens + u.OutputTokens

@@ -4,9 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"maps"
 	"sort"
 
+	maps "reasonix/internal/compat/xmaps"
 	"reasonix/internal/provider"
 )
 

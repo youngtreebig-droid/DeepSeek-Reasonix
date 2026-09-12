@@ -181,7 +181,7 @@ func FormatSubagentOutcome(outcome SubagentOutcome) string {
 
 func ParseSubagentOutcome(text string) (SubagentOutcome, bool) {
 	var outcome SubagentOutcome
-	for line := range strings.SplitSeq(text, "\n") {
+	for _, line := range strings.Split(text, "\n") {
 		line = strings.TrimSpace(line)
 		if ref, ok := strings.CutPrefix(line, "Subagent reference: "); ok {
 			outcome.Ref = strings.TrimSpace(ref)

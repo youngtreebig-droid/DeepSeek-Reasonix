@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 // mcp_manager_view.go renders the /mcp manager overlay and its display strings.
@@ -6,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/config"
 	"reasonix/internal/mcpdiag"
 )
@@ -18,7 +21,7 @@ func (m chatTUI) renderMCPManager() string {
 }
 
 func (p *mcpManager) render(width int) string {
-	w := max(viewWidth(width), 40)
+	w := compat.Max(viewWidth(width), 40)
 	switch p.stage {
 	case mcpStageDetail:
 		return managerContentPanelStyle(w).Render(p.renderDetail(w))
@@ -94,7 +97,7 @@ func (p *mcpManager) renderListRow(i int, s mcpServerView, width int) string {
 	if i == p.sel {
 		prefix = accent("  › ")
 	}
-	nameWidth := min(28, max(12, width/3))
+	nameWidth := compat.Min(28, compat.Max(12, width/3))
 	name := compactMiddle(s.Name, nameWidth)
 	status := mcpStatusLabel(s)
 	meta := fmt.Sprintf("%s · %s", status, countText(s.Tools, "tool"))
@@ -123,7 +126,7 @@ func (p *mcpManager) renderDetail(width int) string {
 	}
 	actions := mcpActionsFor(v, p.snapshot.configPath)
 	if p.action >= len(actions) {
-		p.action = max(0, len(actions)-1)
+		p.action = compat.Max(0, len(actions)-1)
 	}
 	var b strings.Builder
 	fmt.Fprintf(&b, "%s MCP Server\n\n", bold(titleText(v.Name)))
@@ -177,7 +180,7 @@ func (p *mcpManager) renderTools(width int) string {
 	if len(v.ToolList) == 0 {
 		b.WriteString(viewMeta("Current connection did not return tool details.") + "\n")
 	} else {
-		limit := min(len(v.ToolList), mcpToolMaxRows)
+		limit := compat.Min(len(v.ToolList), mcpToolMaxRows)
 		for _, t := range v.ToolList[:limit] {
 			desc := t.Description
 			if t.SchemaError != "" {

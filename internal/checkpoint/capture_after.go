@@ -1,7 +1,5 @@
 package checkpoint
 
-import "slices"
-
 // CaptureAfter records the after fingerprint and reports a preimage change.
 func (s *Store) CaptureAfter(path string, opts CaptureAfterOpts) bool {
 	if path == "" {
@@ -31,7 +29,9 @@ func (s *Store) CaptureAfter(path string, opts CaptureAfterOpts) bool {
 			return changed
 		}
 	}
-	for _, c := range slices.Backward(s.done) {
+	_rev1 := s.done
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		c := _rev1[_ri1]
 		for j := range c.Files {
 			if NormalizeRelPath(s.root, c.Files[j].Path) != pathKey {
 				continue

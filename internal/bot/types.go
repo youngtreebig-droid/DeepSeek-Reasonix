@@ -4,7 +4,7 @@ package bot
 
 import (
 	"context"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 

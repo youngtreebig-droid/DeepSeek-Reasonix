@@ -2,8 +2,8 @@ package agent
 
 import (
 	"crypto/sha256"
-	"log/slog"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 )
 

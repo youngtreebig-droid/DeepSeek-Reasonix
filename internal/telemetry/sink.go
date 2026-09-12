@@ -6,10 +6,10 @@ import (
 	"net"
 	"regexp"
 	"runtime"
-	"slices"
 	"strings"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/netclient"
 	"reasonix/internal/provider"

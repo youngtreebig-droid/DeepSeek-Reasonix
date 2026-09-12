@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"sync"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/extension/protocol"
 )
 
@@ -94,7 +95,7 @@ func (s *Store) Read(ref string, offset int64) (chunk []byte, next *int64, total
 	if offset < 0 || offset > int64(len(object.data)) {
 		return nil, nil, 0, "", protocol.MustProtocolError(protocol.ErrContentRefExpired)
 	}
-	end := min(offset+protocol.ContentRefChunkBytes, int64(len(object.data)))
+	end := compat.Min(offset+protocol.ContentRefChunkBytes, int64(len(object.data)))
 	if end < int64(len(object.data)) {
 		value := end
 		next = &value

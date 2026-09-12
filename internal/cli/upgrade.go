@@ -617,7 +617,7 @@ func verifyChecksum(data []byte, fileName string, checksumFile []byte) error {
 	sum := sha256.Sum256(data)
 	got := hex.EncodeToString(sum[:])
 
-	for line := range strings.SplitSeq(strings.TrimSpace(string(checksumFile)), "\n") {
+	for _, line := range strings.Split(strings.TrimSpace(string(checksumFile)), "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue

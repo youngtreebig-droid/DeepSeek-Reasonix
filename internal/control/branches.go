@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 )
 
 // ParseBranchTarget parses the arguments after "/branch". A leading positive
@@ -111,7 +112,7 @@ func branchTitle(b agent.BranchInfo, depth int) string {
 	if label, ok := structuredBranchLabel(title); ok {
 		return label
 	}
-	maxRunes := max(32-depth*4, 18)
+	maxRunes := compat.Max(32-depth*4, 18)
 	title = oneLineBranch(title, maxRunes)
 	if title == "" {
 		return "(untitled)"

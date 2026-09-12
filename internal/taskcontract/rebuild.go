@@ -3,9 +3,9 @@ package taskcontract
 import (
 	"encoding/json"
 	"fmt"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/evidence"
 )
 

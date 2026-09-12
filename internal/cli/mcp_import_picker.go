@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -6,6 +8,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/config"
 )
 
@@ -81,7 +84,7 @@ func (m chatTUI) renderMCPImport() string {
 	if p == nil {
 		return ""
 	}
-	w := max(m.width, 10)
+	w := compat.Max(m.width, 10)
 	var b strings.Builder
 	b.WriteString(accent("Import MCP from cc-switch") + "\n")
 	b.WriteString(dim("Space select · Enter import · Esc cancel") + "\n\n")

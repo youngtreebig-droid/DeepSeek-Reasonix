@@ -24,6 +24,7 @@ import (
 	"sync"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/filelock"
 	"reasonix/internal/fileutil"
 )
@@ -237,7 +238,7 @@ func (incident missingReasoningIncident) lastEventUnixNano() int64 {
 }
 
 func (incident missingReasoningIncident) lastObservedUnixNano() int64 {
-	return max(incident.LastHealthyAtUnixNano, max(incident.LastResolvedAtUnixNano, incident.LastMissingUnixNano))
+	return compat.Max(incident.LastHealthyAtUnixNano, compat.Max(incident.LastResolvedAtUnixNano, incident.LastMissingUnixNano))
 }
 
 // load returns only current v2 incidents and resolution watermarks. Missing,

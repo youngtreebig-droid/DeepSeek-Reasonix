@@ -3,7 +3,6 @@ package sessioncatalog
 import (
 	"context"
 	"errors"
-	"slices"
 	"sort"
 	"strings"
 
@@ -30,7 +29,9 @@ func lockRepairBatchGenerations(ctx context.Context, outcomes []repairOutcome) (
 
 	unlocks := make([]func(), 0, len(order))
 	release := func() {
-		for _, unlock := range slices.Backward(unlocks) {
+		_rev1 := unlocks
+		for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+			unlock := _rev1[_ri1]
 			unlock()
 		}
 	}

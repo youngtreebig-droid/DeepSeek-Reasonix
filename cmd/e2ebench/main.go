@@ -18,6 +18,7 @@ import (
 	"github.com/BurntSushi/toml"
 
 	"reasonix/internal/ablation"
+	"reasonix/internal/compat"
 	fileencoding "reasonix/internal/fileutil/encoding"
 )
 
@@ -506,7 +507,7 @@ func runSuite(cfg suiteConfig, tasks []task) []result {
 			continue
 		}
 		var cumWallMs int64
-		for attempt := 1; attempt <= max(cfg.attempts, 1); attempt++ {
+		for attempt := 1; attempt <= compat.Max(cfg.attempts, 1); attempt++ {
 			r := runTask(cfg, t)
 			r.Attempt = attempt
 			cumWallMs += r.WallMs

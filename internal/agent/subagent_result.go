@@ -5,10 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"slices"
 	"strings"
 	"unicode/utf8"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )
@@ -94,7 +94,7 @@ func (t *SubagentResultTool) Execute(ctx context.Context, args json.RawMessage) 
 	if p.OffsetBytes < len(answer) && !utf8.RuneStart(answer[p.OffsetBytes]) {
 		return "", fmt.Errorf("offset_bytes %d is not at a UTF-8 character boundary; use next_offset_bytes from the previous page", p.OffsetBytes)
 	}
-	end := min(p.OffsetBytes+p.LimitBytes, len(answer))
+	end := compat.Min(p.OffsetBytes+p.LimitBytes, len(answer))
 	for end > p.OffsetBytes && end < len(answer) && !utf8.RuneStart(answer[end]) {
 		end--
 	}
@@ -157,7 +157,9 @@ func (s *SubagentStore) ReadFinalAnswer(ref, parentSession, workspaceRoot string
 		return "", meta.Status, fmt.Errorf("load subagent transcript %q: %w", ref, err)
 	}
 	msgs := sess.Snapshot()
-	for _, v := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		if v.Role == provider.RoleAssistant && strings.TrimSpace(v.Content) != "" {
 			status := meta.Status
 			if meta.Outcome != "" {
@@ -208,7 +210,7 @@ func formatBoundedSubagentAggregate(prefix string, items []subagentAggregateItem
 			completed++
 		}
 	}
-	available := max(subagentAggregateBudgetBytes-baseBytes, 0)
+	available := compat.Max(subagentAggregateBudgetBytes-baseBytes, 0)
 	perAnswer := 0
 	if completed > 0 {
 		perAnswer = available / completed

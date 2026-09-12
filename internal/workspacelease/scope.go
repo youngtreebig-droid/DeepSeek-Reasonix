@@ -283,7 +283,7 @@ func compatibilityPathChain(root, target string) []string {
 		return out
 	}
 	current := root
-	for part := range strings.SplitSeq(filepath.ToSlash(rel), "/") {
+	for _, part := range strings.Split(filepath.ToSlash(rel), "/") {
 		if part == "" || part == "." {
 			continue
 		}
@@ -321,7 +321,7 @@ func pathChain(root, target string) []string {
 		return out
 	}
 	current := root
-	for part := range strings.SplitSeq(filepath.ToSlash(rel), "/") {
+	for _, part := range strings.Split(filepath.ToSlash(rel), "/") {
 		if part == "" || part == "." {
 			continue
 		}

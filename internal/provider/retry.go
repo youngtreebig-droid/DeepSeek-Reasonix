@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net"
 	"net/http"
+	"reasonix/internal/compat"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -239,7 +240,7 @@ func backoffDelay(attempt int, retryAfter time.Duration) time.Duration {
 		}
 		return retryAfter
 	}
-	d := min(time.Duration(1<<(attempt-1))*500*time.Millisecond, maxBackoff)
+	d := compat.Min(time.Duration(1<<(attempt-1))*500*time.Millisecond, maxBackoff)
 	return d + time.Duration(rand.Intn(250))*time.Millisecond
 }
 

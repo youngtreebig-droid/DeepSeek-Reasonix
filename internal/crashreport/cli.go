@@ -359,7 +359,7 @@ func sanitizeStack(stack string) string {
 func topFrame(stack string) string {
 	fallback := ""
 	functionName := ""
-	for line := range strings.SplitSeq(stack, "\n") {
+	for _, line := range strings.Split(stack, "\n") {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "<path>/") && strings.Contains(line, ".go:") {
 			frame := line

@@ -3,7 +3,7 @@ package productdocs
 import (
 	"encoding/json"
 	"fmt"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 

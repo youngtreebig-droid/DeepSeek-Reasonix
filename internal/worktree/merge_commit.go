@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strings"
 )
@@ -231,7 +230,9 @@ func (fence *sourceMutationFence) release() {
 	if fence == nil {
 		return
 	}
-	for index, file := range slices.Backward(fence.files) {
+	_rev1 := fence.files
+	for index := len(_rev1) - 1; index >= 0; index-- {
+		file := _rev1[index]
 		_ = file.Close()
 		_ = os.Remove(fence.paths[index])
 	}

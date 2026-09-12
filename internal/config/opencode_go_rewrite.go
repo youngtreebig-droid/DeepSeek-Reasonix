@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"reflect"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -143,7 +142,7 @@ func rawTOMLValue(v any) (string, error) {
 		return strconv.FormatFloat(rv.Float(), 'g', -1, 64), nil
 	case reflect.Slice, reflect.Array:
 		var parts []string
-		for i := range rv.Len() {
+		for i := 0; i < rv.Len(); i++ {
 			s, err := rawTOMLValue(rv.Index(i).Interface())
 			if err != nil {
 				return "", err
@@ -211,7 +210,8 @@ func rewriteOpenCodeGoConfig(body string, before, after *Config, additions []ope
 			}
 		}
 	}
-	for i := range slices.Backward(blocks) {
+	_rev1 := blocks
+	for i := len(_rev1) - 1; i >= 0; i-- {
 		next, err := patchOpenCodeGoProvider(originals[i], before.Providers[i], after.Providers[afterIndex[i]])
 		if err != nil {
 			return body, err
@@ -288,12 +288,14 @@ func expandOpenCodeGoInlineProviders(body string) (string, error) {
 	assignment := strings.LastIndex(body[:start], "\n") + 1
 	var tables strings.Builder
 	outside := body[start+1 : end]
-	for _, b := range slices.Backward(blocks) {
+	_rev2 := blocks
+	for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+		b := _rev2[_ri2]
 		a, z := b.start-start-1, b.end-start
 		outside = outside[:a] + outside[z:]
 	}
 	var comments []string
-	for line := range strings.SplitSeq(outside, "\n") {
+	for _, line := range strings.Split(outside, "\n") {
 		if at := tomlInlineCommentIndex(line); at >= 0 {
 			comments = append(comments, line[at:])
 		}

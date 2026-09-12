@@ -10,11 +10,11 @@ import (
 	"reflect"
 	"regexp"
 	"runtime"
-	"slices"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/extension/protocol"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"
@@ -1790,7 +1790,7 @@ func mergeTOMLDelta(body, delta string) string {
 }
 
 func mergeTOMLTopLevelFields(body, fields string) string {
-	for line := range strings.SplitSeq(fields, "\n") {
+	for _, line := range strings.Split(fields, "\n") {
 		line = strings.TrimSpace(line)
 		if line == "" {
 			continue

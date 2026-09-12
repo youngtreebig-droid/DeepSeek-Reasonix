@@ -13,12 +13,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"hash/fnv"
-	"log/slog"
 	"os"
 	"path/filepath"
-	"slices"
 	"time"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 	fileencoding "reasonix/internal/fileutil/encoding"
 )
@@ -93,7 +94,7 @@ func RecordStartup(name string, dur time.Duration) error {
 	}
 	stats.Name = name
 
-	ms := max(dur.Milliseconds(), 0)
+	ms := compat.Max(dur.Milliseconds(), 0)
 	stats.SamplesMs = append(stats.SamplesMs, ms)
 	if len(stats.SamplesMs) > maxSamples {
 		// Trim from the front: oldest samples leave first.
@@ -278,7 +279,7 @@ func p99(samples []int64) time.Duration {
 	slices.Sort(sorted)
 	// Use ceil(0.99 * n) - 1 so that for n=1..100 we always pick the last
 	// element; for larger n it's the index at the 99% boundary.
-	idx := max(int(float64(len(sorted))*0.99+0.9999999)-1, 0)
+	idx := compat.Max(int(float64(len(sorted))*0.99+0.9999999)-1, 0)
 	if idx >= len(sorted) {
 		idx = len(sorted) - 1
 	}

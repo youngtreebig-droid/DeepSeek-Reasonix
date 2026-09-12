@@ -3,8 +3,8 @@ package serve
 import (
 	"encoding/json"
 	"io"
-	"log/slog"
 	"net/http"
+	slog "reasonix/internal/compat/xslog"
 	"strings"
 )
 

@@ -6,10 +6,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"slices"
 	"strings"
 	"sync"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/tool"
 )
@@ -178,7 +178,10 @@ func (p *ParallelTasksTool) Execute(ctx context.Context, args json.RawMessage) (
 			},
 		})
 
-		wg.Go(func() {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
 			modelRef, effortRef := p.taskTool.effectiveProfile(t.Model, t.Effort)
 			itemCtx := withCallContext(ctx, subID, subSinkFor(subID, sink), nil, PlanModeFromContext(ctx))
 			// Route through TaskTool's unified runner so persisted parent sessions
@@ -212,7 +215,7 @@ func (p *ParallelTasksTool) Execute(ctx context.Context, args json.RawMessage) (
 			})
 			answer, ref := splitSubagentRunResult(output)
 			doneCh <- subResult{index: idx, output: answer, ref: ref}
-		})
+		}()
 	}
 
 	markCancelled := func(err error) {

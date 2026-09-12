@@ -320,7 +320,7 @@ func normalizeSearchText(value string) string {
 }
 
 func containsSearchToken(document, token string) bool {
-	for candidate := range strings.FieldsSeq(document) {
+	for _, candidate := range strings.Fields(document) {
 		if candidate == token || strings.Contains(candidate, token) {
 			return true
 		}

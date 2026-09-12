@@ -2,10 +2,10 @@ package provider
 
 import (
 	"context"
-	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"net/http"
+	"reasonix/internal/compat"
 )
 
 type cacheSessionContextKey struct{}
@@ -19,7 +19,7 @@ func WithCacheSession(ctx context.Context, identity string) context.Context {
 }
 
 // NewCacheSessionID provides a stable per-client fallback for standalone calls.
-func NewCacheSessionID() string { return "reasonix-" + rand.Text() }
+func NewCacheSessionID() string { return "reasonix-" + compat.RandText() }
 
 // NewClientIdentityHeaders groups immutable transport identity by client lifetime.
 func NewClientIdentityHeaders() http.Header {

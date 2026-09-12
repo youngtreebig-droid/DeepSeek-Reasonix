@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -6,6 +8,7 @@ import (
 
 	"github.com/charmbracelet/x/ansi"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/control"
 	"reasonix/internal/provider"
 )
@@ -18,7 +21,7 @@ func (m *chatTUI) showBranchTree() {
 		return
 	}
 	tree := renderBranchTree(control.FormatBranchTree(branches, m.ctrl.CurrentBranchID()))
-	m.commitLine(ansi.Hardwrap(tree, max(m.width, 20), false))
+	m.commitLine(ansi.Hardwrap(tree, compat.Max(m.width, 20), false))
 }
 
 func renderBranchTree(tree string) string {

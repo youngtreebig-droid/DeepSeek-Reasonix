@@ -19,6 +19,9 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat/rootfs"
+
+	"reasonix/internal/compat"
 	"reasonix/internal/fileref"
 	"reasonix/internal/instruction"
 	"reasonix/internal/proc"
@@ -139,7 +142,7 @@ func EscapeRefPath(path string) string {
 	}
 	var b strings.Builder
 	b.Grow(len(path) + 8)
-	for i := range len(path) {
+	for i := 0; i < len(path); i++ {
 		if path[i] == ' ' || path[i] == '\t' {
 			b.WriteByte('\\')
 		}
@@ -156,7 +159,7 @@ func UnescapeRefPath(path string) string {
 	}
 	var b strings.Builder
 	b.Grow(len(path))
-	for i := range len(path) {
+	for i := 0; i < len(path); i++ {
 		if path[i] == '\\' && i+1 < len(path) && (path[i+1] == ' ' || path[i+1] == '\t') {
 			continue
 		}
@@ -358,7 +361,7 @@ func (c *Controller) ListExternalFolderRefDir(tokenPath string) (entries []Exter
 	if !ok {
 		return nil, false
 	}
-	root, err := os.OpenRoot(abs)
+	root, err := rootfs.OpenRoot(abs)
 	if err != nil {
 		return nil, true
 	}
@@ -585,7 +588,7 @@ func visionFileImageDataURL(path, baseDir string) (string, error) {
 		return "", fmt.Errorf("workspace root is required for file image references")
 	}
 
-	root, err := os.OpenRoot(absBase)
+	root, err := rootfs.OpenRoot(absBase)
 	if err != nil {
 		return "", err
 	}
@@ -784,7 +787,7 @@ func fileRefExists(path, baseDir string) bool {
 		if !ok {
 			return false
 		}
-		root, err := os.OpenRoot(absBase)
+		root, err := rootfs.OpenRoot(absBase)
 		if err != nil {
 			return false
 		}
@@ -801,7 +804,7 @@ func workspaceRefPath(path, baseDir string) (string, bool) {
 	if !ok {
 		return "", false
 	}
-	root, err := os.OpenRoot(absBase)
+	root, err := rootfs.OpenRoot(absBase)
 	if err != nil {
 		return "", false
 	}
@@ -975,7 +978,7 @@ func readFileRefWithVision(path, baseDir string, vision bool) (content string, i
 		return readFileRefUnscoped(absPath, vision)
 	}
 
-	root, rerr := os.OpenRoot(absBase)
+	root, rerr := rootfs.OpenRoot(absBase)
 	if rerr != nil {
 		return "", false, rerr
 	}
@@ -1026,7 +1029,7 @@ func readFileRefWithVision(path, baseDir string, vision bool) (content string, i
 	if mime := imageMime(data, rel); mime != "" {
 		return imageFileRefNote(displayPath, mime, info.Size(), true, vision), false, nil
 	}
-	if bytes.IndexByte(data[:min(n, 8192)], 0) >= 0 {
+	if bytes.IndexByte(data[:compat.Min(n, 8192)], 0) >= 0 {
 		return fmt.Sprintf("[binary file %s, %d bytes — not shown]", displayPath, info.Size()), false, nil
 	}
 	if n > maxFileRefBytes {
@@ -1105,7 +1108,7 @@ func readFileRefUnscoped(path string, vision bool) (content string, isDir bool, 
 	if mime := imageMime(data, path); mime != "" {
 		return imageFileRefNote(path, mime, info.Size(), false, vision), false, nil
 	}
-	if bytes.IndexByte(data[:min(n, 8192)], 0) >= 0 {
+	if bytes.IndexByte(data[:compat.Min(n, 8192)], 0) >= 0 {
 		return fmt.Sprintf("[binary file %s, %d bytes — not shown]", path, info.Size()), false, nil
 	}
 	if n > maxFileRefBytes {
@@ -1117,7 +1120,7 @@ func readFileRefUnscoped(path string, vision bool) (content string, isDir bool, 
 // walkRootDir walks a directory under a sandboxed *os.Root and writes each
 // entry relative to base (skipping noisy ones like .git and node_modules) into b
 // until n hits maxDirEntries.
-func walkRootDir(root *os.Root, dir, base string, b *strings.Builder, n *int, depth int) error {
+func walkRootDir(root *rootfs.Root, dir, base string, b *strings.Builder, n *int, depth int) error {
 	if depth > maxDirDepth || *n >= maxDirEntries {
 		return nil
 	}
@@ -1334,7 +1337,7 @@ with pdfplumber.open(path) as pdf:
 `
 
 func imageMime(data []byte, path string) string {
-	mime := http.DetectContentType(data[:min(len(data), 512)])
+	mime := http.DetectContentType(data[:compat.Min(len(data), 512)])
 	if strings.HasPrefix(mime, "image/") {
 		return mime
 	}

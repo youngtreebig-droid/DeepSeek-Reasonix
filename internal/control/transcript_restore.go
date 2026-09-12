@@ -1,18 +1,18 @@
 package control
 
 import (
-	"crypto/rand"
 	"errors"
 	"path/filepath"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 	"reasonix/internal/transcript"
 	"reasonix/internal/turnevent"
 )
 
 func (c *Controller) restoreTranscriptProjection(sessionPath string, ledger *turnevent.Ledger) (*transcript.Projection, error) {
-	identity := transcript.Identity{SessionID: agent.BranchID(sessionPath), RuntimeEpoch: rand.Text()}
+	identity := transcript.Identity{SessionID: agent.BranchID(sessionPath), RuntimeEpoch: compat.RandText()}
 	ledger.SetRuntimeEpoch(identity.RuntimeEpoch)
 	var messages []provider.Message
 	if c.executor != nil && c.executor.Session() != nil {
@@ -58,12 +58,12 @@ func (c *Controller) restoreTranscriptProjection(sessionPath string, ledger *tur
 			// suffix. Do not seed its already-autosaved assistant deltas twice.
 			for index, m := range messages {
 				if m.ID == userID {
-					prefixEnd = min(prefixEnd, index)
+					prefixEnd = compat.Min(prefixEnd, index)
 					break
 				}
 			}
 			if len(group.Events) > 0 {
-				covered = min(covered, group.Events[0].Sequence-1)
+				covered = compat.Min(covered, group.Events[0].Sequence-1)
 			}
 			continue
 		}

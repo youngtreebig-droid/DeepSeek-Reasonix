@@ -330,7 +330,7 @@ func registeredWorktreesForBranch(ctx context.Context, sourceRoot, branch string
 		}
 		current = registeredWorktree{}
 	}
-	for record := range strings.SplitSeq(out, "\x00") {
+	for _, record := range strings.Split(out, "\x00") {
 		switch {
 		case strings.HasPrefix(record, "worktree "):
 			appendCurrent()

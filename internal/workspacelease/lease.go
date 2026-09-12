@@ -12,7 +12,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -726,7 +725,9 @@ func waitForSignal(ctx context.Context, signal <-chan struct{}) error {
 }
 
 func runReleases(releases []func()) {
-	for _, release := range slices.Backward(releases) {
+	_rev1 := releases
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		release := _rev1[_ri1]
 		release()
 	}
 }

@@ -2,7 +2,6 @@ package agent
 
 import (
 	"context"
-	"slices"
 
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
@@ -170,7 +169,8 @@ func (a *Agent) prepareTurnContext(ctx context.Context) (provider.Message, bool)
 }
 
 func latestTurnContextSnapshot(messages []provider.Message) (sessioncontext.Snapshot, bool) {
-	for i := range slices.Backward(messages) {
+	_rev1 := messages
+	for i := len(_rev1) - 1; i >= 0; i-- {
 		message := messages[i]
 		if message.Role != provider.RoleUser || message.Origin != provider.MessageOriginHost {
 			continue

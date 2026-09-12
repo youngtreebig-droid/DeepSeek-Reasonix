@@ -1,13 +1,13 @@
 package transcript
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"sort"
 	"sync"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/eventwire"
 	"reasonix/internal/turnevent"
@@ -66,7 +66,7 @@ type Projection struct {
 }
 
 func NewProjection(identity Identity, baseline []Message, covered uint64) (*Projection, error) {
-	p := &Projection{incarnation: rand.Text(), identity: identity, covered: covered, revision: 1,
+	p := &Projection{incarnation: compat.RandText(), identity: identity, covered: covered, revision: 1,
 		attempts: make(map[string]ActiveAttempt), prompts: make(map[string]eventwire.Event)}
 	// Take ownership of nested metadata as well as the slice. Callers may
 	// reuse their conversion buffers immediately after construction.
@@ -187,8 +187,8 @@ func (p *Projection) Apply(envelope turnevent.Envelope) error {
 	case "prompt_answered":
 		delete(p.prompts, owned.ItemID)
 	case "turn_done":
-		clear(p.prompts)
-		clear(p.attempts)
+		compat.Clear(p.prompts)
+		compat.Clear(p.attempts)
 		if owned.TranscriptDigest != "" {
 			p.identity.HeadID = owned.HeadID
 			p.identity.RewriteEpoch = owned.RewriteEpoch
@@ -206,7 +206,7 @@ func (p *Projection) SetRuntimeEpoch(epoch string) {
 	defer p.mu.Unlock()
 	if p.identity.RuntimeEpoch != epoch {
 		p.identity.RuntimeEpoch = epoch
-		p.incarnation = rand.Text()
+		p.incarnation = compat.RandText()
 		p.revision++
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"reasonix/internal/compat"
 	"strings"
 	"sync"
 	"time"
@@ -335,8 +336,8 @@ func (sm *SessionManager) consumeDroppedPrefixLocked(key, text string) string {
 	fmt.Fprintf(&b, "[Queue note: %d older pending message(s) were dropped because this bot session reached its queue cap.", len(dropped))
 	if len(dropped) > 0 {
 		b.WriteString(" Dropped summaries:")
-		limit := min(len(dropped), 3)
-		for i := range limit {
+		limit := compat.Min(len(dropped), 3)
+		for i := 0; i < limit; i++ {
 			fmt.Fprintf(&b, "\n- %s", dropped[i])
 		}
 		if len(dropped) > limit {

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/tool"
 )
 
@@ -424,7 +425,7 @@ func (s *incompleteReadState) configureAutoSourceLocked(entry *incompleteRead, a
 	entry.nextSourceOffset = trailer.nextOffset
 	if trailer.localSafety {
 		entry.sourceWindowEnd = trailer.requestedEnd
-		entry.nextSourceLimit = max(1, trailer.requestedEnd-trailer.nextOffset)
+		entry.nextSourceLimit = compat.Max(1, trailer.requestedEnd-trailer.nextOffset)
 		return
 	}
 	if entry.fullRead {
@@ -484,7 +485,7 @@ func (s *incompleteReadState) observeStrategyReadLocked(
 		entry.sha256 = digest
 		if trailer.localSafety {
 			entry.nextSourceOffset = trailer.nextOffset
-			entry.nextSourceLimit = max(1, trailer.requestedEnd-trailer.nextOffset)
+			entry.nextSourceLimit = compat.Max(1, trailer.requestedEnd-trailer.nextOffset)
 		}
 		s.roundProgress = true
 		return incompleteReadTransition{strategyProgress: true, localSafetyPaged: trailer.localSafety, readID: entry.readID, path: entry.path}
@@ -492,7 +493,7 @@ func (s *incompleteReadState) observeStrategyReadLocked(
 	if trailer.localSafety {
 		entry.phase = incompleteReadStrategySourcePage
 		entry.nextSourceOffset = trailer.nextOffset
-		entry.nextSourceLimit = max(1, trailer.requestedEnd-trailer.nextOffset)
+		entry.nextSourceLimit = compat.Max(1, trailer.requestedEnd-trailer.nextOffset)
 		s.roundProgress = true
 		return incompleteReadTransition{strategyProgress: true, localSafetyPaged: true, readID: entry.readID, path: entry.path}
 	}

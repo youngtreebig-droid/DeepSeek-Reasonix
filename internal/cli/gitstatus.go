@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -12,7 +14,7 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"github.com/charmbracelet/x/ansi"
 
-	"reasonix/internal/gitcmd"
+	"reasonix/internal/compat"
 )
 
 const gitStatusTimeout = 700 * time.Millisecond
@@ -78,20 +80,8 @@ func loadGitStatusWithRunner(ctx context.Context, cwd string, run func(context.C
 	return status, nil
 }
 
-func runGit(ctx context.Context, cwd string, args ...string) (string, error) {
-	// cwd goes through gitcmd's dir parameter, not cmd.Dir, so the gitcmd
-	// baseline can resolve the repository's own config relative to it (the
-	// filter-driver neutralization reads <cwd>/.git/config).
-	cmd := gitcmd.Command(ctx, cwd, args...)
-	out, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	return string(out), nil
-}
-
 func parseGitNumstat(out string) (added int, removed int) {
-	for line := range strings.SplitSeq(strings.TrimSpace(out), "\n") {
+	for _, line := range strings.Split(strings.TrimSpace(out), "\n") {
 		if line == "" {
 			continue
 		}
@@ -115,7 +105,7 @@ func parseGitNumstat(out string) (added int, removed int) {
 
 func countUntracked(out string) int {
 	n := 0
-	for line := range strings.SplitSeq(strings.TrimRight(out, "\n"), "\n") {
+	for _, line := range strings.Split(strings.TrimRight(out, "\n"), "\n") {
 		if strings.HasPrefix(line, "?? ") {
 			n++
 		}
@@ -182,7 +172,7 @@ func (s gitStatus) compactIdentity(maxWidth int) (repo, branch string) {
 	dirtyWidth := visibleWidth(s.dirtyPlain())
 	nameBudget := maxWidth - dirtyWidth - visibleWidth("@")
 	if nameBudget <= 2 {
-		return compactEnd(repo, max(1, nameBudget)), ""
+		return compactEnd(repo, compat.Max(1, nameBudget)), ""
 	}
 	repoWidth := visibleWidth(repo)
 	branchWidth := visibleWidth(branch)
@@ -190,16 +180,16 @@ func (s gitStatus) compactIdentity(maxWidth int) (repo, branch string) {
 		return repo, branch
 	}
 
-	minRepo := min(repoWidth, 8)
+	minRepo := compat.Min(repoWidth, 8)
 	if repoBudget := nameBudget - branchWidth; repoBudget >= minRepo {
 		return compactMiddle(repo, repoBudget), branch
 	}
 
-	repoBudget := min(repoWidth, max(4, min(10, nameBudget/3)))
+	repoBudget := compat.Min(repoWidth, compat.Max(4, compat.Min(10, nameBudget/3)))
 	if nameBudget-repoBudget < 8 {
-		repoBudget = max(1, nameBudget-8)
+		repoBudget = compat.Max(1, nameBudget-8)
 	}
-	branchBudget := max(1, nameBudget-repoBudget)
+	branchBudget := compat.Max(1, nameBudget-repoBudget)
 	return compactMiddle(repo, repoBudget), compactMiddle(branch, branchBudget)
 }
 

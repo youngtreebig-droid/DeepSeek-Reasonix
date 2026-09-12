@@ -1,9 +1,11 @@
+//go:build !win7
+
 package cli
 
 import (
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/control"
 	"reasonix/internal/i18n"
 )

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
 	"reasonix/internal/provider"
@@ -89,7 +90,7 @@ func (a *Agent) applyStormBreaker(calls []provider.ToolCall, outcomes []toolOutc
 	stormHit := ok && a.turn.stormCount >= stormBreakThreshold
 	if !stormHit && consecutiveNormalizedFailure(calls, outcomes, &a.turn.loop) {
 		stormHit = true
-		a.turn.stormCount = max(a.turn.stormCount, 2)
+		a.turn.stormCount = compat.Max(a.turn.stormCount, 2)
 	}
 	streakHit := allBlocked && a.turn.blockedTurnStreak >= stormBreakThreshold
 	if !stormHit && !streakHit {

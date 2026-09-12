@@ -2,9 +2,9 @@ package config
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 	_ "reasonix/internal/provider/anthropic"
 	"reasonix/internal/provider/openai"

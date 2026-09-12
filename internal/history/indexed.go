@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"reasonix/internal/agent"
+	"reasonix/internal/compat"
 	"reasonix/internal/historycatalog"
 	"reasonix/internal/provider"
 	"reasonix/internal/retrieval"
@@ -322,7 +323,7 @@ func (s *IndexedSearcher) Search(ctx context.Context, req SearchRequest) ([]Hit,
 		// Exact roots are the agent authority boundary. Catalog scope describes
 		// desktop grouping and must not change the history tool's project meaning.
 		Query: query,
-		Kinds: kindNames, ToolName: strings.TrimSpace(req.ToolName), Limit: min(limit*4, historycatalog.MaxLimit),
+		Kinds: kindNames, ToolName: strings.TrimSpace(req.ToolName), Limit: compat.Min(limit*4, historycatalog.MaxLimit),
 		Roots: s.rootsFor(scope),
 	})
 	if err != nil {

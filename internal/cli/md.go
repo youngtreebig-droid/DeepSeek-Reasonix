@@ -1,7 +1,10 @@
+//go:build !win7
+
 package cli
 
 import (
 	"fmt"
+	"reasonix/internal/compat"
 	"strings"
 	"unicode"
 
@@ -215,7 +218,7 @@ func (r *mdRenderer) renderBlock(buf *strings.Builder, node ast.Node, src []byte
 	case *extast.Table:
 		r.renderTable(buf, n, src, indent)
 	case *ast.ThematicBreak:
-		w := max(r.width-indent, 8)
+		w := compat.Max(r.width-indent, 8)
 		buf.WriteString(strings.Repeat(" ", indent))
 		buf.WriteString(dim(strings.Repeat("─", w)))
 		buf.WriteString("\n\n")
@@ -253,7 +256,7 @@ func (r *mdRenderer) renderInlineBlock(buf *strings.Builder, n ast.Node, src []b
 	inline := r.collectInline(n, src)
 	prefix := strings.Repeat(" ", indent)
 	wrapped := wrapAnsi(inline, r.width-indent)
-	for line := range strings.SplitSeq(wrapped, "\n") {
+	for _, line := range strings.Split(wrapped, "\n") {
 		buf.WriteString(prefix)
 		buf.WriteString(line)
 		buf.WriteString("\n")
@@ -328,7 +331,7 @@ func (r *mdRenderer) renderBlockquote(buf *strings.Builder, n *ast.Blockquote, s
 	if r.copyMode {
 		prefix = copyOmitSpan(prefix)
 	}
-	for line := range strings.SplitSeq(strings.TrimRight(inner.String(), "\n"), "\n") {
+	for _, line := range strings.Split(strings.TrimRight(inner.String(), "\n"), "\n") {
 		buf.WriteString(prefix)
 		buf.WriteString(dim(line))
 		buf.WriteString("\n")
@@ -451,14 +454,14 @@ func (r *mdRenderer) renderTable(buf *strings.Builder, n *extast.Table, src []by
 	// widths + separators (3 chars each) + indent. Distribute the budget
 	// proportionally to the natural widths so columns with rich content
 	// keep more space than narrow ones.
-	available := max(r.width-indent-3*(cols-1), cols*3)
+	available := compat.Max(r.width-indent-3*(cols-1), cols*3)
 	total := 0
 	for _, w := range widths {
 		total += w
 	}
 	if total > available {
 		for i := range widths {
-			widths[i] = max(widths[i]*available/total, 3)
+			widths[i] = compat.Max(widths[i]*available/total, 3)
 		}
 	}
 

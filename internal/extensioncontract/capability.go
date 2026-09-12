@@ -160,7 +160,7 @@ func normalizeVersion(v string) string {
 // validateVersionRange accepts a simple comma-separated set of comparisons
 // such as ">=1.0.0", ">=1.0.0,<2.0.0".
 func validateVersionRange(expr string) error {
-	for part := range strings.SplitSeq(expr, ",") {
+	for _, part := range strings.Split(expr, ",") {
 		part = strings.TrimSpace(part)
 		if part == "" {
 			return fmt.Errorf("empty version range clause")
@@ -177,7 +177,7 @@ func validateVersionRange(expr string) error {
 }
 
 func matchVersionRange(expr, version string) bool {
-	for part := range strings.SplitSeq(expr, ",") {
+	for _, part := range strings.Split(expr, ",") {
 		part = strings.TrimSpace(part)
 		op, ver, ok := splitRangeClause(part)
 		if !ok {

@@ -1,9 +1,8 @@
 package control
 
 import (
-	"log/slog"
-
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 )
 
 // undoHeadRewind returns the controller to the head it left through an

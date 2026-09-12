@@ -14,7 +14,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -23,6 +22,7 @@ import (
 	"time"
 
 	"reasonix/internal/bot"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 
 	"github.com/gorilla/websocket"

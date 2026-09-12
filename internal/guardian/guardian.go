@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -564,7 +563,9 @@ func firstRunesStr(s string, n int) string {
 
 func lastAssistantText(sess *agent.Session) string {
 	msgs := sess.Snapshot()
-	for _, v := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		if v.Role == provider.RoleAssistant && strings.TrimSpace(v.Content) != "" {
 			return v.Content
 		}

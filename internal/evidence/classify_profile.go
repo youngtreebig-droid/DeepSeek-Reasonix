@@ -104,7 +104,7 @@ func applyBashShape(profile *EffectProfile, family, command string) {
 }
 
 func containsForceFlag(command string) bool {
-	for field := range strings.FieldsSeq(command) {
+	for _, field := range strings.Fields(command) {
 		switch field {
 		case "-f", "--force", "--force-with-lease":
 			return true

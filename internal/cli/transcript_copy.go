@@ -1,7 +1,10 @@
+//go:build !win7
+
 package cli
 
 import (
 	"encoding/base64"
+	"reasonix/internal/compat"
 	"strconv"
 	"strings"
 
@@ -239,7 +242,7 @@ func selectedCopyText(lines []copyTranscriptLine, start, end selPos) string {
 			if span.start > lo {
 				break
 			}
-			lo = min(span.end, hi)
+			lo = compat.Min(span.end, hi)
 		}
 
 		var selected strings.Builder
@@ -251,13 +254,13 @@ func selectedCopyText(lines []copyTranscriptLine, start, end selPos) string {
 			}
 			touchedMath = true
 			if span.start > cursor {
-				selected.WriteString(ansi.Strip(ansi.Cut(line.text, cursor, min(span.start, hi))))
+				selected.WriteString(ansi.Strip(ansi.Cut(line.text, cursor, compat.Min(span.start, hi))))
 			}
 			if !seen[span.id] {
 				selected.WriteString(span.source)
 				seen[span.id] = true
 			}
-			cursor = max(cursor, min(span.end, hi))
+			cursor = compat.Max(cursor, compat.Min(span.end, hi))
 		}
 		if cursor < hi {
 			selected.WriteString(ansi.Strip(ansi.Cut(line.text, cursor, hi)))
@@ -307,10 +310,10 @@ func (m *chatTUI) rewriteConnectorBlock(index int, lines []string) {
 }
 
 func reasoningBlockLines(raw string, width, maxLines int) []string {
-	w := max(width-len([]rune(connector)), 8)
+	w := compat.Max(width-len([]rune(connector)), 8)
 	var lines []string
-	for ln := range strings.SplitSeq(strings.TrimRight(raw, "\n"), "\n") {
-		for wl := range strings.SplitSeq(ansi.Wrap(expandTabs(ln), w, ""), "\n") {
+	for _, ln := range strings.Split(strings.TrimRight(raw, "\n"), "\n") {
+		for _, wl := range strings.Split(ansi.Wrap(expandTabs(ln), w, ""), "\n") {
 			lines = append(lines, dim(wl))
 		}
 	}

@@ -35,7 +35,7 @@ func providerWorkspaceRoot(documents []Document) string {
 			continue
 		}
 		root := absolutePath(doc.Directory)
-		for range doc.Depth {
+		for i := 0; i < doc.Depth; i++ {
 			root = filepath.Dir(root)
 		}
 		return root

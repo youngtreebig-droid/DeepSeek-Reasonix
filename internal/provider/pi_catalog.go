@@ -1,7 +1,9 @@
+//go:build !win7
+
 package provider
 
 import (
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"sort"
 	"strings"
 

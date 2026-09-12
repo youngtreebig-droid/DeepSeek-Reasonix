@@ -16,6 +16,7 @@ import (
 	"reasonix/internal/ablation"
 	"reasonix/internal/capability"
 	"reasonix/internal/checkpoint"
+	"reasonix/internal/compat"
 	"reasonix/internal/diff"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
@@ -1088,7 +1089,7 @@ func New(prov provider.Provider, tools *tool.Registry, session *Session, opts Op
 	} else {
 		maxSubagentDepth = NormalizeMaxSubagentDepth(maxSubagentDepth)
 	}
-	subagentDepth := max(opts.SubagentDepth, 0)
+	subagentDepth := compat.Max(opts.SubagentDepth, 0)
 	reasoningByteLimit := opts.ReasoningByteLimit
 	if reasoningByteLimit == 0 {
 		reasoningByteLimit = defaultReasoningByteLimit
@@ -1962,7 +1963,7 @@ func boundReasoningReplay(reasoning *strings.Builder, latest string, byteLimit i
 		return complete
 	}
 	reasoning.Reset()
-	reasoning.WriteString(snapToRuneBoundary(latest, 0, min(len(latest), byteLimit)))
+	reasoning.WriteString(snapToRuneBoundary(latest, 0, compat.Min(len(latest), byteLimit)))
 	return false
 }
 
@@ -2632,14 +2633,10 @@ func bashRedirectWritesFile(source string, redir *syntax.Redirect) bool {
 	if redir == nil {
 		return false
 	}
-	switch redir.Op {
-	case syntax.RdrOut, syntax.AppOut, syntax.RdrClob, syntax.AppClob,
-		syntax.RdrAll, syntax.RdrAllClob, syntax.AppAll, syntax.AppAllClob,
-		syntax.RdrInOut:
-		return !redirectWordIsNullSink(source, redir.Word)
-	default:
+	if !bashRedirectOpWritesFile(redir.Op) {
 		return false
 	}
+	return !redirectWordIsNullSink(source, redir.Word)
 }
 
 func redirectWordIsNullSink(source string, word *syntax.Word) bool {
@@ -2774,7 +2771,7 @@ func truncateToolOutputFor(s, toolName, toolCallID string) (string, string) {
 	// Prefer more tail when the body looks like a failure.
 	lower := strings.ToLower(s)
 	if strings.Contains(lower, "error:") || strings.Contains(lower, "panic:") || strings.Contains(lower, "fatal:") {
-		tailKeep = max(tailKeep, maxToolOutputBytes/3)
+		tailKeep = compat.Max(tailKeep, maxToolOutputBytes/3)
 		if headKeep+tailKeep > maxToolOutputBytes-512 {
 			headKeep = maxToolOutputBytes - 512 - tailKeep
 		}
@@ -2783,7 +2780,7 @@ func truncateToolOutputFor(s, toolName, toolCallID string) (string, string) {
 	tail := snapToRuneBoundary(s, len(s)-tailKeep, len(s))
 	resultRef := toolResultRef(toolCallID, s)
 	marker := toolOutputRecoveryMarker(toolName, toolCallID, resultRef, len(s), len(head)+len(tail))
-	for range 3 {
+	for __i := 0; __i < 3; __i++ {
 		bodyLen := len(head) + len(marker) + len(tail)
 		if bodyLen <= maxToolOutputBytes {
 			break

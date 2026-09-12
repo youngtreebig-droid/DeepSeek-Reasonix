@@ -3,6 +3,7 @@ package retrieval
 import (
 	"fmt"
 	"math"
+	"reasonix/internal/compat"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -195,11 +196,11 @@ func snippetAround(text string, byteIdx, maxRunes int) string {
 	}
 	runes := []rune(text)
 	pos := utf8.RuneCountInString(text[:byteIdx])
-	start := max(pos-maxRunes/2, 0)
+	start := compat.Max(pos-maxRunes/2, 0)
 	end := start + maxRunes
 	if end > len(runes) {
 		end = len(runes)
-		start = max(end-maxRunes, 0)
+		start = compat.Max(end-maxRunes, 0)
 	}
 	prefix := ""
 	suffix := ""

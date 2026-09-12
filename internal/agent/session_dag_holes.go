@@ -5,8 +5,8 @@ import (
 	"context"
 	"errors"
 	"io"
-	"log/slog"
 	"os"
+	slog "reasonix/internal/compat/xslog"
 )
 
 // resumePastTornLine continues a replay that stopped at a line it could not

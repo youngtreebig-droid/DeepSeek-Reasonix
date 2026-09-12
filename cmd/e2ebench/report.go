@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"slices"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"sort"
 	"strings"
 	"time"
@@ -54,7 +55,7 @@ func gatherSuiteStats(results []result) suiteStats {
 				s.pass1++
 			}
 		}
-		s.maxAttempt = max(s.maxAttempt, r.Attempt)
+		s.maxAttempt = compat.Max(s.maxAttempt, r.Attempt)
 		if r.Passed {
 			s.passed++
 			if r.TTCSMs > 0 {

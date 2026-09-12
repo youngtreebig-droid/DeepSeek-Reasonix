@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -7,6 +9,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 
 	"reasonix/internal/billing"
+	"reasonix/internal/compat"
 	"reasonix/internal/control"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
@@ -67,7 +70,7 @@ func renderQuotedTurnReceipt(u *provider.Usage, q *billing.CostQuote, d *event.C
 		cached := u.CacheHitTokens
 		fresh := u.CacheMissTokens
 		if fresh == 0 {
-			fresh = max(u.PromptTokens-cached, 0)
+			fresh = compat.Max(u.PromptTokens-cached, 0)
 		}
 		groups = append(groups,
 			"in "+shortTokens(u.PromptTokens),
@@ -316,7 +319,7 @@ func renderContextStatusGroups(used, window int, ratio float64) []string {
 	}
 
 	threshold := int(ratio * 100)
-	left := max(threshold-pct, 0)
+	left := compat.Max(threshold-pct, 0)
 	ctxColor := activeCLITheme.muted
 	compactColor := activeCLITheme.muted
 	switch {
@@ -370,7 +373,7 @@ func (m chatTUI) renderStatusBlock(primary string, width int) string {
 		width = 1
 	}
 	primary = hideStatusHintWhenKeyNamesCannotFit(primary, width)
-	modelWork := m.statusModelWorkGroup(max(width-visibleWidth(statusFooterIndent), 1))
+	modelWork := m.statusModelWorkGroup(compat.Max(width-visibleWidth(statusFooterIndent), 1))
 	first := layoutStatusSides(primary, modelWork, width)
 	second := m.layoutGitTelemetry(width)
 	if second == "" {
@@ -385,7 +388,7 @@ func (m chatTUI) renderStatusBlock(primary string, width int) string {
 // the optional shortcut help yields space to the composer.
 func hideStatusHintWhenKeyNamesCannotFit(primary string, width int) string {
 	hint := i18n.M.ChatStatusCycleHintCompact
-	for group := range strings.SplitSeq(hint, " · ") {
+	for _, group := range strings.Split(hint, " · ") {
 		if visibleWidth(statusFooterIndent+group) > width {
 			return strings.Replace(primary, " · "+footerHint(hint), "", 1)
 		}
@@ -394,7 +397,7 @@ func hideStatusHintWhenKeyNamesCannotFit(primary string, width int) string {
 }
 
 func statusFooterDivider(width int) string {
-	width = max(width, 1)
+	width = compat.Max(width, 1)
 	if width <= visibleWidth(statusFooterIndent) {
 		return themeFg(activeCLITheme.border, strings.Repeat("─", width))
 	}
@@ -466,7 +469,7 @@ func (m chatTUI) layoutGitTelemetry(width int) string {
 		return packStatusGroups(telemetryGroups, width)
 	}
 
-	fullGitBudget := max(width-visibleWidth(statusFooterIndent), 1)
+	fullGitBudget := compat.Max(width-visibleWidth(statusFooterIndent), 1)
 	git := m.gitStatus.RenderWithin(fullGitBudget, activeCLITheme.warn)
 	gitLine := statusFooterIndent + git
 	if telemetry == "" {
@@ -485,7 +488,7 @@ func (m chatTUI) layoutGitTelemetry(width int) string {
 }
 
 func packStatusGroups(groups []string, width int) string {
-	width = max(width, 1)
+	width = compat.Max(width, 1)
 	if len(groups) == 0 {
 		return ""
 	}

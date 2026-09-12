@@ -425,7 +425,7 @@ func dropDuplicateProviderBlocks(text, provider string) (string, bool) {
 // providerBlockHasBaseURL reports whether the block starting at idx contains
 // the given base_url assignment before its next table header.
 func providerBlockHasBaseURL(block, baseURL string) bool {
-	for line := range strings.SplitSeq(block, "\n") {
+	for _, line := range strings.Split(block, "\n") {
 		trimmed := strings.TrimSpace(line)
 		if strings.HasPrefix(trimmed, "[") {
 			return false
@@ -459,7 +459,7 @@ func replaceProviderBaseURL(text string, idx int, baseURL string) (string, bool)
 // providerBlockHasKind reports whether the block starting at idx contains the
 // given kind assignment before its next table header.
 func providerBlockHasKind(block, kind string) bool {
-	for line := range strings.SplitSeq(block, "\n") {
+	for _, line := range strings.Split(block, "\n") {
 		trimmed := strings.TrimSpace(line)
 		if strings.HasPrefix(trimmed, "[") {
 			return false
@@ -491,7 +491,7 @@ func replaceProviderKind(text string, idx int, kind string) (string, bool) {
 }
 
 func providerBlockHasModel(block, model string) bool {
-	for line := range strings.SplitSeq(block, "\n") {
+	for _, line := range strings.Split(block, "\n") {
 		trimmed := strings.TrimSpace(line)
 		if strings.HasPrefix(trimmed, "[") {
 			return false
@@ -544,7 +544,7 @@ func materializeDefaultProvider(existing string) string {
 // stops at the first table header — default_model is only meaningful at the
 // top of the file.
 func defaultModelProvider(text string) string {
-	for line := range strings.SplitSeq(text, "\n") {
+	for _, line := range strings.Split(text, "\n") {
 		trimmed := strings.TrimSpace(line)
 		if strings.HasPrefix(trimmed, "[") {
 			return ""

@@ -1,6 +1,9 @@
+//go:build !win7
+
 package cli
 
 import (
+	"reasonix/internal/compat"
 	"strings"
 
 	"github.com/charmbracelet/x/ansi"
@@ -44,7 +47,7 @@ func boxed(lines []string) string {
 	b.WriteString(accent("╭" + bar + "╮"))
 	b.WriteByte('\n')
 	for _, l := range lines {
-		gap := max(inner-visibleWidth(l)-2, 0)
+		gap := compat.Max(inner-visibleWidth(l)-2, 0)
 		b.WriteString(accent("│"))
 		b.WriteByte(' ')
 		b.WriteString(l)

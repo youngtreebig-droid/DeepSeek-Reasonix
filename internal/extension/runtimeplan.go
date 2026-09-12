@@ -1,8 +1,8 @@
 package extension
 
 import (
-	"maps"
-	"slices"
+	maps "reasonix/internal/compat/xmaps"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 

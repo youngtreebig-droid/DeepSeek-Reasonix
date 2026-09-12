@@ -3,6 +3,7 @@ package transcript
 import (
 	"encoding/json"
 	"errors"
+	"reasonix/internal/compat"
 	"reflect"
 	"unicode/utf8"
 )
@@ -91,15 +92,15 @@ func (p *Projection) snapshotCurrent(req PageRequest) (Snapshot, error) {
 	if limit <= 0 {
 		limit = defaultPageRecords
 	}
-	limit = min(limit, maxPageRecords)
+	limit = compat.Min(limit, maxPageRecords)
 	budget := req.Bytes
 	if budget <= 0 {
 		budget = defaultPageBytes
 	}
-	budget = min(budget, maxPageBytes)
+	budget = compat.Min(budget, maxPageBytes)
 	end := len(p.buffer.messages)
 	if req.SnapshotID != "" {
-		end = min(max(req.Before, 0), end)
+		end = compat.Min(compat.Max(req.Before, 0), end)
 	}
 	out.TotalRecords = len(p.buffer.messages)
 	out.TotalTurns = p.buffer.userTurns
@@ -188,7 +189,7 @@ func activeRecordIndexes(messages []*bufferedMessage, before int, runtime Runtim
 	}
 	if runtime.TurnID == "" {
 		indexes := make([]int, 0, before)
-		for i := range before {
+		for i := 0; i < before; i++ {
 			indexes = append(indexes, i)
 		}
 		return indexes
@@ -247,7 +248,7 @@ func (p *Projection) contentCurrent(req ContentRequest) (ContentChunk, error) {
 		if !ok || req.Offset > len(text) || (req.Offset < len(text) && !utf8.RuneStart(text[req.Offset])) {
 			return ContentChunk{}, errors.New("invalid transcript content offset")
 		}
-		end := runeBoundary(text, min(req.Offset+contentChunkBytes, len(text)))
+		end := runeBoundary(text, compat.Min(req.Offset+contentChunkBytes, len(text)))
 		return ContentChunk{Data: text[req.Offset:end], NextOffset: end, Done: end == len(text)}, nil
 	}
 	return ContentChunk{}, errors.New("transcript record not found")

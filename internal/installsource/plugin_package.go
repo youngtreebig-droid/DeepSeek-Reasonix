@@ -9,10 +9,10 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
-	"slices"
 	"sort"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/gitcmd"
 	"reasonix/internal/pluginpkg"
 )

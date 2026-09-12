@@ -2,7 +2,7 @@ package bot
 
 import (
 	"context"
-	"log/slog"
+	slog "reasonix/internal/compat/xslog"
 	"time"
 )
 

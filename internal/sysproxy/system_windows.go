@@ -3,8 +3,8 @@
 package sysproxy
 
 import (
-	"log/slog"
 	"net/url"
+	slog "reasonix/internal/compat/xslog"
 	"strings"
 	"unsafe"
 

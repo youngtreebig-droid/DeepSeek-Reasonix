@@ -2,9 +2,9 @@ package openai
 
 import (
 	"net/url"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 

@@ -2,7 +2,7 @@ package extension
 
 import (
 	"fmt"
-	"maps"
+	maps "reasonix/internal/compat/xmaps"
 	"strings"
 )
 

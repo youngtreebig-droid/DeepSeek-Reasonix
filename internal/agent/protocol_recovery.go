@@ -2,15 +2,15 @@ package agent
 
 import (
 	"context"
-	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"maps"
-	"slices"
+	"reasonix/internal/compat"
 
+	maps "reasonix/internal/compat/xmaps"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )
@@ -76,7 +76,9 @@ func (a *Agent) latestProtocolRecord() (provider.ProtocolRecoveryRecord, bool) {
 	if a == nil || a.Session() == nil {
 		return provider.ProtocolRecoveryRecord{}, false
 	}
-	for _, m := range slices.Backward(a.Session().Snapshot()) {
+	_rev1 := a.Session().Snapshot()
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		m := _rev1[_ri1]
 		if len(m.ProtocolRecovery) > 0 {
 			return provider.DecodeProtocolRecovery(m.ProtocolRecovery)
 		}
@@ -125,7 +127,9 @@ func (a *Agent) restoreProtocolProjection() {
 }
 
 func (a *Agent) protocolRecoverySpent() bool {
-	for _, m := range slices.Backward(a.Session().Snapshot()) {
+	_rev2 := a.Session().Snapshot()
+	for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+		m := _rev2[_ri2]
 		if len(m.ProtocolRecovery) == 0 {
 			continue
 		}
@@ -170,7 +174,7 @@ func (a *Agent) protocolRecord(frozen samplingRequest, state string) provider.Pr
 	if prefix > 0 {
 		anchor = reasoningReplayMessageFingerprint(frozen.req.Messages[prefix-1])
 	}
-	return provider.ProtocolRecoveryRecord{Evidence: protocolEvidenceDigest(a.Session().Snapshot()), Version: 1, ID: rand.Text(), State: state, Scope: a.protocolRecoveryScope(), Fingerprint: protocolDigest(canonical), Count: len(canonical), Prefix: prefix, Anchor: anchor, Run: a.recovery.runSeq.Load()}
+	return provider.ProtocolRecoveryRecord{Evidence: protocolEvidenceDigest(a.Session().Snapshot()), Version: 1, ID: compat.RandText(), State: state, Scope: a.protocolRecoveryScope(), Fingerprint: protocolDigest(canonical), Count: len(canonical), Prefix: prefix, Anchor: anchor, Run: a.recovery.runSeq.Load()}
 }
 
 func (a *Agent) offerProtocolRecovery(frozen samplingRequest, err error) error {
@@ -226,7 +230,8 @@ func (a *Agent) consumeManualProtocolRecovery(ctx context.Context, s *samplingRe
 func (s *Session) storeProtocolRecord(id string, raw json.RawMessage) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	for i := range slices.Backward(s.Messages) {
+	_rev3 := s.Messages
+	for i := len(_rev3) - 1; i >= 0; i-- {
 		if record, ok := provider.DecodeProtocolRecovery(s.Messages[i].ProtocolRecovery); ok && record.ID == id {
 			var fields map[string]json.RawMessage
 			_ = json.Unmarshal(s.Messages[i].ProtocolRecovery, &fields)
@@ -250,7 +255,8 @@ func (s *Session) expireProtocolRecoveryLocked(added []provider.Message) {
 	if !slices.ContainsFunc(added, IsUserAuthoredTurnMessage) {
 		return
 	}
-	for i := range slices.Backward(s.Messages) {
+	_rev4 := s.Messages
+	for i := len(_rev4) - 1; i >= 0; i-- {
 		raw := s.Messages[i].ProtocolRecovery
 		if len(raw) == 0 {
 			continue

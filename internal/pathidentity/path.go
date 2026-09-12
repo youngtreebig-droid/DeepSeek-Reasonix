@@ -3,7 +3,6 @@ package pathidentity
 import (
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strings"
 )
 
@@ -36,7 +35,9 @@ func resolvePathThroughExistingAncestor(path string) string {
 	missing := make([]string, 0, 4)
 	for {
 		if resolved, err := filepath.EvalSymlinks(current); err == nil {
-			for _, v := range slices.Backward(missing) {
+			_rev1 := missing
+			for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+				v := _rev1[_ri1]
 				resolved = filepath.Join(resolved, v)
 			}
 			return resolved

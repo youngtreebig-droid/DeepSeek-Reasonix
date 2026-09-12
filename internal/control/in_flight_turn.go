@@ -1,12 +1,12 @@
 package control
 
 import (
-	"log/slog"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )

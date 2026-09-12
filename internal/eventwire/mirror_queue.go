@@ -151,7 +151,7 @@ func (q *MirrorQueue) Take(max int) []Event {
 		max = len(q.frames)
 	}
 	out := make([]Event, max)
-	for i := range max {
+	for i := 0; i < max; i++ {
 		out[i] = q.frames[i].event
 	}
 	q.frames = append([]mirrorQueueFrame(nil), q.frames[max:]...)

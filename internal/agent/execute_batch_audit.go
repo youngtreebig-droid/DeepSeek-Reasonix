@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/evidence"
 	"reasonix/internal/provider"
@@ -85,7 +86,7 @@ func (a *Agent) recordToolExecutionAudit(readOnly, parallel bool, startedAt, dur
 	if a == nil || a.capabilityAudit == nil || startedAt <= 0 {
 		return
 	}
-	queueMs := max(startedAt-batchStart.UnixMilli(), 0)
+	queueMs := compat.Max(startedAt-batchStart.UnixMilli(), 0)
 	rawBytes := len(o.output)
 	if o.rawOutput != "" {
 		rawBytes = len(o.rawOutput)
@@ -127,7 +128,7 @@ func (a *Agent) storeBatchToolResult(ctx context.Context, call provider.ToolCall
 						observed.LineHashes = nil
 					} else {
 						count := env.DeliveredRanges[0].Lines()
-						observed.LineHashes = observed.LineHashes[:min(count, len(observed.LineHashes))]
+						observed.LineHashes = observed.LineHashes[:compat.Min(count, len(observed.LineHashes))]
 					}
 					observed.Snapshot = env.Source.Snapshot
 					a.recordModelTextObservation(observed, call.ID)

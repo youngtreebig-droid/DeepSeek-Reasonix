@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"slices"
 	"sort"
 	"strings"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/netclient"
 	"reasonix/internal/provider"
 )

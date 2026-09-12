@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -6,6 +8,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/i18n"
 )
 
@@ -75,7 +78,7 @@ func (m chatTUI) renderClearConfirm() string {
 	if m.clearConfirm == nil {
 		return ""
 	}
-	w := max(viewWidth(m.width), 40)
+	w := compat.Max(viewWidth(m.width), 40)
 	var b strings.Builder
 	b.WriteString(i18n.M.SlashClearPrompt + "\n")
 	b.WriteString(viewMeta("This deletes the current transcript from local history and keeps only the system prompt.") + "\n\n")

@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/shellparse"
 )
 
@@ -188,7 +189,7 @@ func (l *Ledger) HasSuccessfulCommandAfter(command string, after int) bool {
 	if l == nil || command == "" {
 		return false
 	}
-	start := max(after+1, 0)
+	start := compat.Max(after+1, 0)
 
 	l.mu.Lock()
 	defer l.mu.Unlock()

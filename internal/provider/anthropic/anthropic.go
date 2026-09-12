@@ -31,6 +31,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/netclient"
 	"reasonix/internal/provider"
 	"reasonix/internal/provider/openai"
@@ -494,10 +495,10 @@ func (c *client) readStream(ctx context.Context, resp *http.Response, out chan<-
 		// such as LongCat report all counters in message_delta instead. Counters
 		// are cumulative and non-negative, so retaining the largest value also
 		// tolerates gateways that repeat partial usage in both events.
-		inTok = max(inTok, usage.InputTokens)
-		outTok = max(outTok, usage.OutputTokens)
-		cacheCreate = max(cacheCreate, usage.CacheCreationInputTokens)
-		cacheRead = max(cacheRead, usage.CacheReadInputTokens)
+		inTok = compat.Max(inTok, usage.InputTokens)
+		outTok = compat.Max(outTok, usage.OutputTokens)
+		cacheCreate = compat.Max(cacheCreate, usage.CacheCreationInputTokens)
+		cacheRead = compat.Max(cacheRead, usage.CacheReadInputTokens)
 		haveUsage = true
 	}
 

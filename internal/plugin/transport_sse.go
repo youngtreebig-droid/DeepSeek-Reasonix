@@ -1,3 +1,5 @@
+//go:build !win7
+
 package plugin
 
 import "context"

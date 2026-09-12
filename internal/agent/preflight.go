@@ -2,10 +2,10 @@ package agent
 
 import (
 	"errors"
-	"log/slog"
 	"strings"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 )
 

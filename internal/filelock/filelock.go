@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"reasonix/internal/compat"
 	"runtime"
 	"strings"
 	"sync"
@@ -161,7 +162,7 @@ func acquireLocal(ctx context.Context, key string, mode Mode) (func(), error) {
 	local := lookupLocal(key)
 	localRegistry.Unlock()
 
-	stop := context.AfterFunc(ctx, func() {
+	stop := compat.ContextAfterFunc(ctx, func() {
 		local.mu.Lock()
 		local.cond.Broadcast()
 		local.mu.Unlock()

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"slices"
 	"sync"
 	"time"
 )
@@ -171,7 +170,9 @@ func (s *LiveScope) Dispose(ctx context.Context) error {
 	s.mu.Unlock()
 
 	var errs []error
-	for _, te := range slices.Backward(effects) {
+	_rev1 := effects
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		te := _rev1[_ri1]
 		if te.disposed {
 			continue
 		}

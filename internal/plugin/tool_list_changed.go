@@ -5,13 +5,14 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
-	"log/slog"
+	"reasonix/internal/compat"
 	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )
@@ -184,7 +185,7 @@ func (h *Host) subscribeToolListChanges(ctx context.Context, callback func(Spec,
 			h.mu.Unlock()
 		})
 	}
-	stop := context.AfterFunc(ctx, unsubscribe)
+	stop := compat.ContextAfterFunc(ctx, unsubscribe)
 	return func() {
 		stop()
 		unsubscribe()
@@ -416,7 +417,7 @@ func (c *Client) runToolsRefreshes() {
 	// Exhaustion stays stale and fail-closed; a later notice or user retry starts
 	// a fresh bounded cycle.
 	refreshDelay := toolListRefreshDebounce
-	for range toolListRefreshMaxAttempts {
+	for i := 0; i < toolListRefreshMaxAttempts; i++ {
 		if err := wait(ctx, refreshDelay); err != nil {
 			return
 		}

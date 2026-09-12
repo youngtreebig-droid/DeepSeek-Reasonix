@@ -12,12 +12,13 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"slices"
 	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/proc"
 	"reasonix/internal/secrets"
 )
@@ -387,7 +388,7 @@ func saveLinuxClipboardImage() (string, error) {
 }
 
 func clipboardTypeListed(raw []byte, want string) bool {
-	for field := range strings.FieldsSeq(string(raw)) {
+	for _, field := range strings.Fields(string(raw)) {
 		if strings.EqualFold(field, want) {
 			return true
 		}
@@ -400,7 +401,7 @@ func clipboardTypeListed(raw []byte, want string) bool {
 // contain their terminal control sequences verbatim.
 func offeredImageTypes(raw []byte) []string {
 	var offered []string
-	for field := range strings.FieldsSeq(string(raw)) {
+	for _, field := range strings.Fields(string(raw)) {
 		lower := strings.ToLower(field)
 		if strings.HasPrefix(lower, "image/") && !slices.Contains(clipboardImageTypes, lower) {
 			offered = append(offered, strconv.QuoteToASCII(field))
@@ -515,7 +516,7 @@ func rejectSymlinkComponents(path, root string) error {
 		return fmt.Errorf("attachment path is outside .reasonix/attachments")
 	}
 	cur := root
-	for part := range strings.SplitSeq(rel, string(filepath.Separator)) {
+	for _, part := range strings.Split(rel, string(filepath.Separator)) {
 		if part == "" || part == "." {
 			continue
 		}
@@ -653,7 +654,7 @@ func createAttachmentFile(ext string) (string, *os.File, error) {
 }
 
 func createAttachmentFileIn(base, ext string) (string, *os.File, error) {
-	for range maxAttachmentCreateAttempts {
+	for __i := 0; __i < maxAttachmentCreateAttempts; __i++ {
 		rel := attachmentPath(ext)
 		f, err := os.OpenFile(filepath.Join(base, rel), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 		if os.IsExist(err) {
@@ -677,7 +678,7 @@ func detectedImageMime(raw []byte) string {
 	if len(raw) == 0 {
 		return ""
 	}
-	mime := http.DetectContentType(raw[:min(len(raw), 512)])
+	mime := http.DetectContentType(raw[:compat.Min(len(raw), 512)])
 	if imageExt(mime) == "" {
 		return ""
 	}

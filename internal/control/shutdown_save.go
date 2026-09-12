@@ -3,9 +3,9 @@ package control
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 )
 
 // recoverShutdownSave answers a save lock that stayed held for the whole

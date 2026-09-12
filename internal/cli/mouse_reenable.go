@@ -1,7 +1,10 @@
+//go:build !win7
+
 package cli
 
 import (
 	"os"
+	"reasonix/internal/compat"
 	"strings"
 	"time"
 
@@ -67,7 +70,7 @@ func (m *chatTUI) armMouseReenableTimer(now time.Time) tea.Cmd {
 	if m.mouseReenableTimerArmed {
 		return nil
 	}
-	wait := max(mouseReenableMinInterval-now.Sub(m.lastMouseReenable), 0)
+	wait := compat.Max(mouseReenableMinInterval-now.Sub(m.lastMouseReenable), 0)
 	m.mouseReenableTimerArmed = true
 	return tea.Tick(wait, func(time.Time) tea.Msg {
 		return mouseReenableMsg{}

@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -9,6 +11,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 
 	"reasonix/internal/checkpoint"
+	"reasonix/internal/compat"
 	"reasonix/internal/control"
 	"reasonix/internal/i18n"
 )
@@ -219,7 +222,7 @@ func (m chatTUI) renderRewind() string {
 	if r == nil {
 		return ""
 	}
-	w := max(m.width, 10)
+	w := compat.Max(m.width, 10)
 	var b strings.Builder
 	if r.stage == 0 {
 		b.WriteString(accent(i18n.M.RewindPickTitle) + "\n")
@@ -275,7 +278,7 @@ func rewindActionLabel(i int) string {
 }
 
 func turnLabel(meta checkpoint.Meta, w int) string {
-	label := oneLine(meta.Prompt, max(20, w-30))
+	label := oneLine(meta.Prompt, compat.Max(20, w-30))
 	if n := len(meta.Paths); n > 0 {
 		s := ""
 		if n != 1 {

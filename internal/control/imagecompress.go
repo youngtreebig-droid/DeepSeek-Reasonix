@@ -6,6 +6,7 @@ import (
 	_ "image/gif" // register gif decoder
 	"image/jpeg"
 	"image/png"
+	"reasonix/internal/compat"
 
 	xdraw "golang.org/x/image/draw"
 	_ "golang.org/x/image/webp" // register webp decoder
@@ -63,9 +64,9 @@ func compressForVision(raw []byte, mime string) ([]byte, string) {
 // aspect ratio (each side at least 1px).
 func scaledDims(w, h, m int) (int, int) {
 	if w >= h {
-		nh := max(h*m/w, 1)
+		nh := compat.Max(h*m/w, 1)
 		return m, nh
 	}
-	nw := max(w*m/h, 1)
+	nw := compat.Max(w*m/h, 1)
 	return nw, m
 }

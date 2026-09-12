@@ -1,6 +1,9 @@
 package control
 
-import "strings"
+import (
+	"reasonix/internal/compat"
+	"strings"
+)
 
 // mergeGoalProgressEvidence updates the bounded Goal-scoped novelty window.
 func mergeGoalProgressEvidence(existing, observed []string) ([]string, bool) {
@@ -10,8 +13,8 @@ func mergeGoalProgressEvidence(existing, observed []string) ([]string, bool) {
 	if len(observed) > maxGoalProgressEvidence {
 		observed = observed[len(observed)-maxGoalProgressEvidence:]
 	}
-	out := make([]string, 0, min(len(existing)+len(observed), maxGoalProgressEvidence))
-	seen := make(map[string]struct{}, min(len(existing)+len(observed), maxGoalProgressEvidence))
+	out := make([]string, 0, compat.Min(len(existing)+len(observed), maxGoalProgressEvidence))
+	seen := make(map[string]struct{}, compat.Min(len(existing)+len(observed), maxGoalProgressEvidence))
 	appendValid := func(sig string) bool {
 		sig = strings.TrimSpace(sig)
 		if sig == "" || len(sig) > 128 {

@@ -7,12 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"maps"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 
+	maps "reasonix/internal/compat/xmaps"
 	fileencoding "reasonix/internal/fileutil/encoding"
 )
 

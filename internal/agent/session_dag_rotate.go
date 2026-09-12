@@ -1,12 +1,12 @@
 package agent
 
 import (
-	"cmp"
 	"fmt"
 	"os"
-	"slices"
 	"time"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/fileutil"
 	"reasonix/internal/provider"
 	"reasonix/internal/store"
@@ -134,7 +134,7 @@ func buildRotatedSessionDAG(st *sessionDAGState, now time.Time) ([]sessionDAGEnt
 	for _, w := range st.writers {
 		writers = append(writers, w)
 	}
-	slices.SortFunc(writers, func(a, b *sessionDAGWriter) int { return cmp.Compare(a.id, b.id) })
+	slices.SortFunc(writers, func(a, b *sessionDAGWriter) int { return compat.Compare(a.id, b.id) })
 	for _, w := range writers {
 		entries = append(entries, sessionDAGEntry{Type: sessionDAGTypeWriter, Writer: w.id, At: w.lastActivity, PID: w.pid, Hostname: w.hostname, LeaseGeneration: w.leaseGeneration})
 	}
@@ -149,7 +149,7 @@ func buildRotatedSessionDAG(st *sessionDAGState, now time.Time) ([]sessionDAGEnt
 		if c := a.createdAt.Compare(b.createdAt); c != 0 {
 			return c
 		}
-		return cmp.Compare(a.id, b.id)
+		return compat.Compare(a.id, b.id)
 	})
 	for _, h := range forks {
 		entries = append(entries, sessionDAGEntry{Type: sessionDAGTypeFork, Head: h.parentHead, NewHead: h.id, From: h.forkFrom, Kind: h.kind, Name: h.name, Writer: h.writer, At: h.createdAt})
@@ -173,7 +173,7 @@ func buildRotatedSessionDAG(st *sessionDAGState, now time.Time) ([]sessionDAGEnt
 	for id := range keep {
 		nodes = append(nodes, st.nodes[id])
 	}
-	slices.SortFunc(nodes, func(a, b *sessionDAGNode) int { return cmp.Compare(a.offset, b.offset) })
+	slices.SortFunc(nodes, func(a, b *sessionDAGNode) int { return compat.Compare(a.offset, b.offset) })
 	digests := map[string]string{}
 	for _, n := range nodes {
 		m := st.appliedMessage(n)

@@ -3,7 +3,6 @@ package command
 import (
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strings"
 )
@@ -90,7 +89,9 @@ func Inspect(dirs ...string) Inspection {
 	for name, list := range byName {
 		// Find last non-error candidate as winner; errors stay as errors.
 		winIdx := -1
-		for i, v := range slices.Backward(list) {
+		_rev1 := list
+		for i := len(_rev1) - 1; i >= 0; i-- {
+			v := _rev1[i]
 			if v.Status != CandidateError {
 				winIdx = i
 				break

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 	"reasonix/internal/readcoord"
 	"reasonix/internal/tool"
@@ -57,7 +58,7 @@ func (a *Agent) readTimeRemaining(id string) time.Duration {
 			remaining -= ob.ActiveTime
 		}
 	}
-	return max(time.Millisecond, remaining)
+	return compat.Max(time.Millisecond, remaining)
 }
 
 func (a *Agent) gateReadOperation(_ context.Context, plan *toolCallPlan) (string, bool) {

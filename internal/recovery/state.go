@@ -2,7 +2,8 @@ package recovery
 
 import (
 	"encoding/json"
-	"slices"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 	"unicode/utf8"
 )
@@ -99,7 +100,7 @@ func (st *taskRuntime) useTaskGrantScope(scope string) {
 		return
 	}
 	if st.taskGrantScope != "" && st.taskGrantScope != scope {
-		clear(st.taskGrants)
+		compat.Clear(st.taskGrants)
 	}
 	st.taskGrantScope = scope
 }
@@ -310,7 +311,9 @@ func trimDiagnosis(af *activeFailure) {
 	total := 0
 	kept := make([]string, 0, len(notes))
 	// Keep the newest notes within the total budget.
-	for _, v := range slices.Backward(notes) {
+	_rev1 := notes
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		n := clipDiagnosisNote(v)
 		if n == "" {
 			continue

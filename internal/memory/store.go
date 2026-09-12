@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat/rootfs"
 	"reasonix/internal/config"
 	"reasonix/internal/fileutil"
 	fileencoding "reasonix/internal/fileutil/encoding"
@@ -261,7 +262,7 @@ func (s Store) Delete(name string) error {
 }
 
 func archiveInDir(dir, name string) (string, error) {
-	root, err := os.OpenRoot(dir)
+	root, err := rootfs.OpenRoot(dir)
 	if os.IsNotExist(err) {
 		return "", nil
 	}
@@ -294,7 +295,7 @@ func archiveInDir(dir, name string) (string, error) {
 	return out, nil
 }
 
-func archivePath(root *os.Root, name string, when time.Time) (string, error) {
+func archivePath(root *rootfs.Root, name string, when time.Time) (string, error) {
 	stem := when.Format("20060102-150405.000") + "-" + name
 	path := filepath.Join(".archive", stem+".md")
 	if _, err := root.Stat(path); os.IsNotExist(err) {
@@ -338,7 +339,7 @@ func safeJoin(base, name string) (string, error) {
 	return pathAbs, nil
 }
 
-func renameMemoryFile(root *os.Root, path, dest string) error {
+func renameMemoryFile(root *rootfs.Root, path, dest string) error {
 	err := root.Rename(path, dest)
 	if err == nil || os.IsNotExist(err) {
 		return nil
@@ -356,7 +357,7 @@ func renameMemoryFile(root *os.Root, path, dest string) error {
 	return err
 }
 
-func repairOwnerWrite(root *os.Root, path string, dir bool) {
+func repairOwnerWrite(root *rootfs.Root, path string, dir bool) {
 	info, err := root.Stat(path)
 	if err != nil {
 		return
@@ -378,7 +379,7 @@ var indexLineRe = regexp.MustCompile(`(?m)^\s*-\s\[.+?\]\(([^)]+)\.md\)\s*—\s.
 func indexLinesExceptIn(dir, name string) map[string]string {
 	existing, _ := fileencoding.ReadFileUTF8(filepath.Join(dir, indexFile))
 	keep := map[string]string{}
-	for line := range strings.SplitSeq(string(existing), "\n") {
+	for _, line := range strings.Split(string(existing), "\n") {
 		if mt := indexLineRe.FindStringSubmatch(line); mt != nil && mt[1] != name {
 			keep[mt[1]] = strings.TrimRight(line, "\r")
 		}
@@ -391,7 +392,7 @@ func indexContainsIn(dir, name string) bool {
 	if err != nil {
 		return false
 	}
-	for line := range strings.SplitSeq(string(existing), "\n") {
+	for _, line := range strings.Split(string(existing), "\n") {
 		if mt := indexLineRe.FindStringSubmatch(line); mt != nil && mt[1] == name {
 			return true
 		}
@@ -408,7 +409,7 @@ func flushIndexIn(dir string, lines map[string]string) error {
 	processed := map[string]bool{}
 	var preserved strings.Builder
 	preservedEmpty := true
-	for line := range strings.SplitSeq(string(existing), "\n") {
+	for _, line := range strings.Split(string(existing), "\n") {
 		trimmed := strings.TrimRight(line, "\r")
 		if mt := indexLineRe.FindStringSubmatch(trimmed); mt != nil {
 			name := mt[1]

@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -11,6 +13,7 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/ansi"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 )
 
@@ -84,7 +87,7 @@ func (m *chatTUI) removeTranscriptBlock(index int) {
 }
 
 func (m *chatTUI) truncateTranscriptBlocks(length int) {
-	length = min(max(length, 0), len(m.transcript))
+	length = compat.Min(compat.Max(length, 0), len(m.transcript))
 	m.ensureTranscriptSources()
 	m.transcript = m.transcript[:length]
 	m.transcriptSources = m.transcriptSources[:length]
@@ -165,12 +168,12 @@ const assistantTranscriptIndent = "  "
 // body keeps a restrained two-cell gutter instead of using a heavy card, and
 // rendering at the reduced width keeps every indented row inside the viewport.
 func renderAssistantMarkdown(raw string, contentWidth int) string {
-	contentWidth = max(contentWidth, 1)
+	contentWidth = compat.Max(contentWidth, 1)
 	indent := assistantTranscriptIndent
 	if contentWidth <= visibleWidth(indent) {
 		indent = ""
 	}
-	bodyWidth := max(contentWidth-visibleWidth(indent), 1)
+	bodyWidth := compat.Max(contentWidth-visibleWidth(indent), 1)
 	renderer := newMarkdownRenderer(bodyWidth)
 	rendered := renderer.Render(raw)
 	if rendered == "" {
@@ -187,12 +190,12 @@ func renderAssistantMarkdown(raw string, contentWidth int) string {
 // renderAssistantMarkdownCopy mirrors renderAssistantMarkdown's visible output
 // and adds zero-width copy spans for math reconstruction and generated gutters.
 func renderAssistantMarkdownCopy(raw string, contentWidth int, prefix string) string {
-	contentWidth = max(contentWidth, 1)
+	contentWidth = compat.Max(contentWidth, 1)
 	indent := assistantTranscriptIndent
 	if contentWidth <= visibleWidth(indent) {
 		indent = ""
 	}
-	bodyWidth := max(contentWidth-visibleWidth(indent), 1)
+	bodyWidth := compat.Max(contentWidth-visibleWidth(indent), 1)
 	renderer := newMarkdownRenderer(bodyWidth)
 	rendered := renderer.RenderCopy(raw, prefix)
 	if rendered == "" {
@@ -227,7 +230,7 @@ func renderTurnReceiptBand(receipt string, contentWidth int) string {
 	if strings.TrimSpace(ansi.Strip(receipt)) == "" {
 		return ""
 	}
-	contentWidth = max(contentWidth, 1)
+	contentWidth = compat.Max(contentWidth, 1)
 	if contentWidth <= visibleWidth(statusFooterIndent) {
 		rule := themeFg(activeCLITheme.border, strings.Repeat("─", contentWidth))
 		return rule + "\n" + wrapTranscript(receipt, contentWidth)
@@ -268,7 +271,7 @@ func captureTranscriptResizeAnchor(blocks []string, width, yOffset int) transcri
 	if width <= 0 || len(blocks) == 0 {
 		return transcriptResizeAnchor{}
 	}
-	remaining := max(yOffset, 0)
+	remaining := compat.Max(yOffset, 0)
 	for i, block := range blocks {
 		lines := transcriptBlockLineCount(block, width)
 		if remaining < lines {
@@ -287,7 +290,7 @@ func (a transcriptResizeAnchor) yOffset(blocks []string, width int) int {
 	if !a.valid || len(blocks) == 0 || width <= 0 {
 		return 0
 	}
-	block := min(max(a.block, 0), len(blocks)-1)
+	block := compat.Min(compat.Max(a.block, 0), len(blocks)-1)
 	offset := 0
 	for i := range block {
 		offset += transcriptBlockLineCount(blocks[i], width)
@@ -491,9 +494,9 @@ func scrollbarThumb(height, yoff, total int) (start, size int) {
 	if total <= height {
 		return 0, 0 // no overflow → no thumb
 	}
-	size = max(height*height/total, 1)
+	size = compat.Max(height*height/total, 1)
 	maxYoff := total - height
-	start = min(yoff*(height-size)/maxYoff, height-size)
+	start = compat.Min(yoff*(height-size)/maxYoff, height-size)
 	return start, size
 }
 
@@ -506,7 +509,7 @@ func scrollbarYOffset(height, row, total, grabOffset int) int {
 	if maxTop <= 0 {
 		return 0
 	}
-	top := min(max(row-grabOffset, 0), maxTop)
+	top := compat.Min(compat.Max(row-grabOffset, 0), maxTop)
 	maxYoff := total - height
 	return (top*maxYoff + maxTop/2) / maxTop
 }

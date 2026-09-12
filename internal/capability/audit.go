@@ -1,7 +1,7 @@
 package capability
 
 import (
-	"maps"
+	maps "reasonix/internal/compat/xmaps"
 	"sync"
 )
 

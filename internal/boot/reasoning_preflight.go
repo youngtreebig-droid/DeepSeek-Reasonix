@@ -2,9 +2,9 @@ package boot
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/config"
 	"reasonix/internal/extension/providerext"
 	"reasonix/internal/provider"

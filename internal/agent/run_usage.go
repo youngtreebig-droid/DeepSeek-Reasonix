@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"reasonix/internal/billing"
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )
@@ -131,7 +132,7 @@ func estimateSamplingRequestInputTokens(req provider.Request) int {
 		encoded, _ := json.Marshal(schema)
 		total += 8 + estimateTextTokens(string(encoded))
 	}
-	return max(total, 1)
+	return compat.Max(total, 1)
 }
 
 // mergeSamplingUsage accumulates billable counters across body attempts.

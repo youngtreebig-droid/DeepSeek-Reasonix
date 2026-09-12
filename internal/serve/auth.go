@@ -2,7 +2,6 @@ package serve
 
 import (
 	"crypto/hmac"
-	"crypto/pbkdf2"
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/subtle"
@@ -12,7 +11,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log/slog"
 	"net"
 	"net/http"
 	"net/url"
@@ -23,6 +21,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 )
 
@@ -188,11 +187,7 @@ func HashPassword(password string) (string, error) {
 
 func sessionKeyForPasswordHash(passwordHash string) []byte {
 	if passwordHash != "" {
-		key, err := pbkdf2.Key(sha256.New, passwordHash, []byte("reasonix serve session key"), pbkdf2Iter, 32)
-		if err != nil {
-			panic("serve/auth: pbkdf2 failed: " + err.Error())
-		}
-		return key
+		return derivePBKDF2SessionKey(passwordHash, []byte("reasonix serve session key"), pbkdf2Iter, 32)
 	}
 	key := make([]byte, 32)
 	if _, err := rand.Read(key); err != nil {
@@ -611,7 +606,7 @@ func generateToken() string {
 
 // acceptsHTML reports whether the request's Accept header prefers text/html.
 func acceptsHTML(r *http.Request) bool {
-	for h := range strings.FieldsSeq(r.Header.Get("Accept")) {
+	for _, h := range strings.Fields(r.Header.Get("Accept")) {
 		if strings.HasPrefix(h, "text/html") {
 			return true
 		}

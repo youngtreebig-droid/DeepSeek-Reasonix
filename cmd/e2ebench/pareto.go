@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"path/filepath"
+	"reasonix/internal/compat"
 	"strings"
 )
 
@@ -127,14 +128,14 @@ func paretoChart(points []paretoPoint) string {
 func paretoBounds(points []paretoPoint) (xmin, xmax int64, ymin float64) {
 	xmin, xmax, ymin = points[0].ttcsMs, points[0].ttcsMs, points[0].acc
 	for _, p := range points[1:] {
-		xmin = min(xmin, p.ttcsMs)
-		xmax = max(xmax, p.ttcsMs)
-		ymin = min(ymin, p.acc)
+		xmin = compat.Min(xmin, p.ttcsMs)
+		xmax = compat.Max(xmax, p.ttcsMs)
+		ymin = compat.Min(ymin, p.acc)
 	}
-	pad := max((xmax-xmin)/10, 500)
-	xmin = max(xmin-pad, 0)
+	pad := compat.Max((xmax-xmin)/10, 500)
+	xmin = compat.Max(xmin-pad, 0)
 	xmax += pad
-	ymin = max(float64(int(ymin/10)*10-10), 0)
+	ymin = compat.Max(float64(int(ymin/10)*10-10), 0)
 	if ymin >= 100 {
 		ymin = 90
 	}
@@ -142,5 +143,5 @@ func paretoBounds(points []paretoPoint) (xmin, xmax int64, ymin float64) {
 }
 
 func clampInt(v, lo, hi int) int {
-	return min(max(v, lo), hi)
+	return compat.Min(compat.Max(v, lo), hi)
 }

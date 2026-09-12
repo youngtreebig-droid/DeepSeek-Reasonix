@@ -1,6 +1,6 @@
 package provider
 
-import "slices"
+import slices "reasonix/internal/compat/xslices"
 
 // ModelModality identifies an input modality accepted by a model. Keep this
 // type open for future audio/video/file capabilities; the first implementation

@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"fmt"
-	"log/slog"
 	"os"
 	"path/filepath"
 
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/provider"
 )
 

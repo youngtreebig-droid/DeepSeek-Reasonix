@@ -2,7 +2,7 @@ package plancontract
 
 import (
 	"fmt"
-	"slices"
+	slices "reasonix/internal/compat/xslices"
 	"strings"
 )
 

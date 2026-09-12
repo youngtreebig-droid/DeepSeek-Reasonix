@@ -1,9 +1,12 @@
+//go:build !win7
+
 package cli
 
 import (
 	"fmt"
 	"strings"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/control"
 	"reasonix/internal/event"
 	"reasonix/internal/extension/uihub"
@@ -91,14 +94,14 @@ func extensionCardLines(pluginID string, c *event.ExtensionCardView, width int) 
 	lines := []string{accent("◆ " + title)}
 	body := c.Text
 	if c.Markdown != "" {
-		bodyWidth := max(width-visibleWidth("  │ "), 1)
+		bodyWidth := compat.Max(width-visibleWidth("  │ "), 1)
 		if rendered := newMarkdownRenderer(bodyWidth).Render(c.Markdown); rendered != "" {
 			body = rendered
 		} else {
 			body = c.Markdown
 		}
 	}
-	for ln := range strings.SplitSeq(strings.TrimRight(body, "\n"), "\n") {
+	for _, ln := range strings.Split(strings.TrimRight(body, "\n"), "\n") {
 		if ln == "" {
 			lines = append(lines, "")
 			continue
@@ -131,7 +134,7 @@ func extensionFormLines(pluginID string, f *event.ExtensionFormView) []string {
 		title = pluginID
 	}
 	lines := []string{accent("◆ " + title)}
-	for ln := range strings.SplitSeq(strings.TrimRight(f.Message, "\n"), "\n") {
+	for _, ln := range strings.Split(strings.TrimRight(f.Message, "\n"), "\n") {
 		if ln == "" {
 			continue
 		}

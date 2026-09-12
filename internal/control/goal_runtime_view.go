@@ -1,6 +1,9 @@
 package control
 
-import "fmt"
+import (
+	"fmt"
+	"reasonix/internal/compat"
+)
 
 // GoalRuntimeView is the host-side runtime summary exposed to frontends.
 type GoalRuntimeView struct {
@@ -60,7 +63,7 @@ func GoalWorkDurationText(durationMs int64) string {
 	if durationMs <= 0 {
 		return "0s"
 	}
-	totalSeconds := max(int64(1), (durationMs+500)/1000)
+	totalSeconds := compat.Max(int64(1), (durationMs+500)/1000)
 	if totalSeconds < 60 {
 		return fmt.Sprintf("%ds", totalSeconds)
 	}

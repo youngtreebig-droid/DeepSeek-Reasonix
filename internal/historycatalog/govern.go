@@ -119,7 +119,7 @@ func (c *Catalog) wipeForRebuild(ctx context.Context) {
 
 func (c *Catalog) evictToTarget(ctx context.Context, size int64) {
 	target := c.opts.MaxBytes * evictTargetPercent / 100
-	for range maxEvictRounds {
+	for __i := 0; __i < maxEvictRounds; __i++ {
 		if size <= target {
 			return
 		}

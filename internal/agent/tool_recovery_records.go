@@ -9,9 +9,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"slices"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
@@ -22,7 +22,9 @@ var ErrToolRecoveryRequired = errors.New("recovery_required: an external tool ef
 func recoveryDigest(b []byte) string { sum := sha256.Sum256(b); return hex.EncodeToString(sum[:]) }
 
 func (s *Session) toolRecoveryRecord(callID string) *provider.ToolCallRecord {
-	for _, m := range slices.Backward(s.Snapshot()) {
+	_rev1 := s.Snapshot()
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		m := _rev1[_ri1]
 		for _, c := range m.ToolCalls {
 			if c.ID == callID && c.Recovery != nil {
 				r := *c.Recovery
@@ -38,7 +40,8 @@ func (s *Session) toolRecoveryRecord(callID string) *provider.ToolCallRecord {
 func (s *Session) setToolRecoveryRecord(id string, r provider.ToolCallRecord) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	for i := range slices.Backward(s.Messages) {
+	_rev2 := s.Messages
+	for i := len(_rev2) - 1; i >= 0; i-- {
 		for j, call := range s.Messages[i].ToolCalls {
 			if call.ID != id {
 				continue
@@ -89,7 +92,9 @@ func (a *Agent) beginToolRecovery(ctx context.Context, p *toolCallPlan) error {
 	if len(msgs) > 0 {
 		identity.SessionID = msgs[0].ID
 	}
-	for _, m := range slices.Backward(msgs) {
+	_rev3 := msgs
+	for _ri3 := len(_rev3) - 1; _ri3 >= 0; _ri3-- {
+		m := _rev3[_ri3]
 		if IsUserAuthoredTurnMessage(m) {
 			identity.TurnID = m.ID
 			break
@@ -201,7 +206,9 @@ func (a *Agent) PendingToolRecovery() []provider.ToolCallRecord {
 		return result
 	}
 	seen := map[string]bool{}
-	for _, m := range slices.Backward(a.sess.conversation.Snapshot()) {
+	_rev4 := a.sess.conversation.Snapshot()
+	for _ri4 := len(_rev4) - 1; _ri4 >= 0; _ri4-- {
+		m := _rev4[_ri4]
 		for _, call := range m.ToolCalls {
 			if call.Recovery == nil {
 				continue

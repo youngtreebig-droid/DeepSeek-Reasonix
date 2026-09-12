@@ -3,7 +3,7 @@ package config
 import (
 	_ "embed"
 	"encoding/json"
-	"maps"
+	maps "reasonix/internal/compat/xmaps"
 )
 
 // ProviderProtocolEndpoint is a documented SDK base URL, not a complete request URL.

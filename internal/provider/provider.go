@@ -14,12 +14,12 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"slices"
 	"sort"
 	"strings"
 	"syscall"
 	"unicode"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/nilutil"
 )
 
@@ -502,7 +502,7 @@ func repairToolCallArgs(m Message) Message {
 func closeTruncatedJSON(s string) string {
 	var stack []byte
 	inStr, esc := false, false
-	for i := range len(s) {
+	for i := 0; i < len(s); i++ {
 		c := s[i]
 		if inStr {
 			switch {
@@ -542,7 +542,9 @@ func closeTruncatedJSON(s string) string {
 	case strings.HasSuffix(trimmed, ":"):
 		out = trimmed + "null"
 	}
-	for _, v := range slices.Backward(stack) {
+	_rev1 := stack
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		out += string(v)
 	}
 	if !json.Valid([]byte(out)) {
@@ -767,7 +769,7 @@ func (p *Pricing) Cost(u *Usage) float64 {
 	// supplied input-token equivalent (for example Anthropic's 1.25x 5-minutewrites or 2x 1-hour writes).
 	// Olderproviders leave both fields at zero andkeep the legacy one-input-rate behavior.
 	// Awritecountwithoutbilledunits also falls back to 1xforbackward compatibility.
-	write := min(max(u.CacheWriteTokens, 0), miss)
+	write := compat.Min(compat.Max(u.CacheWriteTokens, 0), miss)
 	billedWrite := 0.0
 	if write > 0 {
 		billedWrite = u.CacheWriteBilledTokens

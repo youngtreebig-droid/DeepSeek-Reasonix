@@ -9,15 +9,15 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"maps"
 	"path"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
 	"sync"
 	"unicode/utf8"
 
+	maps "reasonix/internal/compat/xmaps"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
 )
 

@@ -2,8 +2,8 @@ package config
 
 import (
 	"fmt"
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/provider"
-	"slices"
 	"strings"
 )
 

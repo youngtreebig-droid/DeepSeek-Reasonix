@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )
@@ -72,7 +73,7 @@ func (s *Service) summarizeImages(ctx context.Context, modelRef string, images, 
 		switch chunk.Type {
 		case provider.ChunkText:
 			if remaining := visionSummaryMaxBytes + 4 - text.Len(); remaining > 0 {
-				text.WriteString(chunk.Text[:min(len(chunk.Text), remaining)])
+				text.WriteString(chunk.Text[:compat.Min(len(chunk.Text), remaining)])
 			}
 		case provider.ChunkUsage:
 			usage = chunk.Usage

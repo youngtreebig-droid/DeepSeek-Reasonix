@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -7,6 +9,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/i18n"
 )
@@ -254,7 +257,7 @@ func (m chatTUI) renderElicit() string {
 	if c == nil {
 		return ""
 	}
-	w := max(m.width, 10)
+	w := compat.Max(m.width, 10)
 	var b strings.Builder
 	fmt.Fprintf(&b, "%s %s\n", accent("MCP"), dim("· "+c.server))
 	b.WriteString(wrapForViewport(c.message, w, activeCLITheme.info) + "\n")

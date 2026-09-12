@@ -3,10 +3,10 @@ package control
 import (
 	"errors"
 	"fmt"
-	"log/slog"
 	"strings"
 
 	"reasonix/internal/agent"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"
 )

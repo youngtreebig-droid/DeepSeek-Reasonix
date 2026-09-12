@@ -9,11 +9,11 @@ package qq
 
 import (
 	"context"
-	"log/slog"
 	"sync"
 	"time"
 
 	"reasonix/internal/bot"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 
 	"golang.org/x/net/websocket"
@@ -64,9 +64,12 @@ func (a *adapter) Start(ctx context.Context) error {
 	}
 	ctx, a.cancel = context.WithCancel(ctx)
 
-	a.loopWG.Go(func() {
+	a.loopWG.Add(1)
+	go func() {
+		defer a.loopWG.Done()
+
 		a.gatewayLoop(ctx)
-	})
+	}()
 	return nil
 }
 

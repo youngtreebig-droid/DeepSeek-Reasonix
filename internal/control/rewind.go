@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log/slog"
 	"sync/atomic"
 
 	"reasonix/internal/agent"
 	"reasonix/internal/checkpoint"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/diff"
 	"reasonix/internal/event"
 	"reasonix/internal/provider"

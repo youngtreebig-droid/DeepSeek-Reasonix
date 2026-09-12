@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -694,7 +693,9 @@ func findTOMLAssignmentEquals(raw string, start, end int) (int, error) {
 
 func applyTOMLReplacements(raw string, replacements []tomlReplacement) string {
 	sort.Slice(replacements, func(i, j int) bool { return replacements[i].start < replacements[j].start })
-	for _, r := range slices.Backward(replacements) {
+	_rev1 := replacements
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		r := _rev1[_ri1]
 		raw = raw[:r.start] + r.value + raw[r.end:]
 	}
 	return raw

@@ -1,3 +1,5 @@
+//go:build !win7
+
 // Formats a tool call as a Claude-style card line: a "● Verb(primary arg)"
 // header instead of the raw "-> name {json}", plus the "⎿" continuation gutter.
 package cli

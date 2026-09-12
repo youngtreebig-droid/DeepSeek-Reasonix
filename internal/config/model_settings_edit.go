@@ -6,8 +6,9 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/BurntSushi/toml"
 	fileencoding "reasonix/internal/fileutil/encoding"
+
+	"github.com/BurntSushi/toml"
 )
 
 // ModelSettingsBaseline must be captured before editing under the config lock.

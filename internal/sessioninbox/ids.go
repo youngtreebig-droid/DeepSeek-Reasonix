@@ -5,12 +5,12 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"reasonix/internal/compat"
 	"strings"
-	"sync"
 	"unicode/utf8"
 )
 
-var processRunID = sync.OnceValue(func() string {
+var processRunID = compat.OnceValue(func() string {
 	return newRandomID()
 })
 
@@ -51,7 +51,7 @@ func PreviewText(text string, maxRunes int) string {
 	}
 	// Collapse internal whitespace for the shelf preview.
 	var b strings.Builder
-	b.Grow(min(len(text), maxRunes*4))
+	b.Grow(compat.Min(len(text), maxRunes*4))
 	prevSpace := false
 	count := 0
 	for i := 0; i < len(text); {

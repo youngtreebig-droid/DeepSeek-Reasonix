@@ -8,6 +8,7 @@ import (
 
 	"golang.org/x/term"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/i18n"
 )
 
@@ -42,7 +43,7 @@ func fixedLines(searching bool) int {
 // maxViewport calculates how many menu item rows fit after subtracting the
 // fixed lines from the available terminal rows, leaving at least 1 row.
 func maxViewport(totalItems, termRows int, searching bool) int {
-	avail := max(termRows-fixedLines(searching), 1)
+	avail := compat.Max(termRows-fixedLines(searching), 1)
 	if totalItems < avail {
 		return totalItems
 	}
@@ -121,7 +122,7 @@ func selectOne(label string, items []menuItem) (int, error) {
 		}
 
 		// menu rows
-		end := min(scroll+vp, n)
+		end := compat.Min(scroll+vp, n)
 		for i := scroll; i < end; i++ {
 			it := filtered[i]
 			name := fmt.Sprintf("%-10s", it.name)
@@ -302,7 +303,7 @@ func selectMany(label string, items []menuItem) ([]int, error) {
 			fmt.Fprintf(w, "\r\033[K\r\n")
 		}
 
-		end := min(scroll+vp, n)
+		end := compat.Min(scroll+vp, n)
 		for i := scroll; i < end; i++ {
 			it := filtered[i]
 			origIdx := filterIdx[i]

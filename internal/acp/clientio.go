@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"reasonix/internal/compat"
 	"sort"
 	"strings"
 	"time"
@@ -121,7 +122,7 @@ func (c *clientIO) RunCommand(ctx context.Context, command, cwd string, timeout 
 		return "", false, nil
 	}
 	id := TerminalIDParams{SessionID: c.sessionID, TerminalID: created.TerminalID}
-	defer func() { _, _ = c.conn.Request(context.WithoutCancel(ctx), "terminal/release", id) }()
+	defer func() { _, _ = c.conn.Request(compat.ContextWithoutCancel(ctx), "terminal/release", id) }()
 
 	waitCtx := ctx
 	var cancel context.CancelFunc
@@ -132,10 +133,10 @@ func (c *clientIO) RunCommand(ctx context.Context, command, cwd string, timeout 
 	_, waitErr := c.conn.Request(waitCtx, "terminal/wait_for_exit", id)
 	timedOut := waitErr != nil && waitCtx.Err() != nil && ctx.Err() == nil
 	if timedOut {
-		_, _ = c.conn.Request(context.WithoutCancel(ctx), "terminal/kill", id)
+		_, _ = c.conn.Request(compat.ContextWithoutCancel(ctx), "terminal/kill", id)
 	}
 
-	output, exit := c.terminalOutput(context.WithoutCancel(ctx), id)
+	output, exit := c.terminalOutput(compat.ContextWithoutCancel(ctx), id)
 	switch {
 	case ctx.Err() != nil:
 		return output, true, ctx.Err()

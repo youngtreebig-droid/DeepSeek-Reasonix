@@ -1,9 +1,9 @@
 package provider
 
 import (
-	"slices"
 	"strings"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/nilutil"
 )
 

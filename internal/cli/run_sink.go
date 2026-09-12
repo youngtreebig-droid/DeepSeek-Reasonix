@@ -38,7 +38,7 @@ func buildRunSink(format runOutputFormat, printOnly, showThinking bool, metricsP
 			if w, _, err := term.GetSize(int(os.Stdout.Fd())); err == nil && w > 0 {
 				termW = w
 			}
-			renderer = newMarkdownRenderer(termW)
+			renderer = cliMarkdownRenderer(termW)
 		}
 		textSink := agent.NewTextSink(os.Stdout, renderer, termW)
 		textSink.SetShowReasoning(showThinking)

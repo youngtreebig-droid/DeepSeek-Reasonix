@@ -1,3 +1,5 @@
+//go:build !win7
+
 package plugin
 
 import (
@@ -6,9 +8,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"maps"
 	"net/http"
 	"net/url"
+	"reasonix/internal/compat"
+	maps "reasonix/internal/compat/xmaps"
 	"strings"
 	"time"
 
@@ -111,7 +114,7 @@ func (rt *sameOriginMCPRoundTripper) RoundTrip(req *http.Request) (*http.Respons
 		requestCtx, cancel = context.WithCancel(req.Context())
 		cancelRequest = cancel
 		if rt.lifetime != nil {
-			stopLifetime = context.AfterFunc(rt.lifetime, cancelRequest)
+			stopLifetime = compat.ContextAfterFunc(rt.lifetime, cancelRequest)
 		}
 	}
 	cancelLifetimeRequest := func() {
@@ -170,26 +173,6 @@ func (b *cancelOnCloseBody) Close() error {
 	err := b.ReadCloser.Close()
 	b.cancel()
 	return err
-}
-
-func sameHTTPOrigin(a, b *url.URL) bool {
-	if a == nil || b == nil || !strings.EqualFold(a.Scheme, b.Scheme) || !strings.EqualFold(a.Hostname(), b.Hostname()) {
-		return false
-	}
-	effectivePort := func(u *url.URL) string {
-		if port := u.Port(); port != "" {
-			return port
-		}
-		switch strings.ToLower(u.Scheme) {
-		case "http":
-			return "80"
-		case "https":
-			return "443"
-		default:
-			return ""
-		}
-	}
-	return effectivePort(a) == effectivePort(b)
 }
 
 func (t *sdkSessionTransport) newEndpoint(ctx context.Context) (sdkEndpoint, error) {

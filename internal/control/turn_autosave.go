@@ -2,7 +2,7 @@ package control
 
 import (
 	"context"
-	"log/slog"
+	slog "reasonix/internal/compat/xslog"
 	"sync/atomic"
 	"time"
 )

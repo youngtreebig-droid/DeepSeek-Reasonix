@@ -3,9 +3,9 @@ package agent
 import (
 	"context"
 	"fmt"
-	"slices"
 	"time"
 
+	slices "reasonix/internal/compat/xslices"
 	"reasonix/internal/store"
 )
 

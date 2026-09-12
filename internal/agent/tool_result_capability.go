@@ -6,10 +6,10 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"slices"
 	"strings"
 	"unicode/utf8"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/provider"
 	"reasonix/internal/tool"
 )
@@ -168,7 +168,7 @@ func (t *sessionToolResultTool) Execute(_ context.Context, args json.RawMessage)
 		return "", fmt.Errorf("session tool result: offset %d is not a UTF-8 character boundary", p.Offset)
 	}
 
-	end := min(len(candidate.body), p.Offset+p.Limit)
+	end := compat.Min(len(candidate.body), p.Offset+p.Limit)
 	for end > p.Offset && end < len(candidate.body) && !utf8.RuneStart(candidate.body[end]) {
 		end--
 	}
@@ -192,7 +192,9 @@ func (t *sessionToolResultTool) Execute(_ context.Context, args json.RawMessage)
 
 func findToolResultCandidate(msgs []provider.Message, toolCallID, resultRef string) (toolResultCandidate, error) {
 	candidates := make([]toolResultCandidate, 0, 2)
-	for _, msg := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		msg := _rev1[_ri1]
 		if msg.Role != provider.RoleTool || msg.ToolCallID != toolCallID {
 			continue
 		}
@@ -250,7 +252,7 @@ func toolResultRefFromMarker(content string) (string, bool) {
 	if end := strings.Index(marker, "]…"); end >= 0 {
 		marker = marker[:end]
 	}
-	for field := range strings.FieldsSeq(marker) {
+	for _, field := range strings.Fields(marker) {
 		ref, ok := strings.CutPrefix(field, "result_ref=")
 		if !ok || len(ref) != len("tr-")+24 || !strings.HasPrefix(ref, "tr-") {
 			continue

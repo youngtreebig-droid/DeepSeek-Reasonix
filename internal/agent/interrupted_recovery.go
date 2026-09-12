@@ -3,7 +3,6 @@ package agent
 import (
 	"fmt"
 	"html"
-	"slices"
 	"strings"
 
 	"reasonix/internal/provider"
@@ -25,7 +24,9 @@ func (a *Agent) transcriptInterruptedRecovery() *provider.InterruptedTurnRecover
 		return nil
 	}
 	msgs := a.sess.conversation.Snapshot()
-	for _, v := range slices.Backward(msgs) {
+	_rev1 := msgs
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		v := _rev1[_ri1]
 		m := v
 		if m.LocalOnly && m.InterruptedTurn != nil && m.InterruptedTurn.Pending {
 			copy := *m.InterruptedTurn

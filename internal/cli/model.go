@@ -1,3 +1,5 @@
+//go:build !win7
+
 package cli
 
 import (
@@ -159,24 +161,6 @@ func (m *chatTUI) persistModel(ref string) {
 }
 
 // modelRefs returns the configured provider/model refs for slash completion.
-func modelRefs() []string {
-	cfg, err := config.Load()
-	if err != nil {
-		return nil
-	}
-	var out []string
-	for i := range cfg.Providers {
-		p := &cfg.Providers[i]
-		if !p.Configured() {
-			continue
-		}
-		for _, model := range p.ChatModelList() {
-			out = append(out, p.Name+"/"+model)
-		}
-	}
-	return out
-}
-
 // mergeExtensionModelRefs folds the session's extension provider catalog into
 // the config-backed picker list. Extension refs arrive fully namespaced
 // (plugin/<plugin>/<provider>/<model>); entries already listed (or blank) are

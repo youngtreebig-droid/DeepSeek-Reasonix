@@ -13,11 +13,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -30,6 +28,9 @@ import (
 	"reasonix/internal/browser"
 	"reasonix/internal/capability"
 	"reasonix/internal/command"
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/config"
 	"reasonix/internal/control"
 	"reasonix/internal/environment"
@@ -956,7 +957,7 @@ func build(ctx context.Context, opts Options) (*BuildResult, error) {
 		cleanup = func() { prev(); lspMgr.Close() }
 	}
 
-	maxSteps := max(opts.MaxSteps, 0)
+	maxSteps := compat.Max(opts.MaxSteps, 0)
 	subagentStore, err := newSubagentStore(sessionDir, opts.SubagentParentLive)
 	if err != nil {
 		return nil, err
@@ -2783,7 +2784,7 @@ func MCPStartupNotice(failures []plugin.Failure) (text, detail string, ok bool) 
 	if len(failures) == 0 {
 		return "", "", false
 	}
-	names := make([]string, 0, min(len(failures), 3))
+	names := make([]string, 0, compat.Min(len(failures), 3))
 	details := make([]string, 0, len(failures))
 	for i, f := range failures {
 		if i >= 3 {

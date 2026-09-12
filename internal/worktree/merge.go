@@ -432,7 +432,7 @@ func diffStats(ctx context.Context, root, targetHead, worktreeHead, status strin
 	if err != nil {
 		return 0, 0, 0, paths, fmt.Errorf("inspect committed diff: %w%s", err, stderrSuffix(stderr))
 	}
-	for line := range strings.SplitSeq(strings.TrimSpace(out), "\n") {
+	for _, line := range strings.Split(strings.TrimSpace(out), "\n") {
 		if strings.TrimSpace(line) == "" {
 			continue
 		}
@@ -464,7 +464,7 @@ func diffStats(ctx context.Context, root, targetHead, worktreeHead, status strin
 func statusPaths(status string) []string {
 	seen := map[string]struct{}{}
 	paths := []string{}
-	for line := range strings.SplitSeq(status, "\n") {
+	for _, line := range strings.Split(status, "\n") {
 		line = strings.TrimRight(line, "\r")
 		if len(line) < 4 {
 			continue

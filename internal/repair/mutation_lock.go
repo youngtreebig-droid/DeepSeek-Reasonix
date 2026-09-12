@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -104,7 +103,7 @@ func removeRepairNodeIfMatching(path, identityPath, expectedStateID string) erro
 }
 
 func moveRepairNodeToUniqueCleanup(path string) (string, error) {
-	for attempt := range 16 {
+	for attempt := 0; attempt < 16; attempt++ {
 		cleanup := fmt.Sprintf("%s.reasonix-cleanup-%d-%d", path, time.Now().UTC().UnixNano(), attempt)
 		err := renameRepairNodeNoReplace(path, cleanup)
 		if err == nil {
@@ -172,7 +171,9 @@ func resolveParentSymlinkPath(path string) string {
 		if resolved, err := filepath.EvalSymlinks(dir); err == nil {
 			parts := make([]string, 0, 1+len(missing))
 			parts = append(parts, resolved)
-			for _, v := range slices.Backward(missing) {
+			_rev1 := missing
+			for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+				v := _rev1[_ri1]
 				parts = append(parts, v)
 			}
 			return filepath.Join(parts...)
@@ -264,7 +265,9 @@ func lockRepairMutationsTimeout(timeout time.Duration, paths ...string) (func(),
 		lockPath := filepath.Join(lockDir, fmt.Sprintf("%x.lock", digest))
 		release, err := filelock.Acquire(ctx, lockPath)
 		if err != nil {
-			for _, v := range slices.Backward(releases) {
+			_rev2 := releases
+			for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+				v := _rev2[_ri2]
 				v()
 			}
 			return nil, fmt.Errorf("lock repair mutations: %w", err)
@@ -275,7 +278,9 @@ func lockRepairMutationsTimeout(timeout time.Duration, paths ...string) (func(),
 	var once sync.Once
 	return func() {
 		once.Do(func() {
-			for _, v := range slices.Backward(releases) {
+			_rev3 := releases
+			for _ri3 := len(_rev3) - 1; _ri3 >= 0; _ri3-- {
+				v := _rev3[_ri3]
 				v()
 			}
 		})

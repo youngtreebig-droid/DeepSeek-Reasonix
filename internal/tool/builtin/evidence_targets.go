@@ -7,10 +7,11 @@ import (
 	"os"
 	"strings"
 
-	udiff "github.com/aymanbagabas/go-udiff"
+	"reasonix/internal/compat"
 	"reasonix/internal/diff"
 	"reasonix/internal/readcoord"
 	"reasonix/internal/tool"
+
 )
 
 // Evidence is resolved by the same preview implementation that validates the
@@ -33,17 +34,17 @@ func previewEvidence(change diff.Change, err error) (tool.EvidenceTargetInfo, er
 		return info, nil
 	}
 	var ranges []tool.ReadRange
-	for _, edit := range udiff.Lines(change.OldText, change.NewText) {
+	for _, edit := range builtinDiffLineEdits(change.OldText, change.NewText) {
 		start := strings.Count(change.OldText[:edit.Start], "\n")
 		end := strings.Count(change.OldText[:edit.End], "\n")
 		if edit.End > edit.Start && change.OldText[edit.End-1] != '\n' {
 			end++
 		}
 		if start == end {
-			start = max(0, start-1)
+			start = compat.Max(0, start-1)
 			end++
 		}
-		ranges = append(ranges, tool.ReadRange{Start: min(start, len(lines)-1), End: min(end, len(lines))})
+		ranges = append(ranges, tool.ReadRange{Start: compat.Min(start, len(lines)-1), End: compat.Min(end, len(lines))})
 	}
 	info.Ranges = readcoord.Normalize(ranges)
 	for _, r := range info.Ranges {

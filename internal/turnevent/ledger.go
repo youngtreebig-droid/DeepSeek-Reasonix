@@ -11,10 +11,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"slices"
 	"sync"
 	"time"
 
+	"reasonix/internal/compat"
 	"reasonix/internal/event"
 	"reasonix/internal/eventwire"
 	"reasonix/internal/fileutil"
@@ -223,7 +223,7 @@ func Open(sessionPath, sessionID string) (*Ledger, error) {
 		}
 		if rec.TurnID != "" {
 			if rec.TurnID != l.active {
-				clear(pendingTools)
+				compat.Clear(pendingTools)
 				pendingToolOrder = pendingToolOrder[:0]
 				l.turnStartSeq = rec.Sequence
 				l.turnStarted = rec.CreatedAt
@@ -656,12 +656,16 @@ func (l *Ledger) AcknowledgeProjection(turnID string) error {
 }
 
 func (l *Ledger) terminalSequenceLocked(turnID string) uint64 {
-	for _, rec := range slices.Backward(l.records) {
+	_rev1 := l.records
+	for _ri1 := len(_rev1) - 1; _ri1 >= 0; _ri1-- {
+		rec := _rev1[_ri1]
 		if rec.TurnID == turnID && rec.Status.Terminal() {
 			return rec.Sequence
 		}
 	}
-	for _, summary := range slices.Backward(l.summaries) {
+	_rev2 := l.summaries
+	for _ri2 := len(_rev2) - 1; _ri2 >= 0; _ri2-- {
+		summary := _rev2[_ri2]
 		if summary.TurnID == turnID {
 			return summary.TerminalSequence
 		}

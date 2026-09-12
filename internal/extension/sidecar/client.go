@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log/slog"
-	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	"reasonix/internal/compat"
+	slices "reasonix/internal/compat/xslices"
+	slog "reasonix/internal/compat/xslog"
 	"reasonix/internal/extension"
 	"reasonix/internal/extension/protocol"
 	"reasonix/internal/extension/rpcwire"
@@ -498,7 +499,7 @@ func (c *Client) Exited() bool {
 // context, and compaction family).
 func (c *Client) TimeoutFor(point extension.InterceptorPoint) time.Duration {
 	if c.rt.TimeoutMillis > 0 {
-		timeout := min(time.Duration(c.rt.TimeoutMillis)*time.Millisecond, maxInterceptTimeout)
+		timeout := compat.Min(time.Duration(c.rt.TimeoutMillis)*time.Millisecond, maxInterceptTimeout)
 		return timeout
 	}
 	switch point {
