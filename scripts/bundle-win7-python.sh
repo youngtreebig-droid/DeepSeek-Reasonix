@@ -66,6 +66,19 @@ PLATFORM_FLAGS=(--only-binary=:all: --platform win_amd64 --python-version 38 --i
 # pinned to 3.3.2 so its wheel is a clean cp38-cp38-win_amd64 build (newer
 # releases only ship cp37-abi3). Pillow is pulled transitively by
 # matplotlib/pdfplumber; pinned to its last cp38 release (10.4.0).
+# rapidocr-onnxruntime is intentionally left UNPINNED: pip resolves it (and its
+# transitive stack -- onnxruntime, opencv-python, shapely, pyclipper, pyyaml,
+# protobuf, coloredlogs, humanfriendly, flatbuffers, sympy, mpmath, tqdm, six,
+# packaging) to cp38-win_amd64 / abi3-win_amd64 / pure-python wheels that all
+# satisfy the platform + Requires-Python guards below. The rapidocr wheel
+# already carries its own PP-OCRv4 ONNX det/rec/cls models, so OCR works fully
+# offline with NO native Tesseract engine on the target. pytesseract is KEPT as
+# a documented fallback. NOTE: opencv-python ships as a cp37-abi3-win_amd64
+# wheel (opencv_python-*-cp37-abi3-win_amd64.whl); the allowlist grep already
+# admits it via its `abi3-win_amd64` alternative, and the blocklist's `cp39..`
+# / `win32|-386-|_i386` patterns do not false-positive on it or on any resolved
+# dependency (e.g. flatbuffers-25.*, packaging-26.* do not contain a cp3xx tag),
+# so no guard-pattern changes were needed.
 # pip is pinned to the LAST 3.8-capable release: pip 25.x has
 # `Requires-Python >=3.9` and cannot run on the bundled CPython 3.8. Because
 # pip/setuptools/wheel are pure-python (py3-none-any) wheels, pip's
@@ -87,6 +100,7 @@ PKGS=(
   reportlab==3.6.13
   pypdf==3.17.4
   pdfplumber==0.10.4
+  rapidocr-onnxruntime
   pytesseract==0.3.10
   SQLAlchemy==2.0.36
   Pillow==10.4.0
@@ -94,11 +108,15 @@ PKGS=(
 )
 
 # BUNDLE_EXCLUDED: heavy ML OCR stacks (easyocr, torch) have NO cp38 win_amd64
-# wheels that resolve offline and are intentionally NOT bundled. OCR ships as
-# pytesseract (a thin wrapper) which requires the native Tesseract engine to be
-# installed on the target machine. scipy is likewise not bundled (not requested
-# and not needed by the pinned set). See README-FONTS.txt for fonts.
-BUNDLE_EXCLUDED="easyocr, torch (no cp38 win_amd64 wheels / infeasible offline); scipy (not required by pinned set). pytesseract needs the native Tesseract engine on the target."
+# wheels that resolve offline and are intentionally NOT bundled. OCR now ships
+# TWO ways: rapidocr-onnxruntime (fully offline, self-contained PP-OCRv4 ONNX
+# models, NO native engine required) as the default, and pytesseract (a thin
+# wrapper that still needs the native Tesseract engine installed on the target)
+# as a documented fallback. scipy is likewise not bundled (not requested and
+# not needed by the pinned set). See README-FONTS.txt for fonts. CAVEAT:
+# onnxruntime is a native lib and on Windows 7 needs the VC++ 2015-2019 x64
+# runtime (VCRUNTIME140.dll); documented in README-WIN7.txt.
+BUNDLE_EXCLUDED="easyocr, torch (no cp38 win_amd64 wheels / infeasible offline); scipy (not required by pinned set). OCR ships offline via rapidocr-onnxruntime (bundled PP-OCRv4 ONNX models, no engine needed); pytesseract remains as a fallback that still needs the native Tesseract engine. rapidocr's onnxruntime needs the VC++ 2015-2019 x64 runtime on the target."
 
 # ---------------------------------------------------------------------------
 # 0. Preconditions.
@@ -329,7 +347,7 @@ echo "== installing packages into $site (offline) =="
 
 # Verify the expected import package dirs landed.
 echo "== verifying installed import packages =="
-expect_dirs=(openpyxl xlsxwriter pandas numpy docx pptx reportlab pypdf pdfplumber pytesseract sqlalchemy matplotlib PIL)
+expect_dirs=(openpyxl xlsxwriter pandas numpy docx pptx reportlab pypdf pdfplumber rapidocr_onnxruntime onnxruntime cv2 pytesseract sqlalchemy matplotlib PIL)
 missing=()
 for d in "${expect_dirs[@]}"; do
   if [ ! -e "$site/$d" ]; then

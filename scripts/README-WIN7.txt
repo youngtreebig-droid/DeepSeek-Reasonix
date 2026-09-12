@@ -105,7 +105,12 @@ python\Lib\site-packages.
     pdfplumber      0.10.4    (extract text/tables from PDFs)
 
   OCR:
-    pytesseract     0.3.10    (wrapper only; see OCR note below)
+    rapidocr-onnxruntime      (offline OCR, no external engine; import name:
+                               rapidocr_onnxruntime. Carries its own PP-OCRv4
+                               ONNX detection/recognition/classification models
+                               for Chinese + English. See OCR note below.)
+    pytesseract     0.3.10    (wrapper only, fallback; needs the native
+                               Tesseract engine. See OCR note below.)
 
   SQL:
     SQLAlchemy      2.0.36    (import name: sqlalchemy)
@@ -132,32 +137,64 @@ Supporting packages (pip build tools and a resolved dependency pin):
 Transitive dependencies are also installed automatically (for example
 et-xmlfile, lxml, python-dateutil, pytz, tzdata, six, fonttools, kiwisolver,
 cycler, contourpy, pyparsing, packaging, importlib-resources, zipp, greenlet,
-typing_extensions, pdfminer.six, cryptography, cffi, pycparser, pypdfium2).
+typing_extensions, pdfminer.six, cryptography, cffi, pycparser, pypdfium2, and
+the rapidocr OCR stack: onnxruntime, opencv-python (import name cv2), shapely,
+pyclipper, pyyaml, protobuf, coloredlogs, humanfriendly, flatbuffers, sympy,
+mpmath, tqdm).
 
 Packages intentionally NOT bundled (BUNDLE_EXCLUDED)
 ----------------------------------------------------
   easyocr, torch   No cp38 win_amd64 wheels resolve offline and the stacks are
-                   too heavy for an offline bundle. OCR ships as pytesseract
-                   only (see OCR note).
+                   too heavy for an offline bundle. Offline OCR ships as
+                   rapidocr-onnxruntime instead (see OCR note).
   scipy            Not required by the pinned set and not requested, so it is
                    left out to keep the bundle smaller.
 
 
 OCR note (IMPORTANT)
 --------------------
-pytesseract is only a thin Python WRAPPER. It does not perform OCR by itself:
-it shells out to the native Tesseract OCR engine (tesseract.exe), which is a
-separate program and is NOT bundled here. To actually run OCR on the target:
+There are TWO OCR options in this bundle. Prefer RapidOCR (option A) because it
+needs no external engine and works fully offline.
 
-  - Install Tesseract for Windows on the machine, or drop a portable Tesseract
-    build into the bundle, and then either:
-      * add the folder containing tesseract.exe to PATH, or
-      * in Python set the path explicitly:
-          import pytesseract
-          pytesseract.pytesseract.tesseract_cmd = r"C:\path\to\tesseract.exe"
+(A) RapidOCR (rapidocr-onnxruntime) -- offline, no engine, self-contained
+    This is the recommended, self-contained OCR path. It runs the PaddleOCR
+    PP-OCRv4 models via ONNX Runtime and does NOT need any external program:
+    the detection / recognition / classification .onnx models (Chinese +
+    English) are bundled inside the package under
+    python\Lib\site-packages\rapidocr_onnxruntime\models\. Basic usage:
 
-  - The usual source for a Windows Tesseract build is the UB-Mannheim project:
-    https://github.com/UB-Mannheim/tesseract/wiki
+        from rapidocr_onnxruntime import RapidOCR
+        ocr = RapidOCR()
+        result, _ = ocr("img.png")
+        # result is a list of [box, text, score]; e.g. print the text lines:
+        for box, text, score in (result or []):
+            print(text, score)
+
+    IMPORTANT WINDOWS 7 CAVEAT (native runtime dependency):
+    onnxruntime is a NATIVE library. On Windows 7 it requires the Microsoft
+    Visual C++ 2015-2019 x64 runtime (VCRUNTIME140.dll) to be present. Most
+    Windows 7 machines already have it, but if importing or running RapidOCR
+    fails with a missing-DLL error (e.g. "VCRUNTIME140.dll was not found" or an
+    onnxruntime DLL load failure), install the
+    "Microsoft Visual C++ 2015-2019 Redistributable (x64)" (vc_redist.x64.exe)
+    on the target machine and retry. No such runtime is needed for the
+    pure-Python packages above; it is specific to onnxruntime/RapidOCR.
+
+(B) pytesseract -- fallback, needs the external Tesseract engine
+    pytesseract is only a thin Python WRAPPER. It does not perform OCR by
+    itself: it shells out to the native Tesseract OCR engine (tesseract.exe),
+    which is a separate program and is NOT bundled here. Use this only if you
+    specifically need Tesseract. To run OCR through it on the target:
+
+      - Install Tesseract for Windows on the machine, or drop a portable
+        Tesseract build into the bundle, and then either:
+          * add the folder containing tesseract.exe to PATH, or
+          * in Python set the path explicitly:
+              import pytesseract
+              pytesseract.pytesseract.tesseract_cmd = r"C:\path\to\tesseract.exe"
+
+      - The usual source for a Windows Tesseract build is the UB-Mannheim
+        project: https://github.com/UB-Mannheim/tesseract/wiki
 
 
 Fonts (公文字体 / Chinese government-document fonts)
@@ -188,13 +225,20 @@ Run these from the unzipped folder to confirm the bundle works:
       Expected: Python 3.8.10
 
   (b) Confirm all bundled packages import:
-        python\python.exe -c "import docx,openpyxl,pptx,xlsxwriter,reportlab,pypdf,pdfplumber,sqlalchemy,numpy,pandas,matplotlib,pytesseract,PIL; print('imports ok')"
+        python\python.exe -c "import docx,openpyxl,pptx,xlsxwriter,reportlab,pypdf,pdfplumber,sqlalchemy,numpy,pandas,matplotlib,rapidocr_onnxruntime,pytesseract,PIL; print('imports ok')"
       Expected: imports ok
 
-  (c) Confirm the launcher runs the CLI:
+  (c) Confirm offline OCR (RapidOCR) loads its native runtime and models:
+        python\python.exe -c "from rapidocr_onnxruntime import RapidOCR; RapidOCR(); print('rapidocr ok')"
+      Expected: rapidocr ok
+      If this fails with a missing-DLL / VCRUNTIME140.dll error, install the
+      "Microsoft Visual C++ 2015-2019 Redistributable (x64)" (see the OCR note
+      above) and retry.
+
+  (d) Confirm the launcher runs the CLI:
         reasonix.cmd --version
 
-  (d) Confirm the AGENT uses the bundled interpreter: start reasonix through
+  (e) Confirm the AGENT uses the bundled interpreter: start reasonix through
       reasonix.cmd and ask the agent to run
         python -c "import pandas; print(pandas.__version__)"
       It should print 2.0.3 (proving `python` resolved to the bundled
